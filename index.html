@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>HUMANITY/1 — One Million Humans. One Irreversible Choice.</title>
+  <style>
+    /* --- DESIGN SYSTEM & GALLERY AESTHETIC --- */
+    :root {
+      --bg-color: #FAFAFA;
+      --surface-color: #FFFFFF;
+      --text-main: #111111;
+      --text-muted: #767676;
+      --border-color: #E5E5E5;
+      --border-focus: #111111;
+      --accent-color: #000000;
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: "SF Mono", "Roboto Mono", "Consolas", monospace;
+      --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.05);
+      --shadow-modal: 0 20px 50px rgba(0, 0, 0, 0.15);
+      --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    #app {
+      display: flex;
+      flex-direction: column;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      position: relative;
+    }
+
+    /* --- HEADER --- */
+    header {
+      padding: 16px 24px;
+      background: rgba(250, 250, 250, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand h1 {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-main);
+    }
+
+    .brand span {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    .stats {
+      text-align: right;
+    }
+
+    .stats-count {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .stats-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* --- CANVAS CONTAINER --- */
+    .viewport {
+      flex: 1;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      touch-action: none;
+      background: #F4F4F6;
+      cursor: grab;
+    }
+
+    .viewport:active {
+      cursor: grabbing;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      image-rendering: optimizeSpeed;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    /* --- CANVAS CONTROLS --- */
+    .controls-overlay {
+      position: absolute;
+      bottom: 24px;
+      right: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 5;
+    }
+
+    .btn-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    .btn-icon:active {
+      transform: scale(0.92);
+      background: #F0F0F0;
+    }
+
+    /* --- SUBTLE GUIDANCE FOOTER --- */
+    .guidance-bar {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(17, 17, 17, 0.88);
+      color: #FFFFFF;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 12px;
+      letter-spacing: 0.3px;
+      pointer-events: none;
+      z-index: 5;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      backdrop-filter: blur(8px);
+      white-space: nowrap;
+      transition: var(--transition-fast);
+    }
+
+    .guidance-bar.hidden {
+      opacity: 0;
+      transform: translate(-50%, 10px);
+    }
+
+    /* --- BOTTOM SHEET / SELECTION PANEL --- */
+    .sheet-backdrop {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.25);
+      backdrop-filter: blur(4px);
+      z-index: 20;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .sheet-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .bottom-sheet {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: var(--surface-color);
+      border-top-left-radius: var(--radius-lg);
+      border-top-right-radius: var(--radius-lg);
+      box-shadow: var(--shadow-modal);
+      padding: 24px;
+      transform: translateY(100%);
+      transition: transform var(--transition-smooth);
+      z-index: 21;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bottom-sheet.active {
+      transform: translateY(0);
+    }
+
+    .sheet-header {
+      text-align: center;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .sheet-drag-handle {
+      width: 36px;
+      height: 4px;
+      background: #E0E0E0;
+      border-radius: 2px;
+      margin: 0 auto 16px auto;
+    }
+
+    .sheet-title {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .sheet-question {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-main);
+      line-height: 1.3;
+      padding: 0 10px;
+    }
+
+    .coord-badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: #F0F0F2;
+      color: #555;
+      padding: 4px 10px;
+      border-radius: 12px;
+      margin-top: 8px;
+    }
+
+    /* PALETTE GRID */
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+      max-height: 45vh;
+      overflow-y: auto;
+      padding: 2px;
+    }
+
+    .value-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 6px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border-color);
+      background: var(--surface-color);
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    .value-card:active {
+      transform: scale(0.96);
+    }
+
+    .value-card.selected {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 1px var(--border-focus);
+      background: #FAFAFA;
+    }
+
+    .swatch {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      margin-bottom: 8px;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+    }
+
+    .value-name {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-main);
+    }
+
+    /* ACTION BUTTONS */
+    .action-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 16px;
+      border-radius: var(--radius-md);
+      background: var(--accent-color);
+      color: #FFFFFF;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .btn-primary:not(:disabled):active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+
+    .btn-secondary {
+      width: 100%;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .seal-warning {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 4px;
+    }
+
+    /* --- INFO MODAL FOR SEALED CELL --- */
+    .info-card {
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    .info-human-no {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .info-value-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: #F4F4F6;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    /* --- DIGITAL CERTIFICATE MODAL --- */
+    .modal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .certificate-card {
+      background: var(--surface-color);
+      width: 100%;
+      max-width: 380px;
+      border-radius: var(--radius-lg);
+      padding: 32px 24px;
+      box-shadow: var(--shadow-modal);
+      text-align: center;
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .cert-logo {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .cert-human-num {
+      font-family: var(--font-mono);
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: var(--text-main);
+      margin-bottom: 12px;
+    }
+
+    .cert-statement {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-bottom: 24px;
+    }
+
+    .cert-swatch-box {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    .cert-value-title {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .cert-coords {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .cert-seal-stamp {
+      border: 1px solid var(--text-main);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .cert-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .toast {
+      position: absolute;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: rgba(17, 17, 17, 0.9);
+      color: #FFF;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 12px;
+      pointer-events: none;
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 40;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+<div id="app">
+  <!-- HEADER -->
+  <header>
+    <div class="brand">
+      <h1>HUMANITY/1</h1>
+      <span>One Million Humans. One Choice.</span>
+    </div>
+    <div class="stats">
+      <div class="stats-count" id="stat-sealed">18,421</div>
+      <div class="stats-label" id="stat-remain">981,579 REMAIN</div>
+    </div>
+  </header>
+
+  <!-- VIEWPORT / CANVAS -->
+  <div class="viewport" id="viewport">
+    <canvas id="canvas"></canvas>
+    
+    <div class="guidance-bar" id="guidance-bar">
+      Choose an empty cell to seal your mark
+    </div>
+
+    <div class="controls-overlay">
+      <button class="btn-icon" id="btn-zoom-in" title="Zoom In">+</button>
+      <button class="btn-icon" id="btn-zoom-out" title="Zoom Out">−</button>
+      <button class="btn-icon" id="btn-fit" title="Fit Canvas">FIT</button>
+    </div>
+  </div>
+
+  <!-- BOTTOM SHEET (SELECTION & SEALING FLOW) -->
+  <div class="sheet-backdrop" id="sheet-backdrop"></div>
+  <div class="bottom-sheet" id="bottom-sheet">
+    <div class="sheet-drag-handle"></div>
+    
+    <!-- SELECTION CONTENT -->
+    <div id="sheet-content-selection">
+      <div class="sheet-header">
+        <div class="sheet-title">GERİ ALINAMAZ İNSANLIK SEÇİMİ</div>
+        <div class="sheet-question">If humanity could carry one thing into the future, what should it be?</div>
+        <div class="coord-badge" id="selected-coord-badge">X: 0 · Y: 0</div>
+      </div>
+
+      <div class="palette-grid" id="palette-grid">
+        <!-- 16 Value Cards generated by JS -->
+      </div>
+
+      <div class="action-group">
+        <button class="btn-primary" id="btn-seal" disabled>SEAL MY MARK</button>
+        <div class="seal-warning">This choice cannot be changed, erased, or moved forever.</div>
+        <button class="btn-secondary" id="btn-cancel-select">Cancel</button>
+      </div>
+    </div>
+
+    <!-- INFO CONTENT FOR ALREADY SEALED CELL -->
+    <div id="sheet-content-sealed" style="display: none;">
+      <div class="sheet-header">
+        <div class="sheet-title">PERMANENT MARK</div>
+        <div class="coord-badge" id="sealed-coord-badge">X: 0 · Y: 0</div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-human-no" id="info-human-no">HUMAN #000000</div>
+        <div style="display: flex; justify-content: center; margin-bottom: 12px;">
+          <div class="info-value-tag" id="info-value-tag">
+            <span class="swatch" id="info-swatch" style="margin:0; width:16px; height:16px;"></span>
+            <span id="info-value-name">Value</span>
+          </div>
+        </div>
+        <div class="cert-statement" style="font-size: 12px; margin-bottom: 16px;">
+          Sealed permanently in humanity's collective portrait.
+        </div>
+      </div>
+
+      <div class="action-group">
+        <button class="btn-primary" id="btn-view-cert">VIEW CERTIFICATE</button>
+        <button class="btn-secondary" id="btn-close-sealed">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CERTIFICATE MODAL -->
+  <div class="modal-overlay" id="cert-modal">
+    <div class="certificate-card">
+      <div class="cert-logo">HUMANITY/1</div>
+      <div class="cert-human-num" id="cert-human-num">HUMAN #000000</div>
+      <div class="cert-statement">I left one permanent mark in humanity's final canvas.</div>
+      
+      <div class="cert-swatch-box" id="cert-swatch"></div>
+      <div class="cert-value-title" id="cert-value-title">HOPE</div>
+      <div class="cert-coords" id="cert-coords">X: 120 · Y: 450</div>
+
+      <div class="cert-seal-stamp">SEALED FOREVER</div>
+
+      <div class="cert-actions">
+        <button class="btn-primary" id="btn-share-link">COPY DIRECT LINK</button>
+        <button class="btn-secondary" id="btn-close-cert">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast" id="toast">Link copied to clipboard</div>
+</div>
+
+<script>
+  /* ==========================================================================
+     1. CONFIGURATION & VALUES (16 HUMAN VALUES)
+     ========================================================================== */
+  const VALUES_CONFIG = [
+    { id: 1,  name: "Love",      color: "#E63946" },
+    { id: 2,  name: "Freedom",   color: "#3A86FF" },
+    { id: 3,  name: "Knowledge", color: "#8338EC" },
+    { id: 4,  name: "Faith",     color: "#FF006E" },
+    { id: 5,  name: "Peace",     color: "#2A9D8F" },
+    { id: 6,  name: "Family",    color: "#F4A261" },
+    { id: 7,  name: "Courage",   color: "#E76F51" },
+    { id: 8,  name: "Truth",     color: "#457B9D" },
+    { id: 9,  name: "Nature",    color: "#52B788" },
+    { id: 10, name: "Justice",   color: "#1D3557" },
+    { id: 11, name: "Creation",  color: "#FFB703" },
+    { id: 12, name: "Hope",      color: "#FFD84D" },
+    { id: 13, name: "Memory",    color: "#B5838D" },
+    { id: 14, name: "Progress",  color: "#00B4D8" },
+    { id: 15, name: "Unity",     color: "#6A040F" },
+    { id: 16, name: "Other",     color: "#6C757D" }
+  ];
+
+  const CANVAS_SIZE = 1000; // 1000 x 1000 = 1,000,000 Real Grid Cells
+  const TOTAL_CELLS = CANVAS_SIZE * CANVAS_SIZE;
+
+  /* ==========================================================================
+     2. GLOBAL STATE & DATA STORAGE
+     ========================================================================== */
+  // 1,000,000 cells state: 0 = empty, 1-16 = value id
+  const gridState = new Uint8Array(TOTAL_CELLS);
+  
+  // Metadata for sealed cells (key: y*1000 + x)
+  const sealedMeta = new Map();
+
+  let sealedCount = 18421;
+  let selectedX = -1;
+  let selectedY = -1;
+  let selectedValueId = null;
+  let activeInspectorCell = null; // Cell being viewed in sealed sheet
+
+  // Camera state
+  let scale = 1;
+  let offsetX = 0;
+  let offsetY = 0;
+  let minScale = 1;
+  let maxScale = 60;
+
+  /* ==========================================================================
+     3. DEMO DATA INITIALIZATION (ORGANIC MOSAIC ENGINE)
+     ========================================================================== */
+  function initDemoData() {
+    // Generate ~18,421 organic initial sealed cells around central clusters
+    let count = 0;
+    const targetCount = 18421;
+
+    // Cluster centers
+    const clusters = [
+      { cx: 500, cy: 500, radius: 180, weight: 0.5 },
+      { cx: 350, cy: 400, radius: 100, weight: 0.2 },
+      { cx: 650, cy: 600, radius: 120, weight: 0.2 },
+      { cx: 200, cy: 800, radius: 80,  weight: 0.1 }
+    ];
+
+    let currentHumanNo = 1;
+
+    while (count < targetCount) {
+      // Pick random cluster
+      const rand = Math.random();
+      let c = clusters[0];
+      let acc = 0;
+      for (let cl of clusters) {
+        acc += cl.weight;
+        if (rand <= acc) { c = cl; break; }
+      }
+
+      // Normal distribution around center
+      const u1 = Math.random();
+      const u2 = Math.random();
+      const z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+      const z1 = Math.sqrt(-2.0 * Math.log(u1)) * Math.sin(2.0 * Math.PI * u2);
+
+      const x = Math.floor(c.cx + z0 * (c.radius / 2));
+      const y = Math.floor(c.cy + z1 * (c.radius / 2));
+
+      if (x >= 0 && x < CANVAS_SIZE && y >= 0 && y < CANVAS_SIZE) {
+        const idx = y * CANVAS_SIZE + x;
+        if (gridState[idx] === 0) {
+          const valueId = Math.floor(Math.random() * 16) + 1;
+          gridState[idx] = valueId;
+          
+          const humanNumStr = `HUMAN #${String(currentHumanNo).padStart(6, '0')}`;
+          sealedMeta.set(idx, {
+            humanNumber: humanNumStr,
+            valueId: valueId,
+            x: x,
+            y: y,
+            date: "August 21, 2026"
+          });
+
+          currentHumanNo++;
+          count++;
+        }
+      }
+    }
+    sealedCount = count;
+    updateHeaderStats();
+  }
+
+  function updateHeaderStats() {
+    document.getElementById('stat-sealed').textContent = sealedCount.toLocaleString('en-US');
+    document.getElementById('stat-remain').textContent = `${(TOTAL_CELLS - sealedCount).toLocaleString('en-US')} REMAIN`;
+  }
+
+  /* ==========================================================================
+     4. CANVAS ENGINE & RENDERER
+     ========================================================================== */
+  const viewport = document.getElementById('viewport');
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d', { alpha: false, preserveDrawingBuffer: true });
+
+  // Offscreen bitmap canvas for fast 1000x1000 blitting
+  const offCanvas = document.createElement('canvas');
+  offCanvas.width = CANVAS_SIZE;
+  offCanvas.height = CANVAS_SIZE;
+  const offCtx = offCanvas.getContext('2d');
+  let offImageData = offCtx.createImageData(CANVAS_SIZE, CANVAS_SIZE);
+
+  function rebuildOffscreenCanvas() {
+    const data = offImageData.data;
+    // Map hex colors to RGBA
+    const colorRGB = VALUES_CONFIG.reduce((acc, v) => {
+      const hex = v.color.replace('#', '');
+      acc[v.id] = [
+        parseInt(hex.substring(0, 2), 16),
+        parseInt(hex.substring(2, 4), 16),
+        parseInt(hex.substring(4, 6), 16),
+        255
+      ];
+      return acc;
+    }, {});
+
+    for (let i = 0; i < TOTAL_CELLS; i++) {
+      const val = gridState[i];
+      const p = i * 4;
+      if (val > 0) {
+        const rgb = colorRGB[val];
+        data[p] = rgb[0];
+        data[p+1] = rgb[1];
+        data[p+2] = rgb[2];
+        data[p+3] = 255;
+      } else {
+        // Empty cell: pure white canvas
+        data[p] = 255;
+        data[p+1] = 255;
+        data[p+2] = 255;
+        data[p+3] = 255;
+      }
+    }
+    offCtx.putImageData(offImageData, 0, 0);
+  }
+
+  function updateOffscreenCell(x, y, valueId) {
+    const idx = y * CANVAS_SIZE + x;
+    gridState[idx] = valueId;
+    
+    const hex = VALUES_CONFIG.find(v => v.id === valueId).color.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+
+    const p = idx * 4;
+    offImageData.data[p] = r;
+    offImageData.data[p+1] = g;
+    offImageData.data[p+2] = b;
+    offImageData.data[p+3] = 255;
+
+    offCtx.putImageData(offImageData, 0, 0);
+  }
+
+  function resizeCanvas() {
+    const rect = viewport.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+
+    // Calculate minimum scale to fit canvas inside viewport
+    minScale = Math.min(canvas.width / CANVAS_SIZE, canvas.height / CANVAS_SIZE);
+    
+    if (scale < minScale) {
+      fitToViewport();
+    } else {
+      render();
+    }
+  }
+
+  function fitToViewport() {
+    const rect = viewport.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const w = rect.width * dpr;
+    const h = rect.height * dpr;
+
+    minScale = Math.min(w / CANVAS_SIZE, h / CANVAS_SIZE);
+    scale = minScale;
+    
+    // Center alignment
+    offsetX = (w - CANVAS_SIZE * scale) / 2;
+    offsetY = (h - CANVAS_SIZE * scale) / 2;
+    render();
+  }
+
+  function render() {
+    const dpr = window.devicePixelRatio || 1;
+    ctx.save();
+    ctx.fillStyle = "#EAEAEA";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Apply Camera Transforms
+    ctx.translate(offsetX, offsetY);
+    ctx.scale(scale, scale);
+
+    // Render Nearest-Neighbor Canvas
+    ctx.imageSmoothingEnabled = false;
+    ctx.mozImageSmoothingEnabled = false;
+    ctx.webkitImageSmoothingEnabled = false;
+    ctx.msImageSmoothingEnabled = false;
+
+    ctx.drawImage(offCanvas, 0, 0);
+
+    // Render Subtle Grid Lines when zoomed in
+    if (scale > 12) {
+      ctx.lineWidth = 1 / scale;
+      ctx.strokeStyle = "rgba(0,0,0,0.08)";
+      ctx.beginPath();
+      
+      const startX = Math.max(0, Math.floor(-offsetX / scale));
+      const endX = Math.min(CANVAS_SIZE, Math.ceil((canvas.width - offsetX) / scale));
+      const startY = Math.max(0, Math.floor(-offsetY / scale));
+      const endY = Math.min(CANVAS_SIZE, Math.ceil((canvas.height - offsetY) / scale));
+
+      for (let x = startX; x <= endX; x++) {
+        ctx.moveTo(x, startY);
+        ctx.lineTo(x, endY);
+      }
+      for (let y = startY; y <= endY; y++) {
+        ctx.moveTo(startX, y);
+        ctx.lineTo(endX, y);
+      }
+      ctx.stroke();
+    }
+
+    // Render Active Selection / Preview Highlight
+    if (selectedX >= 0 && selectedY >= 0) {
+      ctx.save();
+      
+      // If user selected a value in sheet, preview fill color
+      if (selectedValueId) {
+        const valObj = VALUES_CONFIG.find(v => v.id === selectedValueId);
+        ctx.fillStyle = valObj.color;
+        ctx.fillRect(selectedX, selectedY, 1, 1);
+      }
+
+      // Selection Frame
+      ctx.lineWidth = Math.max(2 / scale, 0.1);
+      ctx.strokeStyle = "#000000";
+      ctx.strokeRect(selectedX, selectedY, 1, 1);
+
+      ctx.lineWidth = Math.max(1 / scale, 0.05);
+      ctx.strokeStyle = "#FFFFFF";
+      ctx.strokeRect(selectedX - 0.5/scale, selectedY - 0.5/scale, 1 + 1/scale, 1 + 1/scale);
+
+      ctx.restore();
+    }
+
+    ctx.restore();
+  }
+
+  /* ==========================================================================
+     5. GESTURE & TOUCH NAVIGATION ENGINE (PAN, ZOOM, PINCH)
+     ========================================================================== */
+  let isDragging = false;
+  let startX = 0, startY = 0;
+  let initialPointers = [];
+  let initialPinchDist = 0;
+  let initialScale = 1;
+
+  function getGridCoords(screenX, screenY) {
+    const rect = viewport.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    
+    const viewportX = (screenX - rect.left) * dpr;
+    const viewportY = (screenY - rect.top) * dpr;
+
+    const gridX = Math.floor((viewportX - offsetX) / scale);
+    const gridY = Math.floor((viewportY - offsetY) / scale);
+
+    return { gridX, gridY };
+  }
+
+  function zoomToCell(gx, gy, targetScale = 25) {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = viewport.getBoundingClientRect();
+    const vw = rect.width * dpr;
+    const vh = rect.height * dpr;
+
+    scale = Math.min(Math.max(targetScale, minScale), maxScale);
+
+    // Center viewport on cell (gx + 0.5, gy + 0.5)
+    offsetX = vw / 2 - (gx + 0.5) * scale;
+    offsetY = vh / 2 - (gy + 0.5) * scale;
+
+    render();
+  }
+
+  // Pointer Events for unified Touch/Mouse Handling
+  const activePointers = new Map();
+
+  viewport.addEventListener('pointerdown', (e) => {
+    activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+
+    if (activePointers.size === 2) {
+      const pts = Array.from(activePointers.values());
+      initialPinchDist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+      initialScale = scale;
+    }
+  });
+
+  viewport.addEventListener('pointermove', (e) => {
+    if (!isDragging) return;
+    activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    if (activePointers.size === 1) {
+      // Single Finger Drag (Pan)
+      const dx = (e.clientX - startX) * (window.devicePixelRatio || 1);
+      const dy = (e.clientY - startY) * (window.devicePixelRatio || 1);
+
+      offsetX += dx;
+      offsetY += dy;
+
+      startX = e.clientX;
+      startY = e.clientY;
+      render();
+    } else if (activePointers.size === 2) {
+      // Two Finger Pinch Zoom
+      const pts = Array.from(activePointers.values());
+      const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+
+      if (initialPinchDist > 0) {
+        const factor = dist / initialPinchDist;
+        const newScale = Math.min(Math.max(initialScale * factor, minScale), maxScale);
+
+        // Zoom centered on pinch midpoint
+        const midX = ((pts[0].x + pts[1].x) / 2 - viewport.getBoundingClientRect().left) * (window.devicePixelRatio || 1);
+        const midY = ((pts[0].y + pts[1].y) / 2 - viewport.getBoundingClientRect().top) * (window.devicePixelRatio || 1);
+
+        offsetX = midX - (midX - offsetX) * (newScale / scale);
+        offsetY = midY - (midY - offsetY) * (newScale / scale);
+
+        scale = newScale;
+        render();
+      }
+    }
+  });
+
+  function endPointer(e) {
+    if (activePointers.has(e.pointerId)) {
+      activePointers.delete(e.pointerId);
+    }
+    if (activePointers.size < 2) {
+      initialPinchDist = 0;
+    }
+    if (activePointers.size === 0) {
+      isDragging = false;
+    }
+  }
+
+  viewport.addEventListener('pointerup', endPointer);
+  viewport.addEventListener('pointercancel', endPointer);
+
+  // Wheel Zoom
+  viewport.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const dpr = window.devicePixelRatio || 1;
+    const rect = viewport.getBoundingClientRect();
+    const mouseX = (e.clientX - rect.left) * dpr;
+    const mouseY = (e.clientY - rect.top) * dpr;
+
+    const zoomFactor = e.deltaY < 0 ? 1.15 : 0.85;
+    const newScale = Math.min(Math.max(scale * zoomFactor, minScale), maxScale);
+
+    offsetX = mouseX - (mouseX - offsetX) * (newScale / scale);
+    offsetY = mouseY - (mouseY - offsetY) * (newScale / scale);
+
+    scale = newScale;
+    render();
+  }, { passive: false });
+
+  // Tap / Click Selection
+  let tapStartTime = 0;
+  let tapStartX = 0, tapStartY = 0;
+
+  viewport.addEventListener('pointerdown', (e) => {
+    tapStartTime = Date.now();
+    tapStartX = e.clientX;
+    tapStartY = e.clientY;
+  });
+
+  viewport.addEventListener('pointerup', (e) => {
+    const dist = Math.hypot(e.clientX - tapStartX, e.clientY - tapStartY);
+    const duration = Date.now() - tapStartTime;
+
+    // Detect Tap (short duration, minimal move)
+    if (dist < 8 && duration < 300) {
+      const { gridX, gridY } = getGridCoords(e.clientX, e.clientY);
+
+      if (gridX >= 0 && gridX < CANVAS_SIZE && gridY >= 0 && gridY < CANVAS_SIZE) {
+        handleCellTap(gridX, gridY);
+      }
+    }
+  });
+
+  /* ==========================================================================
+     6. SELECTION & SEALING WORKFLOW
+     ========================================================================== */
+  const bottomSheet = document.getElementById('bottom-sheet');
+  const sheetBackdrop = document.getElementById('sheet-backdrop');
+  const sheetSelection = document.getElementById('sheet-content-selection');
+  const sheetSealed = document.getElementById('sheet-content-sealed');
+  const guidanceBar = document.getElementById('guidance-bar');
+
+  function handleCellTap(gx, gy) {
+    selectedX = gx;
+    selectedY = gy;
+    selectedValueId = null;
+
+    const idx = gy * CANVAS_SIZE + gx;
+    const existingVal = gridState[idx];
+
+    // Smoothly zoom into chosen cell
+    zoomToCell(gx, gy, Math.max(scale, 20));
+
+    if (existingVal === 0) {
+      // EMPTY CELL -> OPEN SELECTION SHEET
+      openSelectionSheet(gx, gy);
+    } else {
+      // SEALED CELL -> OPEN INSPECTION SHEET
+      openSealedInfoSheet(gx, gy, existingVal);
+    }
+  }
+
+  function openSelectionSheet(gx, gy) {
+    document.getElementById('selected-coord-badge').textContent = `X: ${gx} · Y: ${gy}`;
+    document.getElementById('btn-seal').disabled = true;
+
+    // Reset palette selection
+    document.querySelectorAll('.value-card').forEach(c => c.classList.remove('selected'));
+
+    sheetSelection.style.display = 'block';
+    sheetSealed.style.display = 'none';
+
+    bottomSheet.classList.add('active');
+    sheetBackdrop.classList.add('active');
+    guidanceBar.classList.add('hidden');
+    render();
+  }
+
+  function openSealedInfoSheet(gx, gy, valueId) {
+    const idx = gy * CANVAS_SIZE + gx;
+    const meta = sealedMeta.get(idx) || {
+      humanNumber: "HUMAN #UNKNOWN",
+      date: "Permanent"
+    };
+
+    activeInspectorCell = { gx, gy, valueId, meta };
+
+    const valObj = VALUES_CONFIG.find(v => v.id === valueId);
+
+    document.getElementById('sealed-coord-badge').textContent = `X: ${gx} · Y: ${gy}`;
+    document.getElementById('info-human-no').textContent = meta.humanNumber;
+    document.getElementById('info-swatch').style.backgroundColor = valObj.color;
+    document.getElementById('info-value-name').textContent = valObj.name;
+
+    sheetSelection.style.display = 'none';
+    sheetSealed.style.display = 'block';
+
+    bottomSheet.classList.add('active');
+    sheetBackdrop.classList.add('active');
+    guidanceBar.classList.add('hidden');
+    render();
+  }
+
+  function closeSheet() {
+    bottomSheet.classList.remove('active');
+    sheetBackdrop.classList.remove('active');
+    guidanceBar.classList.remove('hidden');
+
+    selectedX = -1;
+    selectedY = -1;
+    selectedValueId = null;
+    render();
+  }
+
+  sheetBackdrop.addEventListener('click', closeSheet);
+  document.getElementById('btn-cancel-select').addEventListener('click', closeSheet);
+  document.getElementById('btn-close-sealed').addEventListener('click', closeSheet);
+
+  /* Build 16 Value Palette Cards */
+  const paletteGrid = document.getElementById('palette-grid');
+  VALUES_CONFIG.forEach(val => {
+    const card = document.createElement('div');
+    card.className = 'value-card';
+    card.innerHTML = `
+      <div class="swatch" style="background-color: ${val.color};"></div>
+      <div class="value-name">${val.name}</div>
+    `;
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.value-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+
+      selectedValueId = val.id;
+      document.getElementById('btn-seal').disabled = false;
+      render(); // Preview color on cell
+    });
+    paletteGrid.appendChild(card);
+  });
+
+  /* SEAL MARK ACTION */
+  document.getElementById('btn-seal').addEventListener('click', () => {
+    if (selectedX < 0 || selectedY < 0 || !selectedValueId) return;
+
+    const gx = selectedX;
+    const gy = selectedY;
+    const idx = gy * CANVAS_SIZE + gx;
+
+    // Check overwrite guard
+    if (gridState[idx] !== 0) return;
+
+    sealedCount++;
+    const newHumanNoStr = `HUMAN #${String(sealedCount).padStart(6, '0')}`;
+
+    // Atomically seal cell in bitmap & metadata
+    updateOffscreenCell(gx, gy, selectedValueId);
+
+    const meta = {
+      humanNumber: newHumanNoStr,
+      valueId: selectedValueId,
+      x: gx,
+      y: gy,
+      date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+    };
+    sealedMeta.set(idx, meta);
+
+    updateHeaderStats();
+
+    // Close selection sheet and open Digital Certificate
+    bottomSheet.classList.remove('active');
+    sheetBackdrop.classList.remove('active');
+
+    showCertificateModal(meta);
+
+    selectedX = -1;
+    selectedY = -1;
+    selectedValueId = null;
+    render();
+  });
+
+  /* ==========================================================================
+     7. DIGITAL CERTIFICATE & SHARING
+     ========================================================================== */
+  const certModal = document.getElementById('cert-modal');
+  let currentCertMeta = null;
+
+  function showCertificateModal(meta) {
+    currentCertMeta = meta;
+    const valObj = VALUES_CONFIG.find(v => v.id === meta.valueId);
+
+    document.getElementById('cert-human-num').textContent = meta.humanNumber;
+    document.getElementById('cert-swatch').style.backgroundColor = valObj.color;
+    document.getElementById('cert-value-title').textContent = valObj.name;
+    document.getElementById('cert-coords').textContent = `X: ${meta.x} · Y: ${meta.y}`;
+
+    certModal.classList.add('active');
+  }
+
+  document.getElementById('btn-view-cert').addEventListener('click', () => {
+    if (activeInspectorCell) {
+      showCertificateModal(activeInspectorCell.meta);
+    }
+  });
+
+  document.getElementById('btn-close-cert').addEventListener('click', () => {
+    certModal.classList.remove('active');
+  });
+
+  document.getElementById('btn-share-link').addEventListener('click', () => {
+    if (!currentCertMeta) return;
+    const shareUrl = `https://humanity.one/h/${currentCertMeta.humanNumber.replace('HUMAN #', '')}`;
+    
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      showToast('Certificate link copied!');
+    }).catch(() => {
+      showToast(`Link: ${shareUrl}`);
+    });
+  });
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 2500);
+  }
+
+  /* ==========================================================================
+     8. UI CONTROLS & DEEP LINK ANIMATION
+     ========================================================================== */
+  document.getElementById('btn-zoom-in').addEventListener('click', () => {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = viewport.getBoundingClientRect();
+    const cx = (rect.width * dpr) / 2;
+    const cy = (rect.height * dpr) / 2;
+
+    const newScale = Math.min(scale * 1.5, maxScale);
+    offsetX = cx - (cx - offsetX) * (newScale / scale);
+    offsetY = cy - (cy - offsetY) * (newScale / scale);
+    scale = newScale;
+    render();
+  });
+
+  document.getElementById('btn-zoom-out').addEventListener('click', () => {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = viewport.getBoundingClientRect();
+    const cx = (rect.width * dpr) / 2;
+    const cy = (rect.height * dpr) / 2;
+
+    const newScale = Math.max(scale / 1.5, minScale);
+    offsetX = cx - (cx - offsetX) * (newScale / scale);
+    offsetY = cy - (cy - offsetY) * (newScale / scale);
+    scale = newScale;
+    render();
+  });
+
+  document.getElementById('btn-fit').addEventListener('click', fitToViewport);
+
+  window.addEventListener('resize', resizeCanvas);
+  window.addEventListener('orientationchange', () => {
+    setTimeout(resizeCanvas, 200);
+  });
+
+  /* ==========================================================================
+     9. BOOTSTRAP APPLICATION
+     ========================================================================== */
+  function boot() {
+    initDemoData();
+    rebuildOffscreenCanvas();
+    resizeCanvas();
+    fitToViewport();
+  }
+
+  window.addEventListener('DOMContentLoaded', boot);
+</script>
+</body>
+</html>
