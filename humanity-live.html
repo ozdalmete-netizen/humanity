@@ -1,0 +1,1656 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+<meta name="theme-color" content="#f4f1ea" />
+<title>HUMANITY/1 — Human. AI. The Bridge.</title>
+<style>
+:root{--bg:#f4f1ea;--paper:#fffef9;--ink:#11110f;--muted:#77736b;--line:#d8d3c8;--line2:#e8e3d9;--soft:#ece8df;--shadow:0 24px 80px rgba(22,19,14,.10);--shadow2:0 12px 34px rgba(22,19,14,.08);--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;--mono:"SFMono-Regular","SF Mono","Roboto Mono",Consolas,monospace}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased}body{min-width:320px}button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}#app{min-height:100vh;min-height:100dvh}
+.topbar{height:72px;padding:0 clamp(14px,3vw,34px);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;border-bottom:1px solid var(--line);background:rgba(244,241,234,.90);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);position:sticky;top:0;z-index:30}.brand{border:0;background:none;padding:0;text-align:left;cursor:pointer;min-width:0}.brand strong{font-size:14px;letter-spacing:.18em}.brand span{display:block;color:var(--muted);font-size:10px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.global-progress{text-align:center}.progress-copy{font:700 12px var(--mono)}.slash{color:#aaa59b;margin:0 3px}.progress-label{font-size:8px;letter-spacing:.18em;margin-top:4px;color:var(--muted)}.about-btn{justify-self:end;border:1px solid var(--line);border-radius:999px;background:rgba(255,254,249,.72);padding:9px 13px;font-size:10px;letter-spacing:.1em;font-weight:800;cursor:pointer}
+.main{width:min(1680px,100%);margin:0 auto;padding:34px clamp(18px,3vw,40px) 64px}.hero{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(340px,.82fr);gap:56px;align-items:end;margin:14px 0 24px}.eyebrow{font-size:9px;letter-spacing:.19em;text-transform:uppercase;color:var(--muted);font-weight:800}.hero h1{font-size:clamp(32px,5vw,72px);line-height:1.10;letter-spacing:-.055em;margin:10px 0 0;max-width:900px}.hero h1 em{font-family:Georgia,serif;font-weight:400}.hero-copy{margin:0 0 4px;color:var(--muted);font-size:13px;line-height:1.65;max-width:490px}
+.world-nav{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}.world-card{position:relative;min-height:100px;padding:16px;border:1px solid var(--line);border-radius:18px;background:rgba(255,254,249,.58);display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;gap:4px 13px;text-align:left;cursor:pointer;overflow:hidden}.world-card.active{background:var(--ink);color:white;border-color:var(--ink)}.world-index{font:700 10px var(--mono);opacity:.55;grid-row:1/3}.world-name{font-size:12px;letter-spacing:.10em;font-weight:850;align-self:end}.world-count{font:600 10px var(--mono);opacity:.62}.world-card.locked{background:#ebe7dd}.world-card.locked .world-count{letter-spacing:.16em}.lock-mark{position:absolute;right:14px;top:14px;font-size:11px;opacity:.5}
+.canvas-shell{margin-top:0;border:1px solid var(--line);background:var(--paper);border-radius:26px;overflow:hidden;box-shadow:var(--shadow)}.canvas-topline{display:flex;justify-content:space-between;gap:28px;padding:20px 24px;border-bottom:1px solid var(--line2)}.canvas-kicker{font-size:9px;letter-spacing:.18em;color:var(--muted);font-weight:800}.canvas-topline h2{margin:4px 0 2px;font-size:24px;letter-spacing:-.03em}.canvas-topline p{margin:0;color:var(--muted);font-size:13px}.canvas-status{text-align:right;align-self:center}.status-big{font:750 18px var(--mono)}.status-small{font-size:9px;letter-spacing:.15em;color:var(--muted);margin-top:4px}
+.viewport{position:relative;height:min(72vh,860px);min-height:520px;background:#ece8df;overflow:hidden;touch-action:none;cursor:grab}.viewport.dragging{cursor:grabbing}canvas{display:block;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges}.coordinate-pill{position:absolute;right:18px;top:18px;background:rgba(255,254,249,.9);border:1px solid var(--line);border-radius:999px;padding:8px 10px;font:650 9px var(--mono);box-shadow:var(--shadow2);opacity:0;transform:translateY(-4px);transition:.18s ease}.coordinate-pill.show{opacity:1;transform:none}.canvas-controls{position:absolute;right:16px;bottom:16px;display:flex;flex-direction:column;gap:7px;z-index:8;touch-action:manipulation}.control{width:48px;height:48px;touch-action:manipulation;border-radius:13px;border:1px solid var(--line);background:rgba(255,254,249,.92);box-shadow:var(--shadow2);font-weight:850;cursor:pointer}.control.fit{font-size:9px;letter-spacing:.08em}.gesture-hint{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);max-width:calc(100% - 180px);background:rgba(17,17,15,.9);color:white;padding:9px 13px;border-radius:999px;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 12px 35px rgba(0,0,0,.16);pointer-events:none;transition:.18s ease}.gesture-hint.hidden{opacity:0}.canvas-footer{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 18px;border-top:1px solid var(--line2)}.rules{display:flex;gap:8px;flex-wrap:wrap}.rules span{font-size:8px;letter-spacing:.12em;color:var(--muted);padding:7px 9px;border:1px solid var(--line2);border-radius:999px}.seal-cta{border:0;background:var(--ink);color:white;border-radius:999px;padding:12px 18px;font-size:9px;letter-spacing:.12em;font-weight:850;cursor:pointer}
+.backdrop{position:fixed;inset:0;background:rgba(24,21,16,.28);backdrop-filter:blur(4px);z-index:40;opacity:0;pointer-events:none;transition:.22s}.backdrop.show{opacity:1;pointer-events:auto}.sheet{position:fixed;z-index:45;left:0;right:0;bottom:0;background:var(--paper);border-radius:26px 26px 0 0;border:1px solid var(--line);padding:10px 18px max(18px,env(safe-area-inset-bottom));box-shadow:0 -28px 80px rgba(20,18,14,.16);transform:translateY(102%);transition:transform .35s cubic-bezier(.16,1,.3,1);max-height:86dvh;overflow:auto}.sheet.show{transform:none}.sheet-handle{width:38px;height:4px;border-radius:5px;background:#d4cfc4;margin:2px auto 15px}.sheet-top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:14px}.sheet-top h3{font-size:20px;margin:5px 0 0;letter-spacing:-.025em}.coord{font:650 9px var(--mono);background:var(--soft);border-radius:999px;padding:7px 9px;white-space:nowrap}.selected-color-panel{display:flex;align-items:center;gap:12px;margin:0 0 12px;padding:11px 12px;border:1px solid var(--line);border-radius:14px;background:#faf8f2}
+.selected-color-chip{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#f2eee4,#e5dfd3);border:1px solid rgba(0,0,0,.12);box-shadow:inset 0 0 0 1px rgba(255,255,255,.45)}
+.selected-color-copy{min-width:0}.selected-color-copy span{display:block;font-size:7px;letter-spacing:.15em;color:var(--muted);font-weight:850}.selected-color-copy strong{display:block;font-size:12px;margin-top:2px}.selected-color-copy small{display:block;font:650 8px var(--mono);color:var(--muted);margin-top:2px}
+.palette{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+@media (min-width:900px){.palette{grid-template-columns:repeat(8,1fr)}}
+.value{position:relative;min-height:66px;border:1px solid var(--line2);background:white;border-radius:13px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;touch-action:manipulation;transition:transform .12s ease,border-color .12s ease,box-shadow .12s ease}
+.value:active{transform:scale(.96)}
+.value.selected{border-color:#111;box-shadow:inset 0 0 0 1px #111,0 7px 18px rgba(17,17,15,.08)}
+.value.selected:after{content:"✓";position:absolute;right:5px;top:5px;width:16px;height:16px;border-radius:50%;display:grid;place-items:center;background:#111;color:#fff;font-size:9px;font-weight:900}
+.swatch{width:29px;height:29px;border-radius:9px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.16),0 2px 6px rgba(0,0,0,.06)}
+.value b{font-size:8px;line-height:1.1;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sheet-bottom{margin-top:15px;border-top:1px solid var(--line2);padding-top:13px}.purchase-summary{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.purchase-summary span{display:block;font-size:9px;letter-spacing:.13em;font-weight:800}.purchase-summary small{display:block;color:var(--muted);font-size:9px;margin-top:3px}.purchase-summary strong{font:800 17px var(--mono)}.primary{width:100%;height:49px;border:0;border-radius:14px;background:var(--ink);color:white;font-size:10px;letter-spacing:.1em;font-weight:850;cursor:pointer}.primary:disabled{opacity:.25;cursor:not-allowed}.secondary{width:100%;height:40px;border:0;background:transparent;color:var(--muted);font-size:10px;font-weight:750;cursor:pointer}.micro{font-size:9px;line-height:1.45;color:var(--muted);text-align:center;margin:8px 0 0}
+.modal-wrap{position:fixed;inset:0;background:rgba(22,20,16,.48);backdrop-filter:blur(7px);z-index:60;display:grid;place-items:center;padding:18px;opacity:0;pointer-events:none;transition:.2s}.modal-wrap.show{opacity:1;pointer-events:auto}.modal{width:min(470px,100%);background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:23px;box-shadow:var(--shadow)}.modal-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.modal h3{font-size:24px;margin:5px 0 4px;letter-spacing:-.035em}.modal p{color:var(--muted);font-size:11px;line-height:1.55;margin:0}.close{border:0;background:var(--soft);width:34px;height:34px;border-radius:50%;font-size:18px;cursor:pointer}.payment-option{width:100%;margin-top:10px;border:1px solid var(--line);border-radius:15px;background:white;padding:14px;display:flex;justify-content:space-between;align-items:center;text-align:left;cursor:pointer}.payment-option:first-of-type{margin-top:20px}.payment-option strong{font-size:11px;letter-spacing:.1em}.payment-option span{display:block;font-size:9px;color:var(--muted);margin-top:3px}.payment-option b{font:800 13px var(--mono)}.security-note{margin-top:14px;border-radius:13px;background:var(--soft);padding:12px;color:#625f58;font-size:9px;line-height:1.5}.bridge-modal{text-align:center}.bridge-symbol{font-size:26px;margin-bottom:14px}.bridge-modal h3{font-size:26px}.bridge-condition{display:grid;grid-template-columns:1fr auto;gap:9px 14px;text-align:left;border:1px solid var(--line);border-radius:15px;padding:14px;margin:20px 0}.bridge-condition span{font-size:9px;letter-spacing:.12em}.bridge-condition b{font:700 10px var(--mono)}.about-grid{display:grid;gap:10px;margin-top:18px}.about-grid>div{border:1px solid var(--line2);border-radius:14px;padding:12px}.about-grid b{font-size:10px;letter-spacing:.1em}.about-grid p{margin-top:4px}.about-end{margin-top:16px!important;color:var(--ink)!important;font-weight:700}.toast{position:fixed;top:86px;left:50%;z-index:100;transform:translate(-50%,-8px);background:#111;color:white;padding:10px 14px;border-radius:999px;font-size:9px;box-shadow:0 12px 35px rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(min-width:900px){.sheet{left:auto;right:22px;bottom:22px;width:430px;border-radius:24px;max-height:calc(100dvh - 44px);transform:translateX(calc(100% + 60px));padding:18px}.sheet.show{transform:none}.sheet-handle{display:none}}
+@media(min-width:1100px){
+.topbar{height:80px;padding:0 30px}
+.brand strong{font-size:18px}
+.brand span{font-size:11px}
+.global-progress{justify-self:center}
+.hero-copy{font-size:14px;max-width:540px}
+.live-strip{margin:0 0 18px;padding:12px 16px}
+.live-label{font-size:10px}
+.live-value{font-size:12px}
+.world-card{min-height:112px;padding:18px}
+.world-name{font-size:13px}
+.world-count{font-size:11px}
+.control{width:54px;height:54px;border-radius:16px}
+.control.fit{font-size:10px}
+.coordinate-pill{padding:9px 12px;font-size:10px}
+.gesture-hint{font-size:10px;padding:10px 15px}
+.seal-cta{padding:13px 22px;font-size:10px}
+}
+@media(max-width:760px){.topbar{height:64px;grid-template-columns:1fr auto}.global-progress{display:none}.brand span{display:none}.main{padding-top:18px}.hero{grid-template-columns:1fr;gap:13px;margin-bottom:18px}.hero h1{font-size:38px}.hero-copy{font-size:11px}.world-nav{gap:6px;margin-bottom:6px}.world-card{min-height:82px;padding:11px 9px;border-radius:14px;grid-template-columns:1fr}.world-index{grid-row:auto;font-size:8px}.world-name{font-size:10px}.world-count{font-size:8px}.lock-mark{right:8px;top:8px}.canvas-topline{padding:13px 14px}.canvas-topline h2{font-size:16px}.canvas-topline p{font-size:9px}.status-big{font-size:11px}.status-small{font-size:7px}.viewport{height:58vh;min-height:410px}.coordinate-pill{right:10px;top:10px}.canvas-controls{right:10px;bottom:10px}.control{width:48px;height:48px}.gesture-hint{bottom:10px;font-size:8px;max-width:calc(100% - 150px)}.canvas-footer{padding:11px;align-items:flex-end}.rules{gap:5px}.rules span{font-size:7px;padding:6px 7px}.seal-cta{padding:11px 13px;font-size:8px}}
+@media(max-width:480px){.hero h1{font-size:33px}.world-card{min-height:76px}.canvas-topline p{max-width:220px}.palette{grid-template-columns:repeat(4,1fr);gap:6px}.value{min-height:61px;border-radius:12px}.swatch{width:27px;height:27px}.selected-color-panel{margin-bottom:10px}}
+
+/* ===== V2 viral/product additions ===== */
+.live-strip{
+  display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;
+  margin:0 0 12px;padding:11px 14px;border:1px solid var(--line);border-radius:16px;
+  background:rgba(255,254,249,.62)
+}
+.live-side{display:flex;align-items:center;gap:9px;min-width:0}
+.live-side.right{justify-content:flex-end;text-align:right}
+.pulse{width:8px;height:8px;border-radius:50%;background:#20a56b;box-shadow:0 0 0 5px rgba(32,165,107,.10)}
+.live-label{font-size:8px;letter-spacing:.14em;color:var(--muted);font-weight:800}
+.live-value{font:750 11px var(--mono);white-space:nowrap}
+.vs{font-size:8px;letter-spacing:.18em;color:var(--muted);font-weight:850}
+.ai-provider-wrap{display:none;margin:0 0 13px;padding:12px;border:1px solid var(--line2);border-radius:14px;background:#faf8f2}
+.ai-provider-wrap.show{display:block}
+.ai-provider-wrap label{display:block;font-size:8px;letter-spacing:.12em;color:var(--muted);font-weight:800;margin-bottom:7px}
+.ai-provider-wrap select,.ai-provider-wrap input{
+  width:100%;border:1px solid var(--line);border-radius:11px;background:white;padding:11px 12px;font-size:11px;outline:none
+}
+.ai-provider-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.afterpay-preview{
+  margin-top:20px;border-top:1px solid var(--line2);padding-top:16px
+}
+.afterpay-preview h4{font-size:10px;letter-spacing:.12em;margin:0 0 9px}
+.reward-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.reward{
+  min-height:86px;border:1px solid var(--line);border-radius:13px;background:#fff;padding:10px;text-align:left;cursor:pointer
+}
+.reward b{display:block;font-size:9px;letter-spacing:.08em;margin-top:16px}
+.reward span{display:block;color:var(--muted);font-size:8px;margin-top:3px;line-height:1.35}
+
+
+
+
+
+
+
+
+
+
+@media(max-width:760px){
+  .live-strip{grid-template-columns:1fr auto 1fr;padding:9px 10px}.live-value{font-size:9px}
+    
+                
+  .reward-grid{grid-template-columns:1fr 1fr 1fr}
+  .reward{padding:8px}
+}
+
+
+.country-section{
+  width:min(1680px,100%);
+  margin:0 auto;
+  padding:0 clamp(18px,3vw,40px) 64px;
+}
+.country-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:24px;
+  padding-top:34px;
+  margin-bottom:14px;
+  border-top:1px solid var(--line);
+}
+.country-head h3{
+  margin:6px 0 0;
+  font-size:clamp(24px,2.5vw,36px);
+  letter-spacing:-.04em;
+}
+.country-tabs{
+  display:flex;
+  gap:6px;
+  padding:4px;
+  background:rgba(255,254,249,.66);
+  border:1px solid var(--line);
+  border-radius:999px;
+}
+.country-tab{
+  border:0;
+  background:transparent;
+  padding:9px 13px;
+  border-radius:999px;
+  font-size:9px;
+  letter-spacing:.12em;
+  font-weight:850;
+  cursor:pointer;
+}
+.country-tab.active{
+  background:var(--ink);
+  color:#fff;
+}
+.country-board{
+  border:1px solid var(--line);
+  border-radius:20px;
+  background:rgba(255,254,249,.68);
+  overflow:hidden;
+}
+.country-board-header,
+.country-row{
+  display:grid;
+  grid-template-columns:80px minmax(0,1fr) auto;
+  gap:14px;
+  align-items:center;
+  padding:13px 16px;
+}
+.country-board-header{
+  border-bottom:1px solid var(--line2);
+  color:var(--muted);
+  font-size:8px;
+  letter-spacing:.13em;
+  font-weight:850;
+}
+.country-board-header span:last-child{text-align:right}
+.country-row{
+  border-bottom:1px solid var(--line2);
+}
+.country-row:last-child{border-bottom:0}
+.country-rank{
+  font:750 10px var(--mono);
+  color:var(--muted);
+}
+.country-name{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+  font-size:11px;
+  font-weight:780;
+}
+.country-flag{
+  width:25px;
+  height:18px;
+  border-radius:4px;
+  background:var(--soft);
+  border:1px solid var(--line2);
+  overflow:hidden;
+  flex:0 0 auto;
+}
+.country-marks{
+  font:750 10px var(--mono);
+  text-align:right;
+}
+.country-empty{
+  padding:28px 16px;
+  text-align:center;
+  color:var(--muted);
+  font-size:10px;
+}
+@media(max-width:760px){
+  .country-section{padding:0 14px 44px}
+  .country-head{align-items:center;padding-top:26px}
+  .country-head h3{font-size:24px}
+  .country-tabs{padding:3px}
+  .country-tab{padding:8px 10px;font-size:8px}
+  .country-board-header,.country-row{
+    grid-template-columns:48px minmax(0,1fr) auto;
+    padding:12px 13px;
+    gap:10px;
+  }
+}
+
+
+/* ===== V3.2 BATCH SELECTION ===== */
+.idle-footer{width:100%;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.selection-dock{display:none;width:100%;grid-template-columns:auto minmax(330px,1fr) auto auto;gap:12px;align-items:center}
+.canvas-footer.selection-active .idle-footer{display:none}
+.canvas-footer.selection-active .selection-dock{display:grid}
+
+.selection-color{
+  border:1px solid var(--line);background:#fff;border-radius:14px;padding:8px 11px;
+  display:flex;align-items:center;gap:9px;min-width:120px;cursor:pointer;touch-action:manipulation
+}
+.selection-color-swatch{
+  width:30px;height:30px;border-radius:9px;border:1px solid rgba(0,0,0,.14);
+  background:linear-gradient(135deg,#eee9df,#ddd7cb);flex:0 0 auto
+}
+.selection-color-copy{text-align:left;min-width:0}
+.selection-color-copy small,.selection-totals small,.checkout-summary small{
+  display:block;font-size:7px;letter-spacing:.13em;color:var(--muted);font-weight:850
+}
+.selection-color-copy b{display:block;font-size:10px;margin-top:2px;max-width:90px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.tool-group{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;border:1px solid var(--line);
+  background:#f4f1ea;border-radius:14px
+}
+.tool-btn{
+  border:0;background:transparent;border-radius:10px;padding:10px 9px;font-size:8px;letter-spacing:.10em;
+  font-weight:850;cursor:pointer;touch-action:manipulation
+}
+.tool-btn.active{background:var(--ink);color:white;box-shadow:0 5px 14px rgba(0,0,0,.12)}
+
+.selection-totals{display:flex;gap:18px;align-items:center;white-space:nowrap}
+.selection-totals b{display:block;font:800 11px var(--mono);margin-top:2px}
+.selection-price{text-align:right}
+
+.selection-actions{display:flex;gap:7px;align-items:center}
+.clear-btn,.review-btn{
+  border-radius:999px;height:42px;padding:0 14px;font-size:8px;letter-spacing:.10em;font-weight:850;cursor:pointer
+}
+.clear-btn{border:1px solid var(--line);background:#fff;color:var(--muted)}
+.review-btn{border:0;background:var(--ink);color:white;min-width:126px}
+.review-btn:disabled{opacity:.24;cursor:not-allowed}
+
+.area-pill{
+  position:absolute;left:18px;top:18px;background:rgba(17,17,15,.92);color:#fff;border-radius:999px;
+  padding:8px 10px;font:700 9px var(--mono);z-index:7;opacity:0;pointer-events:none;transition:.12s
+}
+.area-pill.show{opacity:1}
+
+.checkout-summary{
+  display:grid;grid-template-columns:1fr 1fr 1.1fr;gap:8px;margin:18px 0 12px
+}
+.checkout-summary>div{
+  border:1px solid var(--line);border-radius:13px;padding:11px;background:#fff
+}
+.checkout-summary b{display:block;font:800 13px var(--mono);margin-top:5px}
+.checkout-summary-total{background:var(--ink)!important;color:#fff;border-color:var(--ink)!important}
+.checkout-summary-total small{color:#aaa!important}
+
+.checkout-field{display:block;margin-top:10px}
+.checkout-field>span{
+  display:flex;justify-content:space-between;font-size:8px;letter-spacing:.12em;color:var(--muted);font-weight:850;margin:0 0 6px 2px
+}
+.checkout-field em{font-style:normal;font-weight:650;opacity:.65}
+.checkout-field select,.checkout-field input{
+  width:100%;height:45px;border:1px solid var(--line);border-radius:12px;background:#fff;
+  padding:0 12px;font-size:11px;outline:none
+}
+.checkout-field>small{display:block;color:var(--muted);font-size:8px;margin:5px 2px 0}
+.ai-checkout-fields{display:none;grid-template-columns:1fr 1fr;gap:8px}
+.ai-checkout-fields.show{display:grid}
+
+@media(max-width:900px){
+  .canvas-footer.selection-active{padding:9px}
+  .selection-dock{
+    grid-template-columns:auto minmax(0,1fr);
+    grid-template-areas:
+      "color totals"
+      "tools tools"
+      "actions actions";
+    gap:7px
+  }
+  .selection-color{grid-area:color;min-width:0}
+  .selection-totals{grid-area:totals;justify-content:flex-end}
+  .tool-group{grid-area:tools}
+  .selection-actions{grid-area:actions}
+  .selection-actions .clear-btn{flex:0 0 auto}
+  .selection-actions .review-btn{flex:1}
+}
+@media(max-width:520px){
+  .idle-footer{align-items:flex-end}
+  .selection-color{padding:7px 9px}
+  .selection-color-swatch{width:27px;height:27px}
+  .selection-totals{gap:11px}
+  .selection-totals b{font-size:10px}
+  .tool-btn{padding:9px 5px;font-size:7px}
+  .clear-btn,.review-btn{height:40px}
+  .checkout-summary{grid-template-columns:1fr 1fr}
+  .checkout-summary-total{grid-column:1/3}
+  .ai-checkout-fields{grid-template-columns:1fr}
+}
+
+
+
+/* ===== V4.1 REAL RESERVATION ===== */
+.reservation-banner{
+  display:none;align-items:center;justify-content:space-between;gap:12px;
+  margin:12px 0 4px;padding:11px 12px;border:1px solid #cfc9bc;
+  border-radius:13px;background:#f3efe6
+}
+.reservation-banner.show{display:flex}
+.reservation-banner .reservation-copy small{
+  display:block;font-size:7px;letter-spacing:.13em;color:var(--muted);font-weight:850
+}
+.reservation-banner .reservation-copy b{
+  display:block;margin-top:3px;font:800 11px var(--mono)
+}
+.reservation-banner .reservation-clock{
+  flex:0 0 auto;border-radius:999px;background:var(--ink);color:white;
+  padding:8px 10px;font:800 10px var(--mono)
+}
+.review-btn.busy{opacity:.62;cursor:wait}
+.payment-option:disabled{opacity:.36;cursor:not-allowed}
+
+/* ===== V3.3 deterministic canvas gestures ===== */
+.area-pill.over-limit{background:#9f1d2f}
+.viewport.selecting{cursor:crosshair}
+.viewport.panning{cursor:grabbing}
+@media(max-width:760px){
+  .gesture-hint{max-width:calc(100% - 128px)}
+}
+
+</style>
+</head>
+<body>
+<div id="app">
+<header class="topbar">
+<button class="brand" id="brandBtn"><strong>HUMANITY/1</strong><span>Human. AI. The Bridge between them.</span></button>
+<div class="global-progress"><div class="progress-copy"><span id="globalSealed">0</span> SEALED</div><div class="progress-label">HUMAN + AI IN PROGRESS</div></div>
+<button class="about-btn" id="aboutBtn">THE IDEA</button>
+</header>
+<main class="main">
+<section class="hero"><div><div class="eyebrow">A finite global artwork</div><h1>Human creates one.<br>AI creates another.<br><em>Then we build the bridge.</em></h1></div><p class="hero-copy">Every paid mark is permanent. No overwrites. No resets. Human and AI begin separately. The Bridge unlocks only when both are complete.</p></section>
+
+<section class="live-strip">
+  <div class="live-side">
+    <span class="pulse"></span>
+    <div>
+      <div class="live-label">HUMAN DECISIONS</div>
+      <div class="live-value"><span id="humanLive">0</span> / 1,000,000</div>
+    </div>
+  </div>
+  <div class="vs">VS</div>
+  <div class="live-side right">
+    <div>
+      <div class="live-label">AI DECISIONS</div>
+      <div class="live-value"><span id="aiLive">0</span> / 1,000,000</div>
+    </div>
+    <span class="pulse"></span>
+  </div>
+</section>
+
+<section class="world-nav">
+<button class="world-card active" data-world="human"><span class="world-index">01</span><span class="world-name">HUMAN</span><span class="world-count"><b>0</b> / 1,000,000</span></button>
+<button class="world-card bridge-card locked" data-world="bridge"><span class="world-index">02</span><span class="world-name">THE BRIDGE</span><span class="world-count">LOCKED</span><span class="lock-mark">◆</span></button>
+<button class="world-card" data-world="ai"><span class="world-index">03</span><span class="world-name">AI</span><span class="world-count"><b>0</b> / 1,000,000</span></button>
+</section>
+<section class="canvas-shell">
+<div class="canvas-topline"><div><div class="canvas-kicker" id="canvasKicker">ACT I</div><h2 id="canvasTitle">THE HUMAN CANVAS</h2><p id="canvasSubtitle">Choose any empty cell. Your color. Your decision.</p></div><div class="canvas-status"><div class="status-big" id="canvasStatusBig">1,000,000</div><div class="status-small">MARKS REMAIN</div></div></div>
+<div class="viewport" id="viewport"><canvas id="canvas"></canvas><div class="area-pill" id="areaPill"></div><div class="coordinate-pill" id="coordinatePill">X000 · Y000</div><div class="canvas-controls"><button class="control" id="zoomIn">+</button><button class="control" id="zoomOut">−</button><button class="control fit" id="fit">FIT</button></div><div class="gesture-hint" id="gestureHint">Tap to zoom in · Tap an exact cell · Drag to move</div></div>
+
+<div class="canvas-footer" id="canvasFooter">
+  <div class="idle-footer" id="idleFooter">
+    <div class="rules">
+      <span>NO OVERWRITES</span>
+      <span>NO RESETS</span>
+      <span>$4.99 / MARK</span>
+      <span>UP TO 1000 / CHECKOUT</span>
+    </div>
+    <button class="seal-cta" id="quickSealBtn">CHOOSE CELLS</button>
+  </div>
+
+  <div class="selection-dock" id="selectionDock">
+    <button class="selection-color" id="selectionColorBtn" type="button">
+      <span class="selection-color-swatch" id="dockColorSwatch"></span>
+      <span class="selection-color-copy">
+        <small>COLOR</small>
+        <b id="dockColorName">Choose</b>
+      </span>
+    </button>
+
+    <div class="tool-group" role="group" aria-label="Selection tool">
+      
+      <button class="tool-btn active" data-tool="tap" type="button">SELECT</button>
+      <button class="tool-btn" data-tool="brush" type="button">BRUSH</button>
+      <button class="tool-btn" data-tool="area" type="button">AREA</button>
+    </div>
+
+    <div class="selection-totals">
+      <div>
+        <small>SELECTED</small>
+        <b><span id="selectionCount">0</span> / 1000</b>
+      </div>
+      <div class="selection-price">
+        <small>TOTAL</small>
+        <b id="selectionTotal">$0.00</b>
+      </div>
+    </div>
+
+    <div class="selection-actions">
+      <button class="clear-btn" id="clearSelectionBtn" type="button">CLEAR</button>
+      <button class="review-btn" id="reviewSelectionBtn" type="button" disabled>REVIEW & PAY</button>
+    </div>
+  </div>
+</div>
+
+</section>
+</main>
+
+<section class="country-section" id="countrySection">
+  <div class="country-head">
+    <div>
+      <div class="eyebrow">GLOBAL PARTICIPATION</div>
+      <h3>LIVE BY COUNTRY</h3>
+    </div>
+    <div class="country-tabs" role="tablist" aria-label="Country leaderboard canvas">
+      <button class="country-tab active" data-country-canvas="human">HUMAN</button>
+      <button class="country-tab" data-country-canvas="ai">AI</button>
+    </div>
+  </div>
+
+  <div class="country-board">
+    <div class="country-board-header">
+      <span>RANK</span>
+      <span>COUNTRY</span>
+      <span>MARKS</span>
+    </div>
+    <div id="countryRows">
+      <div class="country-empty">Country rankings will appear here as verified marks are sealed.</div>
+    </div>
+  </div>
+</section>
+
+<div class="backdrop" id="sheetBackdrop"></div>
+
+<aside class="sheet color-sheet" id="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-top">
+    <div>
+      <div class="eyebrow">ACTIVE COLOR</div>
+      <h3>Choose a color.</h3>
+    </div>
+    <div class="coord">32 COLORS</div>
+  </div>
+
+  <div class="selected-color-panel" id="selectedColorPanel">
+    <div class="selected-color-chip" id="selectedColorChip"></div>
+    <div class="selected-color-copy">
+      <span>NEW SELECTIONS WILL USE</span>
+      <strong id="selectedColorName">None selected</strong>
+      <small id="selectedColorHex">Choose one of 32 colors</small>
+    </div>
+  </div>
+
+  <div class="palette" id="palette"></div>
+  <button class="secondary" id="cancelBtn" type="button">Close</button>
+</aside>
+
+
+<div class="modal-wrap" id="paymentModal">
+  <div class="modal checkout-modal">
+    <div class="modal-head">
+      <div>
+        <div class="eyebrow">CHECKOUT</div>
+        <h3 id="checkoutTitle">Review your marks.</h3>
+        <p>All selected cells are locked together for 7 minutes before payment begins.</p>
+      </div>
+      <button class="close" data-close="paymentModal">×</button>
+    </div>
+
+    <div class="checkout-summary">
+      <div>
+        <small>MARKS</small>
+        <b id="checkoutCount">0</b>
+      </div>
+      <div>
+        <small>PRICE / MARK</small>
+        <b>$4.99</b>
+      </div>
+      <div class="checkout-summary-total">
+        <small>TOTAL</small>
+        <b id="checkoutTotal">$0.00</b>
+      </div>
+    </div>
+
+    <div class="reservation-banner" id="reservationBanner">
+      <div class="reservation-copy">
+        <small>CELLS RESERVED</small>
+        <b id="reservationStatusText">Your batch is temporarily locked.</b>
+      </div>
+      <div class="reservation-clock" id="reservationClock">07:00</div>
+    </div>
+
+    <label class="checkout-field">
+      <span>REPRESENTING</span>
+      <select id="countrySelect">
+        <option value="">Choose country</option>
+        <option value="AF">Afghanistan</option>
+<option value="AL">Albania</option>
+<option value="DZ">Algeria</option>
+<option value="AS">American Samoa</option>
+<option value="AD">Andorra</option>
+<option value="AO">Angola</option>
+<option value="AI">Anguilla</option>
+<option value="AQ">Antarctica</option>
+<option value="AG">Antigua and Barbuda</option>
+<option value="AR">Argentina</option>
+<option value="AM">Armenia</option>
+<option value="AW">Aruba</option>
+<option value="AU">Australia</option>
+<option value="AT">Austria</option>
+<option value="AZ">Azerbaijan</option>
+<option value="BS">Bahamas</option>
+<option value="BH">Bahrain</option>
+<option value="BD">Bangladesh</option>
+<option value="BB">Barbados</option>
+<option value="BY">Belarus</option>
+<option value="BE">Belgium</option>
+<option value="BZ">Belize</option>
+<option value="BJ">Benin</option>
+<option value="BM">Bermuda</option>
+<option value="BT">Bhutan</option>
+<option value="BO">Bolivia, Plurinational State of</option>
+<option value="BQ">Bonaire, Sint Eustatius and Saba</option>
+<option value="BA">Bosnia and Herzegovina</option>
+<option value="BW">Botswana</option>
+<option value="BV">Bouvet Island</option>
+<option value="BR">Brazil</option>
+<option value="IO">British Indian Ocean Territory</option>
+<option value="BN">Brunei Darussalam</option>
+<option value="BG">Bulgaria</option>
+<option value="BF">Burkina Faso</option>
+<option value="BI">Burundi</option>
+<option value="CV">Cabo Verde</option>
+<option value="KH">Cambodia</option>
+<option value="CM">Cameroon</option>
+<option value="CA">Canada</option>
+<option value="KY">Cayman Islands</option>
+<option value="CF">Central African Republic</option>
+<option value="TD">Chad</option>
+<option value="CL">Chile</option>
+<option value="CN">China</option>
+<option value="CX">Christmas Island</option>
+<option value="CC">Cocos (Keeling) Islands</option>
+<option value="CO">Colombia</option>
+<option value="KM">Comoros</option>
+<option value="CG">Congo</option>
+<option value="CD">Congo, The Democratic Republic of the</option>
+<option value="CK">Cook Islands</option>
+<option value="CR">Costa Rica</option>
+<option value="HR">Croatia</option>
+<option value="CU">Cuba</option>
+<option value="CW">Curaçao</option>
+<option value="CY">Cyprus</option>
+<option value="CZ">Czechia</option>
+<option value="CI">Côte d'Ivoire</option>
+<option value="DK">Denmark</option>
+<option value="DJ">Djibouti</option>
+<option value="DM">Dominica</option>
+<option value="DO">Dominican Republic</option>
+<option value="EC">Ecuador</option>
+<option value="EG">Egypt</option>
+<option value="SV">El Salvador</option>
+<option value="GQ">Equatorial Guinea</option>
+<option value="ER">Eritrea</option>
+<option value="EE">Estonia</option>
+<option value="SZ">Eswatini</option>
+<option value="ET">Ethiopia</option>
+<option value="FK">Falkland Islands (Malvinas)</option>
+<option value="FO">Faroe Islands</option>
+<option value="FJ">Fiji</option>
+<option value="FI">Finland</option>
+<option value="FR">France</option>
+<option value="GF">French Guiana</option>
+<option value="PF">French Polynesia</option>
+<option value="TF">French Southern Territories</option>
+<option value="GA">Gabon</option>
+<option value="GM">Gambia</option>
+<option value="GE">Georgia</option>
+<option value="DE">Germany</option>
+<option value="GH">Ghana</option>
+<option value="GI">Gibraltar</option>
+<option value="GR">Greece</option>
+<option value="GL">Greenland</option>
+<option value="GD">Grenada</option>
+<option value="GP">Guadeloupe</option>
+<option value="GU">Guam</option>
+<option value="GT">Guatemala</option>
+<option value="GG">Guernsey</option>
+<option value="GN">Guinea</option>
+<option value="GW">Guinea-Bissau</option>
+<option value="GY">Guyana</option>
+<option value="HT">Haiti</option>
+<option value="HM">Heard Island and McDonald Islands</option>
+<option value="VA">Holy See (Vatican City State)</option>
+<option value="HN">Honduras</option>
+<option value="HK">Hong Kong</option>
+<option value="HU">Hungary</option>
+<option value="IS">Iceland</option>
+<option value="IN">India</option>
+<option value="ID">Indonesia</option>
+<option value="IR">Iran, Islamic Republic of</option>
+<option value="IQ">Iraq</option>
+<option value="IE">Ireland</option>
+<option value="IM">Isle of Man</option>
+<option value="IL">Israel</option>
+<option value="IT">Italy</option>
+<option value="JM">Jamaica</option>
+<option value="JP">Japan</option>
+<option value="JE">Jersey</option>
+<option value="JO">Jordan</option>
+<option value="KZ">Kazakhstan</option>
+<option value="KE">Kenya</option>
+<option value="KI">Kiribati</option>
+<option value="KP">Korea, Democratic People's Republic of</option>
+<option value="KR">Korea, Republic of</option>
+<option value="KW">Kuwait</option>
+<option value="KG">Kyrgyzstan</option>
+<option value="LA">Lao People's Democratic Republic</option>
+<option value="LV">Latvia</option>
+<option value="LB">Lebanon</option>
+<option value="LS">Lesotho</option>
+<option value="LR">Liberia</option>
+<option value="LY">Libya</option>
+<option value="LI">Liechtenstein</option>
+<option value="LT">Lithuania</option>
+<option value="LU">Luxembourg</option>
+<option value="MO">Macao</option>
+<option value="MG">Madagascar</option>
+<option value="MW">Malawi</option>
+<option value="MY">Malaysia</option>
+<option value="MV">Maldives</option>
+<option value="ML">Mali</option>
+<option value="MT">Malta</option>
+<option value="MH">Marshall Islands</option>
+<option value="MQ">Martinique</option>
+<option value="MR">Mauritania</option>
+<option value="MU">Mauritius</option>
+<option value="YT">Mayotte</option>
+<option value="MX">Mexico</option>
+<option value="FM">Micronesia, Federated States of</option>
+<option value="MD">Moldova, Republic of</option>
+<option value="MC">Monaco</option>
+<option value="MN">Mongolia</option>
+<option value="ME">Montenegro</option>
+<option value="MS">Montserrat</option>
+<option value="MA">Morocco</option>
+<option value="MZ">Mozambique</option>
+<option value="MM">Myanmar</option>
+<option value="NA">Namibia</option>
+<option value="NR">Nauru</option>
+<option value="NP">Nepal</option>
+<option value="NL">Netherlands</option>
+<option value="NC">New Caledonia</option>
+<option value="NZ">New Zealand</option>
+<option value="NI">Nicaragua</option>
+<option value="NE">Niger</option>
+<option value="NG">Nigeria</option>
+<option value="NU">Niue</option>
+<option value="NF">Norfolk Island</option>
+<option value="MK">North Macedonia</option>
+<option value="MP">Northern Mariana Islands</option>
+<option value="NO">Norway</option>
+<option value="OM">Oman</option>
+<option value="PK">Pakistan</option>
+<option value="PW">Palau</option>
+<option value="PS">Palestine, State of</option>
+<option value="PA">Panama</option>
+<option value="PG">Papua New Guinea</option>
+<option value="PY">Paraguay</option>
+<option value="PE">Peru</option>
+<option value="PH">Philippines</option>
+<option value="PN">Pitcairn</option>
+<option value="PL">Poland</option>
+<option value="PT">Portugal</option>
+<option value="PR">Puerto Rico</option>
+<option value="QA">Qatar</option>
+<option value="RO">Romania</option>
+<option value="RU">Russian Federation</option>
+<option value="RW">Rwanda</option>
+<option value="RE">Réunion</option>
+<option value="BL">Saint Barthélemy</option>
+<option value="SH">Saint Helena, Ascension and Tristan da Cunha</option>
+<option value="KN">Saint Kitts and Nevis</option>
+<option value="LC">Saint Lucia</option>
+<option value="MF">Saint Martin (French part)</option>
+<option value="PM">Saint Pierre and Miquelon</option>
+<option value="VC">Saint Vincent and the Grenadines</option>
+<option value="WS">Samoa</option>
+<option value="SM">San Marino</option>
+<option value="ST">Sao Tome and Principe</option>
+<option value="SA">Saudi Arabia</option>
+<option value="SN">Senegal</option>
+<option value="RS">Serbia</option>
+<option value="SC">Seychelles</option>
+<option value="SL">Sierra Leone</option>
+<option value="SG">Singapore</option>
+<option value="SX">Sint Maarten (Dutch part)</option>
+<option value="SK">Slovakia</option>
+<option value="SI">Slovenia</option>
+<option value="SB">Solomon Islands</option>
+<option value="SO">Somalia</option>
+<option value="ZA">South Africa</option>
+<option value="GS">South Georgia and the South Sandwich Islands</option>
+<option value="SS">South Sudan</option>
+<option value="ES">Spain</option>
+<option value="LK">Sri Lanka</option>
+<option value="SD">Sudan</option>
+<option value="SR">Suriname</option>
+<option value="SJ">Svalbard and Jan Mayen</option>
+<option value="SE">Sweden</option>
+<option value="CH">Switzerland</option>
+<option value="SY">Syrian Arab Republic</option>
+<option value="TW">Taiwan, Province of China</option>
+<option value="TJ">Tajikistan</option>
+<option value="TZ">Tanzania, United Republic of</option>
+<option value="TH">Thailand</option>
+<option value="TL">Timor-Leste</option>
+<option value="TG">Togo</option>
+<option value="TK">Tokelau</option>
+<option value="TO">Tonga</option>
+<option value="TT">Trinidad and Tobago</option>
+<option value="TN">Tunisia</option>
+<option value="TM">Turkmenistan</option>
+<option value="TC">Turks and Caicos Islands</option>
+<option value="TV">Tuvalu</option>
+<option value="TR">Türkiye</option>
+<option value="UG">Uganda</option>
+<option value="UA">Ukraine</option>
+<option value="AE">United Arab Emirates</option>
+<option value="GB">United Kingdom</option>
+<option value="US">United States</option>
+<option value="UM">United States Minor Outlying Islands</option>
+<option value="UY">Uruguay</option>
+<option value="UZ">Uzbekistan</option>
+<option value="VU">Vanuatu</option>
+<option value="VE">Venezuela, Bolivarian Republic of</option>
+<option value="VN">Viet Nam</option>
+<option value="VG">Virgin Islands, British</option>
+<option value="VI">Virgin Islands, U.S.</option>
+<option value="WF">Wallis and Futuna</option>
+<option value="EH">Western Sahara</option>
+<option value="YE">Yemen</option>
+<option value="ZM">Zambia</option>
+<option value="ZW">Zimbabwe</option>
+<option value="AX">Åland Islands</option>
+      </select>
+      <small>This is the country counted in LIVE BY COUNTRY.</small>
+    </label>
+
+    <div class="ai-checkout-fields" id="checkoutAiFields">
+      <label class="checkout-field">
+        <span>AI PROVIDER</span>
+        <select id="aiProvider">
+          <option value="">Choose AI</option>
+          <option>ChatGPT</option>
+          <option>Claude</option>
+          <option>Gemini</option>
+          <option>Grok</option>
+          <option>DeepSeek</option>
+          <option>Other</option>
+        </select>
+      </label>
+      <label class="checkout-field">
+        <span>MODEL / VERSION <em>OPTIONAL</em></span>
+        <input id="aiModel" placeholder="e.g. GPT-5.6" />
+      </label>
+    </div>
+
+    <button class="payment-option" id="cardOption">
+      <div><strong>CARD</strong><span>Visa · Mastercard · Apple Pay · Google Pay</span></div>
+      <b id="cardTotal">$0.00</b>
+    </button>
+
+    <button class="payment-option" id="cryptoOption">
+      <div><strong>CRYPTO</strong><span>USDT · USDC · BTC · ETH</span></div>
+      <b id="cryptoTotal">$0.00</b>
+    </button>
+
+    <div class="afterpay-preview">
+      <h4>AFTER VERIFIED PAYMENT</h4>
+      <div class="reward-grid">
+        <button class="reward" id="rewardCertificate"><span>✦</span><b>CERTIFICATES</b><span>One permanent record for each sealed mark</span></button>
+        <button class="reward" id="rewardShare"><span>↗</span><b>SHARE CARD</b><span>Share the completed batch</span></button>
+        <button class="reward" id="rewardLink"><span>⌖</span><b>CELL LINKS</b><span>Open directly on sealed marks</span></button>
+      </div>
+    </div>
+
+    <div class="security-note">Payment starts only after the server confirms that every selected cell can be reserved. A browser success page can never seal a mark.</div>
+  </div>
+</div>
+<div class="modal-wrap" id="bridgeModal"><div class="modal bridge-modal"><div class="bridge-symbol">◆</div><div class="eyebrow">ACT III</div><h3>THE BRIDGE IS LOCKED.</h3><p>Human and AI must first complete their separate canvases. Only then will the space between them open.</p><div class="bridge-condition"><span>HUMAN</span><b>0 / 1,000,000</b><span>AI</span><b>0 / 1,000,000</b></div><button class="primary" data-close="bridgeModal">UNDERSTOOD</button></div></div>
+<div class="modal-wrap" id="aboutModal"><div class="modal"><div class="modal-head"><div><div class="eyebrow">HUMANITY/1</div><h3>Three acts. One permanent work.</h3></div><button class="close" data-close="aboutModal">×</button></div><div class="about-grid"><div><b>01 — HUMAN</b><p>1,000,000 permanent human choices.</p></div><div><b>02 — THE BRIDGE</b><p>Locked until Human and AI are complete.</p></div><div><b>03 — AI</b><p>1,000,000 choices directed by artificial intelligence.</p></div></div><p class="about-end">Every mark costs $4.99. One person may own multiple marks.</p></div></div>
+<div class="toast" id="toast"></div>
+</div>
+<script>window.HUMANITY_CONFIG={functionsBase:"https://xwcmzsoydgeybjntqljv.supabase.co/functions/v1"};</script>
+<script>
+const WORLDS={human:{id:'human',sizeX:1000,sizeY:1000,total:1e6,sealed:0,act:'ACT I',title:'THE HUMAN CANVAS',subtitle:'Choose any empty cell. Your color. Your decision.',sheetLabel:'HUMAN MARK'},ai:{id:'ai',sizeX:1000,sizeY:1000,total:1e6,sealed:0,act:'ACT II',title:'THE AI CANVAS',subtitle:'Choose a cell. Ask any AI which color should live there.',sheetLabel:'AI-GUIDED MARK'},bridge:{id:'bridge',sizeX:null,sizeY:null,total:null,sealed:0,act:'ACT III',title:'THE BRIDGE',subtitle:'Human and AI build the space between them.',sheetLabel:'BRIDGE MARK',locked:true}};
+const COLORS=[
+['Burgundy','#6D001A'],['Red','#BE0039'],['Orange Red','#FF4500'],['Orange','#FFA800'],
+['Yellow','#FFD635'],['Pale Yellow','#FFF8B8'],['Dark Green','#00A368'],['Green','#00CC78'],
+['Light Green','#7EED56'],['Dark Teal','#00756F'],['Teal','#009EAA'],['Cyan','#00CCC0'],
+['Dark Blue','#2450A4'],['Blue','#3690EA'],['Light Blue','#51E9F4'],['Indigo','#493AC1'],
+['Periwinkle','#6A5CFF'],['Lavender','#94B3FF'],['Dark Purple','#811E9F'],['Purple','#B44AC0'],
+['Light Purple','#E4ABFF'],['Magenta','#DE107F'],['Pink','#FF3881'],['Light Pink','#FF99AA'],
+['Dark Brown','#6D482F'],['Brown','#9C6926'],['Peach','#FFB470'],['Black','#000000'],
+['Dark Gray','#515252'],['Gray','#898D90'],['Light Gray','#D4D7D9'],['White','#FFFFFF']
+].map((x,i)=>({id:i+1,name:x[0],color:x[1]}));
+
+const MAX_SELECTION = 1000;
+const PRICE_MINOR = 499;
+const MIN_TAP_ZOOM = 7;     // CSS px per cell
+const MIN_BRUSH_ZOOM = 5;   // CSS px per cell
+const MIN_AREA_ZOOM = 2;    // CSS px per cell
+const MAX_ZOOM = 72;        // CSS px per cell
+
+let activeWorld = WORLDS.human;
+let zoom = 1;               // CSS px per logical cell
+let minZoom = 1;
+let panX = 0;               // CSS px in viewport coordinates
+let panY = 0;
+let raf = 0;
+let selectionMode = false;
+let activeTool = 'tap';
+let activeColor = null;
+let areaPreview = null;
+let selectedCells = new Map();
+let pendingCellSelection = null;
+let reservationState = null;
+let reservationTimer = null;
+let reservationBusy = false;
+let limitToastLocked = false;
+
+const viewport = document.getElementById('viewport');
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d',{alpha:false});
+const off = document.createElement('canvas');
+const offctx = off.getContext('2d',{alpha:false});
+const palette = document.getElementById('palette');
+const selectedColorChip = document.getElementById('selectedColorChip');
+const selectedColorName = document.getElementById('selectedColorName');
+const selectedColorHex = document.getElementById('selectedColorHex');
+const areaPill = document.getElementById('areaPill');
+const DPR = ()=>Math.max(1,window.devicePixelRatio||1);
+const keyFor = (x,y)=>`${x}:${y}`;
+const money = minor=>`$${(minor/100).toFixed(2)}`;
+
+// Gesture state is deliberately simple: one-finger gesture OR two-finger pinch.
+const pointers = new Map();
+let oneFinger = null;
+let pinch = null;
+let suppressUntilAllUp = false;
+
+function viewportSize(){
+  const r=viewport.getBoundingClientRect();
+  return {w:r.width,h:r.height};
+}
+
+function resetOffscreen(){
+  off.width=activeWorld.sizeX;
+  off.height=activeWorld.sizeY;
+  offctx.setTransform(1,0,0,1,0,0);
+  offctx.imageSmoothingEnabled=false;
+  offctx.fillStyle='#fffef9';
+  offctx.fillRect(0,0,off.width,off.height);
+}
+
+function queueRender(){
+  cancelAnimationFrame(raf);
+  raf=requestAnimationFrame(render);
+}
+
+function resizeCanvasBackingStore(){
+  const r=viewport.getBoundingClientRect();
+  const d=DPR();
+  const w=Math.max(1,Math.round(r.width*d));
+  const h=Math.max(1,Math.round(r.height*d));
+  if(canvas.width!==w||canvas.height!==h){
+    canvas.width=w; canvas.height=h;
+  }
+}
+
+function constrainPan(){
+  const {w,h}=viewportSize();
+  const worldW=activeWorld.sizeX*zoom;
+  const worldH=activeWorld.sizeY*zoom;
+  if(worldW<=w) panX=(w-worldW)/2;
+  else panX=Math.min(0,Math.max(w-worldW,panX));
+  if(worldH<=h) panY=(h-worldH)/2;
+  else panY=Math.min(0,Math.max(h-worldH,panY));
+}
+
+function fit(){
+  const {w,h}=viewportSize();
+  minZoom=Math.min(w/activeWorld.sizeX,h/activeWorld.sizeY);
+  zoom=minZoom;
+  panX=(w-activeWorld.sizeX*zoom)/2;
+  panY=(h-activeWorld.sizeY*zoom)/2;
+  queueRender();
+}
+
+function resize(){
+  resizeCanvasBackingStore();
+  fit();
+}
+
+function snapView(anchorClientX=null,anchorClientY=null){
+  // After pinch/wheel settles, make one logical cell an exact device-pixel multiple.
+  // This keeps the grid crisp without making the live pinch gesture jumpy.
+  if(zoom<2)return;
+  const d=DPR();
+  const snapped=Math.max(minZoom,Math.round(zoom*d)/d);
+  if(Math.abs(snapped-zoom)<0.0001)return;
+  const r=viewport.getBoundingClientRect();
+  const ax=anchorClientX==null?r.left+r.width/2:anchorClientX;
+  const ay=anchorClientY==null?r.top+r.height/2:anchorClientY;
+  const sx=ax-r.left, sy=ay-r.top;
+  const wx=(sx-panX)/zoom, wy=(sy-panY)/zoom;
+  zoom=snapped;
+  panX=sx-wx*zoom; panY=sy-wy*zoom;
+  panX=Math.round(panX*d)/d;
+  panY=Math.round(panY*d)/d;
+  constrainPan();
+}
+
+function screenCellRect(x,y){
+  // Round both cell boundaries in device pixels. Adjacent cells share a boundary,
+  // so there are no gaps/overlaps even at fractional zoom.
+  const d=DPR();
+  const x1=Math.round((panX+x*zoom)*d)/d;
+  const y1=Math.round((panY+y*zoom)*d)/d;
+  const x2=Math.round((panX+(x+1)*zoom)*d)/d;
+  const y2=Math.round((panY+(y+1)*zoom)*d)/d;
+  return {x:x1,y:y1,w:x2-x1,h:y2-y1};
+}
+
+function render(){
+  resizeCanvasBackingStore();
+  const d=DPR();
+  const {w,h}=viewportSize();
+  ctx.setTransform(d,0,0,d,0,0);
+  ctx.imageSmoothingEnabled=false;
+  ctx.fillStyle='#ece8df';
+  ctx.fillRect(0,0,w,h);
+
+  const worldW=activeWorld.sizeX*zoom;
+  const worldH=activeWorld.sizeY*zoom;
+  ctx.drawImage(off,0,0,off.width,off.height,panX,panY,worldW,worldH);
+
+  // Selected cells are drawn from exact rounded boundaries.
+  for(const item of selectedCells.values()){
+    const r=screenCellRect(item.x,item.y);
+    ctx.fillStyle=item.color.color;
+    ctx.fillRect(r.x,r.y,r.w,r.h);
+  }
+
+  if(areaPreview&&activeColor){
+    const x1=Math.min(areaPreview.x1,areaPreview.x2);
+    const y1=Math.min(areaPreview.y1,areaPreview.y2);
+    const x2=Math.max(areaPreview.x1,areaPreview.x2);
+    const y2=Math.max(areaPreview.y1,areaPreview.y2);
+    const tl=screenCellRect(x1,y1);
+    const br=screenCellRect(x2,y2);
+    const rx=tl.x, ry=tl.y;
+    const rw=(br.x+br.w)-tl.x, rh=(br.y+br.h)-tl.y;
+    ctx.save();
+    ctx.globalAlpha=.28;
+    ctx.fillStyle=activeColor.color;
+    ctx.fillRect(rx,ry,rw,rh);
+    ctx.restore();
+    ctx.strokeStyle=areaPreview.overLimit?'#9f1d2f':'#11110f';
+    ctx.lineWidth=2/d;
+    ctx.strokeRect(rx,ry,rw,rh);
+  }
+
+  // Crisp visible grid only when cells are large enough to target reliably.
+  if(zoom>=5){
+    const sx=Math.max(0,Math.floor((-panX)/zoom));
+    const ex=Math.min(activeWorld.sizeX,Math.ceil((w-panX)/zoom));
+    const sy=Math.max(0,Math.floor((-panY)/zoom));
+    const ey=Math.min(activeWorld.sizeY,Math.ceil((h-panY)/zoom));
+    ctx.beginPath();
+    ctx.strokeStyle='rgba(17,17,15,.13)';
+    ctx.lineWidth=1/d;
+    for(let x=sx;x<=ex;x++){
+      const px=Math.round((panX+x*zoom)*d)/d;
+      ctx.moveTo(px,Math.max(0,panY));
+      ctx.lineTo(px,Math.min(h,panY+worldH));
+    }
+    for(let y=sy;y<=ey;y++){
+      const py=Math.round((panY+y*zoom)*d)/d;
+      ctx.moveTo(Math.max(0,panX),py);
+      ctx.lineTo(Math.min(w,panX+worldW),py);
+    }
+    ctx.stroke();
+  }
+
+  // Outer edge.
+  ctx.strokeStyle='rgba(17,17,15,.24)';
+  ctx.lineWidth=1/d;
+  ctx.strokeRect(panX,panY,worldW,worldH);
+}
+
+function clientToGrid(cx,cy){
+  const r=viewport.getBoundingClientRect();
+  return {
+    x:Math.floor((cx-r.left-panX)/zoom),
+    y:Math.floor((cy-r.top-panY)/zoom)
+  };
+}
+
+function validGrid(g){
+  return !!g&&g.x>=0&&g.y>=0&&g.x<activeWorld.sizeX&&g.y<activeWorld.sizeY;
+}
+
+function zoomAt(clientX,clientY,factor,snap=true){
+  const r=viewport.getBoundingClientRect();
+  const sx=clientX-r.left, sy=clientY-r.top;
+  const wx=(sx-panX)/zoom, wy=(sy-panY)/zoom;
+  zoom=Math.max(minZoom,Math.min(MAX_ZOOM,zoom*factor));
+  panX=sx-wx*zoom; panY=sy-wy*zoom;
+  constrainPan();
+  if(snap)snapView(clientX,clientY);
+  queueRender();
+}
+
+function zoomTo(clientX,clientY,target){
+  const factor=target/zoom;
+  zoomAt(clientX,clientY,factor,true);
+}
+
+function updateWorldUI(){
+  document.querySelectorAll('.world-card').forEach(x=>x.classList.toggle('active',x.dataset.world===activeWorld.id));
+  document.getElementById('canvasKicker').textContent=activeWorld.act;
+  document.getElementById('canvasTitle').textContent=activeWorld.title;
+  document.getElementById('canvasSubtitle').textContent=activeWorld.subtitle;
+  document.getElementById('canvasStatusBig').textContent=(activeWorld.total-activeWorld.sealed).toLocaleString('en-US');
+}
+
+function switchWorld(id){
+  if(id==='bridge'){openModal('bridgeModal');return}
+  if(selectedCells.size){toast('Clear or finish the current selection before switching canvases.');return}
+  activeWorld=WORLDS[id];
+  selectionMode=false;activeTool='tap';activeColor=null;areaPreview=null;
+  pendingCellSelection=null;
+  selectedCells.clear();
+  document.getElementById('canvasFooter').classList.remove('selection-active');
+  resetOffscreen();updateWorldUI();updateSelectionUI();resetSelectedColorUI();closeColorSheet();resize();
+}
+
+document.querySelectorAll('.world-card').forEach(btn=>btn.addEventListener('click',()=>switchWorld(btn.dataset.world)));
+
+function resetSelectedColorUI(){
+  selectedColorChip.style.background='linear-gradient(135deg,#f2eee4,#e5dfd3)';
+  selectedColorName.textContent='None selected';
+  selectedColorHex.textContent='Choose one of 32 colors';
+  document.getElementById('dockColorSwatch').style.background='linear-gradient(135deg,#eee9df,#ddd7cb)';
+  document.getElementById('dockColorName').textContent='Choose';
+}
+
+function applySelectedColorUI(c){
+  selectedColorChip.style.background=c.color;
+  selectedColorName.textContent=c.name;
+  selectedColorHex.textContent=c.color.toUpperCase();
+  document.getElementById('dockColorSwatch').style.background=c.color;
+  document.getElementById('dockColorName').textContent=c.name;
+}
+
+function openColorSheet(){document.getElementById('sheet').classList.add('show');document.getElementById('sheetBackdrop').classList.add('show')}
+function closeColorSheet(){document.getElementById('sheet').classList.remove('show');document.getElementById('sheetBackdrop').classList.remove('show')}
+
+COLORS.forEach(c=>{
+  const btn=document.createElement('button');
+  btn.className='value';btn.type='button';btn.title=`${c.name} ${c.color}`;
+  btn.setAttribute('aria-label',`${c.name}, ${c.color}`);
+  btn.innerHTML=`<span class="swatch" style="background:${c.color}"></span><b>${c.name}</b>`;
+  btn.onclick=()=>{
+    activeColor=c;
+    [...palette.children].forEach(x=>x.classList.remove('selected'));
+    btn.classList.add('selected');
+    applySelectedColorUI(c);
+    closeColorSheet();
+    if(pendingCellSelection&&validGrid(pendingCellSelection)){
+      addOrUpdateCell(pendingCellSelection.x,pendingCellSelection.y,c);
+      pendingCellSelection=null;
+    }
+    updateGestureHint();
+    queueRender();
+  };
+  palette.appendChild(btn);
+});
+resetSelectedColorUI();
+
+function startSelectionMode(initialCell=null){
+  selectionMode=true;
+  document.getElementById('canvasFooter').classList.add('selection-active');
+  viewport.classList.add('selecting');
+  setTool('tap');
+  updateSelectionUI();
+  pendingCellSelection=(initialCell&&validGrid(initialCell))?initialCell:null;
+
+  // ALWAYS show the color palette when entering selection mode.
+  // This is the single shared behavior for both CHOOSE CELLS and canvas tap.
+  requestAnimationFrame(()=>openColorSheet());
+}
+
+function setTool(tool){
+  activeTool=tool;
+  document.querySelectorAll('.tool-btn').forEach(btn=>btn.classList.toggle('active',btn.dataset.tool===tool));
+  areaPreview=null;areaPill.classList.remove('show');areaPill.classList.remove('over-limit');
+  updateGestureHint();queueRender();
+}
+
+function updateGestureHint(){
+  const hint=document.getElementById('gestureHint');
+  if(!selectionMode){hint.textContent='Drag to move · Pinch to zoom';return}
+  if(!activeColor){hint.textContent='Choose a color first';return}
+  hint.textContent={
+    tap:'Tap to select · Drag to move · Pinch to zoom',
+    brush:'Drag to paint selection · Pinch to zoom',
+    area:'Drag a rectangle · Pinch to zoom'
+  }[activeTool];
+}
+
+function updateSelectionUI(){
+  const count=selectedCells.size,total=count*PRICE_MINOR;
+  document.getElementById('selectionCount').textContent=count.toLocaleString('en-US');
+  document.getElementById('selectionTotal').textContent=money(total);
+  document.getElementById('reviewSelectionBtn').disabled=count===0;
+  document.getElementById('checkoutCount').textContent=count.toLocaleString('en-US');
+  document.getElementById('checkoutTotal').textContent=money(total);
+  document.getElementById('cardTotal').textContent=money(total);
+  document.getElementById('cryptoTotal').textContent=money(total);
+}
+
+function addOrUpdateCell(x,y,color=activeColor){
+  if(!color)return false;
+  if(reservationState)invalidateReservation();
+  const key=keyFor(x,y);
+  if(!selectedCells.has(key)&&selectedCells.size>=MAX_SELECTION){
+    if(!limitToastLocked){
+      toast('Maximum 1,000 cells per checkout.');
+      limitToastLocked=true;setTimeout(()=>limitToastLocked=false,1200);
+    }
+    return false;
+  }
+  selectedCells.set(key,{x,y,color});updateSelectionUI();return true;
+}
+
+function toggleCell(x,y){
+  if(reservationState)invalidateReservation();
+  const key=keyFor(x,y);
+  if(selectedCells.has(key))selectedCells.delete(key);else addOrUpdateCell(x,y);
+  updateSelectionUI();queueRender();
+}
+
+function paintLine(a,b){
+  if(!validGrid(a)||!validGrid(b)||!activeColor)return;
+  let x0=a.x,y0=a.y,x1=b.x,y1=b.y;
+  const dx=Math.abs(x1-x0),sx=x0<x1?1:-1;
+  const dy=-Math.abs(y1-y0),sy=y0<y1?1:-1;
+  let err=dx+dy;
+  while(true){
+    addOrUpdateCell(x0,y0);
+    if(x0===x1&&y0===y1)break;
+    const e2=2*err;
+    if(e2>=dy){err+=dy;x0+=sx}
+    if(e2<=dx){err+=dx;y0+=sy}
+  }
+  queueRender();
+}
+
+function areaMetrics(a,b){
+  const x1=Math.max(0,Math.min(a.x,b.x)),y1=Math.max(0,Math.min(a.y,b.y));
+  const x2=Math.min(activeWorld.sizeX-1,Math.max(a.x,b.x)),y2=Math.min(activeWorld.sizeY-1,Math.max(a.y,b.y));
+  const w=x2-x1+1,h=y2-y1+1;
+  return{x1,y1,x2,y2,w,h,count:w*h};
+}
+
+function showAreaPreview(a,b){
+  const m=areaMetrics(a,b);
+  let newNeeded=0;
+  for(let y=m.y1;y<=m.y2;y++)for(let x=m.x1;x<=m.x2;x++)if(!selectedCells.has(keyFor(x,y)))newNeeded++;
+  const over=selectedCells.size+newNeeded>MAX_SELECTION;
+  areaPreview={x1:m.x1,y1:m.y1,x2:m.x2,y2:m.y2,overLimit:over};
+  areaPill.textContent=`${m.w}×${m.h} · ${m.count.toLocaleString('en-US')} CELLS${over?' · TOO LARGE':''}`;
+  areaPill.classList.toggle('over-limit',over);areaPill.classList.add('show');queueRender();
+}
+
+function commitArea(a,b){
+  if(!activeColor)return;
+  const m=areaMetrics(a,b);let newNeeded=0;
+  for(let y=m.y1;y<=m.y2;y++)for(let x=m.x1;x<=m.x2;x++)if(!selectedCells.has(keyFor(x,y)))newNeeded++;
+  if(selectedCells.size+newNeeded>MAX_SELECTION){
+    toast(`${MAX_SELECTION-selectedCells.size} selection slots remain.`);return;
+  }
+  for(let y=m.y1;y<=m.y2;y++)for(let x=m.x1;x<=m.x2;x++)addOrUpdateCell(x,y);
+  updateSelectionUI();queueRender();
+}
+
+function clearSelection(){
+  if(reservationState)invalidateReservation();
+  selectedCells.clear();pendingCellSelection=null;areaPreview=null;areaPill.classList.remove('show','over-limit');updateSelectionUI();queueRender();
+}
+
+function requiredZoomFor(tool){return tool==='area'?MIN_AREA_ZOOM:tool==='brush'?MIN_BRUSH_ZOOM:MIN_TAP_ZOOM}
+
+function ensureTargetZoom(cx,cy,tool){
+  const need=requiredZoomFor(tool);
+  if(zoom>=need)return true;
+  zoomTo(cx,cy,tool==='area'?4:tool==='brush'?7:11);
+  toast('Zoomed in. Now select the exact cells.');
+  return false;
+}
+
+const HUMANITY_BACKEND={
+  base:String(window.HUMANITY_CONFIG?.functionsBase||'').replace(/\/+$/,'')
+};
+
+async function backendPost(functionName,payload){
+  if(!HUMANITY_BACKEND.base){
+    const err=new Error('BACKEND_NOT_CONFIGURED');
+    err.code='BACKEND_NOT_CONFIGURED';
+    throw err;
+  }
+  const response=await fetch(`${HUMANITY_BACKEND.base}/${functionName}`,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
+  });
+  let data={};
+  try{data=await response.json()}catch{}
+  if(!response.ok){
+    const err=new Error(data?.message||data?.code||`HTTP_${response.status}`);
+    err.code=data?.code||`HTTP_${response.status}`;
+    err.payload=data;
+    throw err;
+  }
+  return data;
+}
+
+window.HUMANITY_API={
+  reserveBatch(payload){return backendPost('reserve-batch',payload)},
+  releaseBatch(batchId,reservationToken){
+    return backendPost('release-batch',{batch_id:batchId,reservation_token:reservationToken});
+  },
+  prepareCheckout(payload){return backendPost('prepare-checkout',payload)},
+  reservationStatus(batchId,reservationToken){
+    return backendPost('reservation-status',{batch_id:batchId,reservation_token:reservationToken});
+  }
+};
+
+function reservationIsActive(){
+  return !!reservationState&&Date.now()<new Date(reservationState.expiresAt).getTime();
+}
+
+function selectedReservationItems(){
+  return [...selectedCells.values()].map(item=>({
+    x:item.x,y:item.y,color_id:item.color.id
+  }));
+}
+
+function setReviewBusy(busy){
+  reservationBusy=busy;
+  const btn=document.getElementById('reviewSelectionBtn');
+  btn.classList.toggle('busy',busy);
+  btn.textContent=busy?'RESERVING…':'REVIEW & PAY';
+  btn.disabled=busy||selectedCells.size===0;
+}
+
+function updateReservationBanner(){
+  const banner=document.getElementById('reservationBanner');
+  const clock=document.getElementById('reservationClock');
+  const status=document.getElementById('reservationStatusText');
+  if(!reservationState){
+    banner.classList.remove('show');
+    return;
+  }
+
+  const left=Math.max(0,new Date(reservationState.expiresAt).getTime()-Date.now());
+  const seconds=Math.ceil(left/1000);
+  const mm=String(Math.floor(seconds/60)).padStart(2,'0');
+  const ss=String(seconds%60).padStart(2,'0');
+
+  banner.classList.add('show');
+  clock.textContent=`${mm}:${ss}`;
+  status.textContent=`${reservationState.itemCount.toLocaleString('en-US')} cells are locked for this checkout.`;
+
+  if(left<=0){
+    clearInterval(reservationTimer);
+    reservationTimer=null;
+    reservationState=null;
+    banner.classList.remove('show');
+    if(document.getElementById('paymentModal').classList.contains('show')){
+      toast('Reservation expired. Tap REVIEW & PAY to reserve the cells again.');
+    }
+  }
+}
+
+function startReservationTimer(){
+  clearInterval(reservationTimer);
+  updateReservationBanner();
+  reservationTimer=setInterval(updateReservationBanner,1000);
+}
+
+function invalidateReservation(){
+  if(!reservationState)return;
+  const old=reservationState;
+  reservationState=null;
+  clearInterval(reservationTimer);
+  reservationTimer=null;
+  document.getElementById('reservationBanner')?.classList.remove('show');
+  window.HUMANITY_API.releaseBatch(old.batchId,old.token).catch(()=>{});
+}
+
+function removeReservationConflicts(conflicts=[]){
+  let removed=0;
+  for(const conflict of conflicts){
+    if(selectedCells.delete(keyFor(Number(conflict.x),Number(conflict.y))))removed++;
+  }
+  if(removed){
+    updateSelectionUI();
+    queueRender();
+  }
+  return removed;
+}
+
+async function reserveCurrentSelection(){
+  if(!selectedCells.size)return null;
+  if(reservationIsActive())return reservationState;
+  if(reservationBusy)return null;
+
+  setReviewBusy(true);
+  try{
+    const result=await window.HUMANITY_API.reserveBatch({
+      canvas:activeWorld.id,
+      items:selectedReservationItems()
+    });
+    reservationState={
+      batchId:result.batch_id,
+      token:result.reservation_token,
+      expiresAt:result.expires_at,
+      itemCount:Number(result.item_count),
+      amountMinor:Number(result.amount_minor)
+    };
+    startReservationTimer();
+    return reservationState;
+  }catch(err){
+    if(err.code==='BACKEND_NOT_CONFIGURED'){
+      toast('Connect Supabase in PUBLIC_SITE/config.js first.');
+    }else if(err.code==='CELL_CONFLICT'){
+      const removed=removeReservationConflicts(err.payload?.conflicts||[]);
+      toast(removed
+        ? `${removed} unavailable cell${removed===1?' was':'s were'} removed. Choose replacements and try again.`
+        : 'One or more cells are no longer available.');
+    }else if(err.code==='RATE_LIMITED'){
+      toast('Too many reservation attempts. Try again shortly.');
+    }else{
+      toast('Could not reserve the selected cells. Try again.');
+    }
+    return null;
+  }finally{
+    setReviewBusy(false);
+  }
+}
+
+async function openCheckout(){
+  if(!selectedCells.size)return;
+  const reservation=await reserveCurrentSelection();
+  if(!reservation)return;
+
+  document.getElementById('checkoutTitle').textContent=`Review ${reservation.itemCount.toLocaleString('en-US')} mark${reservation.itemCount===1?'':'s'}.`;
+  document.getElementById('checkoutAiFields').classList.toggle('show',activeWorld.id==='ai');
+  document.getElementById('checkoutCount').textContent=reservation.itemCount.toLocaleString('en-US');
+  document.getElementById('checkoutTotal').textContent=money(reservation.amountMinor);
+  document.getElementById('cardTotal').textContent=money(reservation.amountMinor);
+  document.getElementById('cryptoTotal').textContent=money(reservation.amountMinor);
+  updateReservationBanner();
+  openModal('paymentModal');
+}
+
+async function prepareReservedCheckout(channel){
+  if(!validateCheckout())return;
+  if(!reservationIsActive()){
+    toast('Reservation expired. Tap REVIEW & PAY again.');
+    closeModal('paymentModal');
+    return;
+  }
+
+  const button=document.getElementById(channel==='card'?'cardOption':'cryptoOption');
+  button.disabled=true;
+  try{
+    const result=await window.HUMANITY_API.prepareCheckout({
+      batch_id:reservationState.batchId,
+      reservation_token:reservationState.token,
+      country_code:document.getElementById('countrySelect').value,
+      ai_provider:activeWorld.id==='ai'?document.getElementById('aiProvider').value:null,
+      ai_model:activeWorld.id==='ai'?(document.getElementById('aiModel').value.trim()||null):null
+    });
+    reservationState.expiresAt=result.expires_at;
+    startReservationTimer();
+    toast(channel==='card'
+      ? 'Reservation verified. Card payment provider is the next connection.'
+      : 'Reservation verified. Crypto payment provider is the next connection.');
+  }catch(err){
+    if(err.code==='RESERVATION_EXPIRED'||err.code==='RESERVATION_NOT_ACTIVE'){
+      reservationState=null;
+      updateReservationBanner();
+      toast('Reservation expired. Reserve the cells again.');
+      closeModal('paymentModal');
+    }else{
+      toast('Could not verify this reservation.');
+    }
+  }finally{
+    button.disabled=false;
+  }
+}
+
+function validateCheckout(){
+  if(!document.getElementById('countrySelect').value){toast('Choose the country you are representing.');return false}
+  if(activeWorld.id==='ai'&&!document.getElementById('aiProvider').value){toast('Choose which AI made these decisions.');return false}
+  return true;
+}
+
+const enterCellSelection = (initialCell=null)=>startSelectionMode(initialCell);
+document.getElementById('quickSealBtn').onclick=()=>enterCellSelection();
+document.getElementById('selectionColorBtn').onclick=openColorSheet;
+document.getElementById('cancelBtn').onclick=closeColorSheet;
+document.getElementById('sheetBackdrop').onclick=closeColorSheet;
+document.getElementById('clearSelectionBtn').onclick=clearSelection;
+document.getElementById('reviewSelectionBtn').onclick=openCheckout;
+document.querySelectorAll('.tool-btn').forEach(btn=>btn.onclick=()=>setTool(btn.dataset.tool));
+
+function openModal(id){document.getElementById(id).classList.add('show')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+document.querySelectorAll('[data-close]').forEach(btn=>btn.onclick=()=>closeModal(btn.dataset.close));
+document.getElementById('aboutBtn').onclick=()=>openModal('aboutModal');
+
+document.getElementById('cardOption').onclick=()=>prepareReservedCheckout('card');
+document.getElementById('cryptoOption').onclick=()=>prepareReservedCheckout('crypto');
+document.getElementById('rewardCertificate').onclick=()=>toast('Certificates are created after verified payment.');
+document.getElementById('rewardShare').onclick=()=>toast('Share card is created after verified payment.');
+document.getElementById('rewardLink').onclick=()=>toast('Cell links are created after verified payment.');
+
+function toast(msg){
+  const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast._t);
+  toast._t=setTimeout(()=>el.classList.remove('show'),2400);
+}
+
+function relativePoint(clientX,clientY){const r=viewport.getBoundingClientRect();return{x:clientX-r.left,y:clientY-r.top}}
+
+function beginPinch(){
+  if(pointers.size!==2)return;
+  const pts=[...pointers.values()];
+  const a=relativePoint(pts[0].x,pts[0].y),b=relativePoint(pts[1].x,pts[1].y);
+  const mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
+  pinch={
+    startDist:Math.hypot(a.x-b.x,a.y-b.y),startZoom:zoom,
+    worldX:(mx-panX)/zoom,worldY:(my-panY)/zoom,
+    lastClientX:mx+viewport.getBoundingClientRect().left,lastClientY:my+viewport.getBoundingClientRect().top
+  };
+  oneFinger=null;areaPreview=null;areaPill.classList.remove('show','over-limit');
+  suppressUntilAllUp=true;
+}
+
+viewport.addEventListener('pointerdown',e=>{
+  if(e.target.closest('.canvas-controls'))return;
+  viewport.setPointerCapture?.(e.pointerId);
+  pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+
+  if(pointers.size===2){beginPinch();viewport.classList.add('panning');return}
+  if(pointers.size!==1||suppressUntilAllUp)return;
+
+  const g=clientToGrid(e.clientX,e.clientY);
+  oneFinger={
+    id:e.pointerId,startX:e.clientX,startY:e.clientY,lastX:e.clientX,lastY:e.clientY,
+    startGrid:g,lastGrid:g,moved:false,activated:false,kind:selectionMode?activeTool:'move'
+  };
+});
+
+viewport.addEventListener('pointermove',e=>{
+  if(!pointers.has(e.pointerId))return;
+  pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+
+  if(pinch&&pointers.size===2){
+    const pts=[...pointers.values()];
+    const a=relativePoint(pts[0].x,pts[0].y),b=relativePoint(pts[1].x,pts[1].y);
+    const mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
+    const dist=Math.max(1,Math.hypot(a.x-b.x,a.y-b.y));
+    zoom=Math.max(minZoom,Math.min(MAX_ZOOM,pinch.startZoom*(dist/pinch.startDist)));
+    panX=mx-pinch.worldX*zoom;panY=my-pinch.worldY*zoom;
+    constrainPan();queueRender();
+    pinch.lastClientX=mx+viewport.getBoundingClientRect().left;
+    pinch.lastClientY=my+viewport.getBoundingClientRect().top;
+    return;
+  }
+
+  if(!oneFinger||oneFinger.id!==e.pointerId||pointers.size!==1||suppressUntilAllUp)return;
+  const dx=e.clientX-oneFinger.lastX,dy=e.clientY-oneFinger.lastY;
+  const travel=Math.hypot(e.clientX-oneFinger.startX,e.clientY-oneFinger.startY);
+  if(travel>5)oneFinger.moved=true;
+
+  if(oneFinger.kind==='move'||oneFinger.kind==='tap'){
+    if(travel>7){
+      oneFinger.kind='move';
+      panX+=dx;panY+=dy;constrainPan();viewport.classList.add('panning');queueRender();
+    }
+  }else if(oneFinger.kind==='brush'){
+    if(!oneFinger.activated&&travel>5){
+      if(!activeColor||!ensureTargetZoom(e.clientX,e.clientY,'brush')){oneFinger.kind='noop'}
+      else{
+        oneFinger.activated=true;
+        const g0=validGrid(oneFinger.startGrid)?oneFinger.startGrid:clientToGrid(oneFinger.startX,oneFinger.startY);
+        const g1=clientToGrid(e.clientX,e.clientY);
+        if(validGrid(g0)&&validGrid(g1))paintLine(g0,g1);
+        oneFinger.lastGrid=g1;
+      }
+    }else if(oneFinger.activated){
+      const g=clientToGrid(e.clientX,e.clientY);
+      if(validGrid(g)&&validGrid(oneFinger.lastGrid))paintLine(oneFinger.lastGrid,g);
+      oneFinger.lastGrid=g;
+    }
+  }else if(oneFinger.kind==='area'){
+    if(!oneFinger.activated&&travel>5){
+      if(!activeColor||!ensureTargetZoom(e.clientX,e.clientY,'area')){oneFinger.kind='noop'}
+      else oneFinger.activated=true;
+    }
+    if(oneFinger.activated){
+      const g=clientToGrid(e.clientX,e.clientY);
+      if(validGrid(oneFinger.startGrid)&&validGrid(g)){showAreaPreview(oneFinger.startGrid,g);oneFinger.lastGrid=g}
+    }
+  }
+  oneFinger.lastX=e.clientX;oneFinger.lastY=e.clientY;
+});
+
+function finishPointer(e){
+  if(!pointers.has(e.pointerId))return;
+  const wasPinching=!!pinch;
+  pointers.delete(e.pointerId);
+
+  if(wasPinching){
+    if(pointers.size<2){
+      snapView(pinch.lastClientX,pinch.lastClientY);pinch=null;queueRender();
+    }
+    if(pointers.size===0){suppressUntilAllUp=false;viewport.classList.remove('panning')}
+    return;
+  }
+
+  if(suppressUntilAllUp){
+    if(pointers.size===0){suppressUntilAllUp=false;viewport.classList.remove('panning')}
+    oneFinger=null;return;
+  }
+
+  const g=clientToGrid(e.clientX,e.clientY);
+  if(oneFinger&&oneFinger.id===e.pointerId){
+    if(selectionMode){
+      if(oneFinger.kind==='tap'&&!oneFinger.moved){
+        if(!activeColor){openColorSheet()}
+        else if(ensureTargetZoom(e.clientX,e.clientY,'tap')&&validGrid(g))toggleCell(g.x,g.y);
+      }else if(oneFinger.kind==='brush'&&!oneFinger.activated&&!oneFinger.moved){
+        if(!activeColor){openColorSheet()}
+        else if(ensureTargetZoom(e.clientX,e.clientY,'brush')&&validGrid(g))addOrUpdateCell(g.x,g.y);
+      }else if(oneFinger.kind==='area'&&!oneFinger.activated&&!oneFinger.moved){
+        if(!activeColor){openColorSheet()}
+        else if(ensureTargetZoom(e.clientX,e.clientY,'area')&&validGrid(g))addOrUpdateCell(g.x,g.y);
+      }else if(oneFinger.kind==='area'&&oneFinger.activated&&validGrid(oneFinger.startGrid)&&validGrid(oneFinger.lastGrid)){
+        if(!areaPreview?.overLimit)commitArea(oneFinger.startGrid,oneFinger.lastGrid);
+        else toast(`${MAX_SELECTION-selectedCells.size} selection slots remain.`);
+      }
+    }else if(!oneFinger.moved){
+      // A short tap on the canvas opens the same color flow as CHOOSE CELLS,
+      // but remembers the tapped cell so the chosen color is applied instantly.
+      if(validGrid(g))enterCellSelection(g);
+      else enterCellSelection();
+    }
+  }
+
+  oneFinger=null;areaPreview=null;areaPill.classList.remove('show','over-limit');viewport.classList.remove('panning');
+  queueRender();
+}
+
+viewport.addEventListener('pointerup',finishPointer);
+viewport.addEventListener('pointercancel',finishPointer);
+
+const canvasControls=document.querySelector('.canvas-controls');
+['pointerdown','pointerup','pointercancel','click'].forEach(type=>canvasControls.addEventListener(type,e=>e.stopPropagation()));
+
+let wheelSnapTimer=null;
+viewport.addEventListener('wheel',e=>{
+  e.preventDefault();zoomAt(e.clientX,e.clientY,e.deltaY<0?1.14:.877,false);clearTimeout(wheelSnapTimer);
+  wheelSnapTimer=setTimeout(()=>{snapView(e.clientX,e.clientY);queueRender()},90);
+},{passive:false});
+
+document.getElementById('zoomIn').onclick=e=>{e.preventDefault();e.stopPropagation();const r=viewport.getBoundingClientRect();zoomAt(r.left+r.width/2,r.top+r.height/2,1.6,true)};
+document.getElementById('zoomOut').onclick=e=>{e.preventDefault();e.stopPropagation();const r=viewport.getBoundingClientRect();zoomAt(r.left+r.width/2,r.top+r.height/2,.625,true)};
+document.getElementById('fit').onclick=e=>{e.preventDefault();e.stopPropagation();fit()};
+
+window.addEventListener('resize',resize);
+window.addEventListener('orientationchange',()=>setTimeout(resize,180));
+
+resetOffscreen();updateWorldUI();updateSelectionUI();updateGestureHint();resize();
+
+const countryState = { canvas: 'human', rows: [] };
+
+function renderCountryLeaderboard(rows = countryState.rows) {
+  const root = document.getElementById('countryRows');
+  if (!root) return;
+  if (!rows || !rows.length) {
+    root.innerHTML = '<div class="country-empty">Country rankings will appear here as verified marks are sealed.</div>';
+    return;
+  }
+  root.innerHTML = rows.slice(0, 20).map((row, index) => `
+    <div class="country-row">
+      <div class="country-rank">${String(index + 1).padStart(2,'0')}</div>
+      <div class="country-name">
+        <span class="country-flag" aria-hidden="true"></span>
+        <span>${row.country_name}</span>
+      </div>
+      <div class="country-marks">${Number(row.marks || 0).toLocaleString('en-US')}</div>
+    </div>
+  `).join('');
+}
+
+document.querySelectorAll('.country-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.country-tab').forEach(x => x.classList.remove('active'));
+    btn.classList.add('active');
+    countryState.canvas = btn.dataset.countryCanvas;
+    renderCountryLeaderboard([]);
+    // Production: fetch /api/stats/countries?canvas=${countryState.canvas}
+  });
+});
+
+renderCountryLeaderboard();
+
+</script>
+</body>
+</html>
