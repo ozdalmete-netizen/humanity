@@ -6,7 +6,7 @@
 <meta name="referrer" content="no-referrer" />
 <meta name="theme-color" content="#f4f1ea" />
 <title>HUMANITY/1 — Human. AI. The Bridge.</title>
-<meta name="humanity-build" content="V5.8.4-CAPABILITY-HARDENED-20260825" />
+<meta name="humanity-build" content="V5.8.5-LEGAL-CONSENT-20260825" />
 <style>
 :root{--bg:#f4f1ea;--paper:#fffef9;--ink:#11110f;--muted:#77736b;--line:#d8d3c8;--line2:#e8e3d9;--soft:#ece8df;--shadow:0 24px 80px rgba(22,19,14,.10);--shadow2:0 12px 34px rgba(22,19,14,.08);--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;--mono:"SFMono-Regular","SF Mono","Roboto Mono",Consolas,monospace}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased}body{min-width:320px}button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}#app{min-height:100vh;min-height:100dvh}
@@ -723,6 +723,10 @@
   .canvas-shell{border-radius:22px}
 }
 
+
+/* ===== V5.8.5 LEGAL / PRIVACY / PAYMENT CONSENT ===== */
+.legal-consent{margin:14px 0 4px;padding:13px 14px;border:1px solid var(--line);border-radius:14px;background:#faf8f2}.legal-consent label{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;cursor:pointer}.legal-consent input{width:18px;height:18px;margin:1px 0 0;accent-color:#11110f;cursor:pointer}.legal-consent-copy{color:#27241f;font-size:9px;line-height:1.6}.legal-consent-copy b{font-weight:900}.legal-inline{border:0;background:transparent;padding:0;margin:0;color:#11110f;text-decoration:underline;text-underline-offset:2px;font:inherit;font-weight:850;cursor:pointer}.legal-consent small{display:block;margin:8px 0 0 28px;color:var(--muted);font-size:7px;line-height:1.55}.payment-option.legal-locked{opacity:.48}.legal-modal{place-items:start center;overflow:hidden;padding:14px}.legal-modal .modal{width:min(820px,100%);max-height:calc(100dvh - 28px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:24px}.legal-copy{margin-top:15px;color:#28251f;font-size:10px;line-height:1.72}.legal-copy .legal-date{display:block;margin:-4px 0 16px;color:var(--muted);font:750 8px var(--mono);letter-spacing:.08em}.legal-copy h4{margin:20px 0 7px;font-size:11px;letter-spacing:.08em}.legal-copy p{margin:0 0 10px;color:#38342e;font-size:10px;line-height:1.72}.legal-copy ul{margin:7px 0 12px;padding-left:20px}.legal-copy li{margin:5px 0}.legal-copy a{color:#11110f;font-weight:800;text-underline-offset:2px}.legal-callout{margin:14px 0;padding:12px 13px;border:1px solid var(--line);border-radius:13px;background:var(--soft);font-size:9px;line-height:1.65}.legal-warning{margin:14px 0;padding:12px 13px;border:1px solid #d6c6a5;border-radius:13px;background:#fff8e9;color:#5a4522;font-size:9px;line-height:1.65}.site-legal-footer{width:min(1680px,100%);margin:0 auto;padding:0 clamp(18px,3vw,40px) max(38px,env(safe-area-inset-bottom));color:var(--muted)}.site-legal-footer-inner{border-top:1px solid var(--line);padding-top:18px;display:flex;justify-content:space-between;gap:18px;align-items:flex-start;flex-wrap:wrap}.site-legal-footer b{color:var(--ink);font-size:9px;letter-spacing:.12em}.site-legal-footer p{margin:5px 0 0;max-width:760px;font-size:8px;line-height:1.55}.site-legal-nav{display:flex;gap:7px;flex-wrap:wrap}.site-legal-nav button{border:1px solid var(--line);background:rgba(255,254,249,.66);border-radius:999px;padding:8px 10px;color:var(--ink);font-size:7px;letter-spacing:.11em;font-weight:850;cursor:pointer}@media(max-width:520px){.legal-modal{padding:8px}.legal-modal .modal{max-height:calc(100dvh - 16px);padding:20px;border-radius:20px}.site-legal-footer-inner{display:block}.site-legal-nav{margin-top:13px}}
+
 </style>
 </head>
 <body>
@@ -847,6 +851,8 @@
     </div>
   </div>
 </section>
+
+<footer class="site-legal-footer" aria-label="Legal information"><div class="site-legal-footer-inner"><div><b>HUMANITY/1 · PERMANENT COLLABORATIVE DIGITAL ARTWORK</b><p>A mark is a permanent placement and verification record inside HUMANITY/1. It is not an investment, security, deposit, cryptocurrency, NFT, equity interest, or transfer of copyright in the underlying artwork.</p></div><nav class="site-legal-nav" aria-label="Legal policies"><button type="button" data-legal="termsModal">TERMS</button><button type="button" data-legal="privacyModal">PRIVACY</button><button type="button" data-legal="paymentPolicyModal">PAYMENT &amp; REFUNDS</button></nav></div></footer>
 
 <div class="backdrop" id="sheetBackdrop"></div>
 
@@ -1186,6 +1192,14 @@
       </label>
     </div>
 
+    <div class="legal-consent" id="legalConsentBlock">
+      <label>
+        <input type="checkbox" id="legalConsent" autocomplete="off">
+        <span class="legal-consent-copy">I have read and agree to the <button type="button" class="legal-inline" data-legal="termsModal">Terms of Use</button>, <button type="button" class="legal-inline" data-legal="privacyModal">Privacy Policy</button>, and <button type="button" class="legal-inline" data-legal="paymentPolicyModal">Payment &amp; Refund Policy</button>. <b>I understand that verified sealed mark metadata becomes part of a permanent public artwork record.</b></span>
+      </label>
+      <small>Legal version 2026-08-25. Payment cannot start until this box is checked.</small>
+    </div>
+
     <button class="payment-option" id="cardOption">
       <div><strong>CARD</strong><span>Visa · Mastercard · Apple Pay · Google Pay · no mark minimum</span><span style="display:block;margin-top:4px">Taxes, if applicable, are calculated at checkout based on your location.</span></div>
       <b id="cardTotal">$0.00</b>
@@ -1370,6 +1384,7 @@
 
 <div class="modal-wrap" id="bridgeModal"><div class="modal bridge-modal"><div class="bridge-symbol">◆</div><div class="eyebrow">ACT III</div><h3 id="bridgeModalTitle">THE BRIDGE IS LOCKED.</h3><p id="bridgeModalCopy">Human and AI must first complete their separate canvases. Only then will the space between them open.</p><div class="bridge-condition"><span>HUMAN</span><b>0 / 1,000,000</b><span>AI</span><b>0 / 1,000,000</b></div><button class="primary" id="bridgeModalButton" data-close="bridgeModal">UNDERSTOOD</button></div></div>
 <div class="modal-wrap" id="aboutModal"><div class="modal"><div class="modal-head"><div><div class="eyebrow">HUMANITY/1</div><h3>Three acts. One permanent work.</h3></div><button class="close" data-close="aboutModal">×</button></div><div class="about-grid"><div><b>01 — HUMAN</b><p>1,000,000 permanent human choices.</p></div><div><b>02 — THE BRIDGE</b><p>Locked until Human and AI are complete.</p></div><div><b>03 — AI</b><p>1,000,000 choices directed by artificial intelligence.</p></div></div><p class="about-end">Every mark costs $4.99 + applicable taxes. One person may own multiple marks.</p></div></div>
+<div class="modal-wrap legal-modal" id="termsModal"><div class="modal"><div class="modal-head"><div><div class="eyebrow">HUMANITY/1 LEGAL</div><h3>Terms of Use</h3><p>Rules for participating in and purchasing permanent marks in HUMANITY/1.</p></div><button class="close" type="button" data-close="termsModal">×</button></div><div class="legal-copy"><span class="legal-date">VERSION 2026-08-25 · LAST UPDATED 25 AUGUST 2026</span><div class="legal-callout"><b>Important:</b> HUMANITY/1 is a finite collaborative digital artwork. A purchase is for a permanent mark and associated public verification record. It is not an investment product and does not promise financial return, resale value, profit, ownership of the overall artwork, or intellectual-property rights.</div><h4>1. ACCEPTANCE AND ELIGIBILITY</h4><p>By using HUMANITY/1 or starting a purchase, you agree to these Terms, the Privacy Policy, and the Payment &amp; Refund Policy. You must have legal capacity to enter a binding transaction and must be at least 18 years old where required by the payment service you choose or applicable law.</p><h4>2. THE ARTWORK</h4><ul><li>The Human Canvas and AI Canvas each contain 1,000,000 finite cells.</li><li>Each verified paid mark occupies one coordinate and one color.</li><li>A checkout may contain from 1 to 1,000 unique cells, subject to current availability and server-side reservation.</li><li>For AI Canvas marks, the selected AI provider becomes part of the public mark record. HUMANITY/1 does not claim that the named AI provider approved, endorsed, or independently verified the choice.</li><li>The Bridge remains locked until the completion conditions shown by the server are satisfied. Any future Bridge purchase mechanics may be subject to additional terms displayed before purchase.</li></ul><h4>3. PERMANENCE</h4><p>Once the server has independently verified a successful payment and sealed a mark, its canvas, coordinate, color, country code, AI-provider field where applicable, seal timestamp, certificate identifier, and permanent-link identifier are intended to remain part of the artwork's historical record. A refund, reversal, dispute, or chargeback changes the financial record, not the already-sealed artwork record, except where a change is legally required.</p><h4>4. WHAT A MARK DOES — AND DOES NOT — GIVE YOU</h4><p>A mark gives you the ability to create and verify the permanent placement described above. It does not transfer copyright, trademark rights, source-code rights, ownership of the HUMANITY/1 brand, control of the canvas, a right to future revenue, voting rights, equity, a token, or any other financial interest unless expressly stated in a separate written agreement.</p><h4>5. COUNTRY AND PUBLIC METADATA</h4><p>The country selected at checkout is self-declared participation metadata used for public aggregation and the LIVE BY COUNTRY display. It is not verification of nationality, residence, citizenship, or identity.</p><h4>6. RESERVATIONS AND AVAILABILITY</h4><p>Cell selection in the browser is not ownership. A cell is available only if the server successfully reserves it. Reservations expire automatically. A cell may become unavailable because another valid reservation or permanent mark reached the server first. HUMANITY/1 will not silently substitute a different coordinate for a selected cell.</p><h4>7. PROHIBITED CONDUCT</h4><p>You may not bypass or interfere with rate limits, Cloudflare Turnstile, payment verification, reservation locks, webhook verification, server authorization, or other security controls. You may not use bots, scripts, scraping, flooding, malformed requests, payment manipulation, duplicate-payment abuse, or other methods intended to obtain marks without a valid verified payment or to deny service to others.</p><h4>8. SERVICE AND TECHNICAL CHANGES</h4><p>The interface, providers, infrastructure, security controls, and non-essential features may change. HUMANITY/1 may suspend checkout or reservations to protect users, payments, the artwork, or legal compliance. Validly sealed marks will not be overwritten or reset as an ordinary product feature.</p><h4>9. CERTIFICATES AND LINKS</h4><p>A HUMANITY/1 certificate or permanent link is a project verification record generated from server data. It is not a government certificate, deed, title, regulated security, or guarantee of market value.</p><h4>10. THIRD-PARTY PAYMENT TERMS</h4><p>Card purchases are processed through Dodo Payments, which states that it acts as Merchant of Record for the transaction. Dodo's own buyer terms and privacy policy also apply to its checkout. Crypto payments are processed through NOWPayments and are additionally subject to the provider's terms, network rules, and applicable law.</p><h4>11. MANDATORY LAW</h4><p>Nothing in these Terms removes consumer, privacy, refund, or other rights that cannot lawfully be excluded. Where a mandatory rule of applicable law conflicts with these Terms, the mandatory rule controls to the extent required.</p><div class="legal-warning">Before live sales begin, HUMANITY/1 will publish a dedicated legal/privacy contact address. No contact address has been invented or inserted into this build.</div></div></div></div><div class="modal-wrap legal-modal" id="privacyModal"><div class="modal"><div class="modal-head"><div><div class="eyebrow">HUMANITY/1 LEGAL</div><h3>Privacy Policy</h3><p>What the project processes, what becomes public, and which providers are involved.</p></div><button class="close" type="button" data-close="privacyModal">×</button></div><div class="legal-copy"><span class="legal-date">VERSION 2026-08-25 · LAST UPDATED 25 AUGUST 2026</span><h4>1. SCOPE</h4><p>This Policy applies to information processed by the HUMANITY/1 project website and backend. Separate providers process information under their own policies when you use card or crypto checkout.</p><h4>2. INFORMATION HUMANITY/1 PROCESSES</h4><ul><li><b>Public mark data:</b> canvas, coordinate, color, country code, AI provider where applicable, seal timestamp, mark number, certificate identifier, and permanent-link identifier.</li><li><b>Transaction and integrity data:</b> batch identifiers, provider payment/order identifiers, amounts, currencies, payment states, timestamps, provider event identifiers, reservation data, and security/audit records needed to verify payment and preserve artwork integrity.</li><li><b>Payment-provider event data:</b> information returned by Dodo Payments or NOWPayments for verification, disputes, refunds, fraud prevention, reconciliation, and compliance. Provider payloads may contain billing/contact details supplied to the provider. Those details are not intentionally published in the artwork or public admin views.</li><li><b>Security data:</b> IP-derived hashes and rate-limit records, request/security logs, and Cloudflare Turnstile verification information used to reduce abuse and automated reservations.</li><li><b>Browser storage:</b> sessionStorage is used for the pending card-checkout recovery state. HUMANITY/1 does not use that state as proof of payment.</li></ul><h4>3. CARD DATA</h4><p>HUMANITY/1 does not ask you to enter raw card numbers or CVV into the HUMANITY/1 page. Card entry occurs on Dodo Payments' checkout. Dodo Payments may independently collect and process billing, identity, tax, fraud, and payment information as Merchant of Record.</p><h4>4. CRYPTO DATA</h4><p>NOWPayments processes the crypto payment route and may process wallet, transaction, technical, or other data under its own policies. Blockchain transactions may also be publicly visible on the relevant network independently of HUMANITY/1.</p><h4>5. WHY DATA IS USED</h4><p>Data is used to provide the artwork, reserve cells, verify payment, prevent double payment and fraud, enforce security controls, create permanent certificates and links, maintain country aggregates, investigate disputes, comply with law, and protect the integrity of permanent marks.</p><h4>6. PERMANENT PUBLIC ART RECORD</h4><p>After a mark is validly sealed, its non-account artwork metadata is intentionally public and designed to remain part of the permanent historical record. HUMANITY/1 does not require a public name, email address, phone number, or wallet address to be displayed on a mark.</p><h4>7. RETENTION</h4><p>Permanent mark records are intended to be retained indefinitely as part of the artwork. Payment, security, dispute, accounting, and provider-event records are retained for as long as reasonably necessary for transaction verification, fraud prevention, legal obligations, disputes, and system integrity.</p><h4>8. SERVICE PROVIDERS AND INTERNATIONAL PROCESSING</h4><p>HUMANITY/1 uses Supabase for backend/database infrastructure and Cloudflare Turnstile for bot/security checks. Card transactions use Dodo Payments; crypto transactions use NOWPayments. These providers may process data in jurisdictions different from your own and apply their own privacy terms and safeguards.</p><h4>9. YOUR RIGHTS</h4><p>Depending on your jurisdiction, you may have rights to access, correct, delete, restrict, object to, or receive a copy of personal data, and to complain to a supervisory authority. These rights are not absolute and may be limited by legal obligations, fraud prevention, dispute preservation, or other lawful grounds.</p><h4>10. SECURITY</h4><p>HUMANITY/1 uses server-side payment verification, restricted database privileges, immutable-mark controls, signed webhooks, provider re-checks, rate limiting, and anti-bot controls. No internet service can guarantee absolute security.</p><h4>11. CHILDREN</h4><p>HUMANITY/1 is not intended for children where the selected payment provider or applicable law prohibits them from entering the transaction. NOWPayments' published privacy policy states that its services are not intended for children under 18.</p><h4>12. PROVIDER POLICIES</h4><p><a href="https://dodopayments.com/privacy-policy" target="_blank" rel="noopener noreferrer nofollow">Dodo Payments Privacy Policy</a> · <a href="https://dodopayments.com/archive/buyer-terms" target="_blank" rel="noopener noreferrer nofollow">Dodo Payments Buyer Terms</a> · <a href="https://nowpayments.io/doc/privacy-policy.pdf" target="_blank" rel="noopener noreferrer nofollow">NOWPayments Privacy Policy</a> · <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer nofollow">Cloudflare Privacy Policy</a></p><div class="legal-warning">A dedicated HUMANITY/1 privacy contact address must be added before live sales are enabled. This build intentionally does not invent one.</div></div></div></div><div class="modal-wrap legal-modal" id="paymentPolicyModal"><div class="modal"><div class="modal-head"><div><div class="eyebrow">HUMANITY/1 LEGAL</div><h3>Payment &amp; Refund Policy</h3><p>How card, crypto, reservations, refunds, reversals, and permanent marks interact.</p></div><button class="close" type="button" data-close="paymentPolicyModal">×</button></div><div class="legal-copy"><span class="legal-date">VERSION 2026-08-25 · LAST UPDATED 25 AUGUST 2026</span><h4>1. PRICE</h4><p>The base price is USD $4.99 per mark. One checkout may include 1–1,000 marks. Applicable card taxes are calculated at Dodo Payments checkout based on the information and jurisdiction used by the provider. Crypto quotes, network conditions, and provider minimums may change the amount of cryptocurrency required to satisfy the USD-denominated order.</p><h4>2. RESERVATION IS NOT PAYMENT</h4><p>A browser selection or reservation does not create a permanent mark. Cells are temporarily reserved by the server and can expire. Payment starts only after a valid server reservation exists.</p><h4>3. CARD PAYMENTS — DODO PAYMENTS</h4><p>Card transactions are completed on Dodo Payments' checkout. Dodo Payments states that it acts as Merchant of Record for those purchases. Its Buyer Terms, tax handling, fraud controls, refund process, and privacy policy apply in addition to HUMANITY/1's policies.</p><p><a href="https://dodopayments.com/archive/buyer-terms" target="_blank" rel="noopener noreferrer nofollow">Read Dodo Payments Buyer Terms</a></p><h4>4. CRYPTO PAYMENTS — NOWPAYMENTS</h4><p>Crypto payments use NOWPayments. You must send the exact supported currency/network to the generated address and comply with the displayed amount and timing instructions. Sending another token, using the wrong network, sending after expiration, or sending to an old address may be irreversible.</p><h4>5. SERVER VERIFICATION CONTROLS THE MARK</h4><p>A success page, browser redirect, screenshot, wallet screenshot, card authorization message, or client-side state is never sufficient to seal a mark. HUMANITY/1 seals only after the backend independently validates the payment state through the configured provider verification chain and the database integrity checks succeed.</p><h4>6. FAILED, EXPIRED, OR CANCELLED PAYMENTS</h4><p>If payment is not successfully verified, no new permanent mark is created. A failed or expired payment normally releases the reservation when it is safe to do so. An active provider payment may keep the cells reserved temporarily to prevent double payment or conflicting ownership.</p><h4>7. DUPLICATE PAYMENT PROTECTION</h4><p>The backend allows only one active payment channel for a reserved batch. Do not intentionally open or pay multiple provider invoices for the same reservation. If you believe you were charged twice, preserve the provider receipts and request review through the applicable payment support channel.</p><h4>8. REFUNDS, DISPUTES, REVERSALS, AND CHARGEBACKS</h4><p>Refund rights depend on applicable law and the payment provider's rules. For card transactions, Dodo Payments' Buyer Terms state that refunds are handled under its process and may be assessed case by case, without limiting rights that cannot legally be waived.</p><p>For crypto, refunds are not automatically guaranteed because blockchain transfers, network fees, conversion, and routing can be irreversible. Where a refund is legally required or otherwise approved, the operational method and amount may depend on the provider, available settlement route, fees, and applicable law.</p><div class="legal-callout"><b>Artwork integrity:</b> if a mark has already been validly sealed, a later refund, dispute, reversal, or chargeback is recorded as a financial event and does not automatically erase, move, recolor, or transfer the historical artwork mark. Mandatory law overrides this rule where required.</div><h4>9. PAYMENT VERIFIED BUT SEAL BLOCKED</h4><p>If a provider confirms payment but an integrity check prevents a complete atomic seal, HUMANITY/1 will not silently create only part of the purchased batch. The payment is placed into a review path so the issue can be investigated and an appropriate remedy, retry, replacement process, or refund can be determined under provider rules and applicable law.</p><h4>10. NO GUARANTEE OF RESALE OR FINANCIAL VALUE</h4><p>Purchasing a mark is participation in a digital artwork. HUMANITY/1 does not operate a resale market and does not promise liquidity, appreciation, return, profit, or any investment value.</p></div></div></div>
 <div class="turnstile-wrap" id="turnstileWrap" aria-live="polite">
   <div class="turnstile-card">
     <b>SECURITY CHECK</b>
@@ -1381,6 +1396,11 @@
 </div>
 <script>window.HUMANITY_CONFIG={functionsBase:"https://xwcmzsoydgeybjntqljv.supabase.co/functions/v1",publicBaseUrl:"https://ozdalmete-netizen.github.io/humanity/humanity-live.html",turnstileSiteKey:"0x4AAAAAAEbXX1da6YPxw1W0"};</script>
 <script>
+const HUMANITY_LEGAL_VERSION='2026-08-25';
+function legalConsentAccepted(){return document.getElementById('legalConsent')?.checked===true;}
+function syncLegalConsentUI(){const accepted=legalConsentAccepted();const block=document.getElementById('legalConsentBlock');if(block)block.classList.toggle('accepted',accepted);for(const id of ['cardOption','cryptoOption']){const btn=document.getElementById(id);if(btn){btn.classList.toggle('legal-locked',!accepted);btn.setAttribute('aria-disabled',accepted?'false':'true');}}}
+function requireLegalConsent(){if(legalConsentAccepted())return true;document.getElementById('legalConsentBlock')?.scrollIntoView({behavior:'smooth',block:'center'});toast('Accept the Terms, Privacy Policy, and Payment & Refund Policy before payment.');return false;}
+
 const WORLDS={human:{id:'human',sizeX:1000,sizeY:1000,total:1e6,sealed:0,act:'ACT I',title:'THE HUMAN CANVAS',subtitle:'Choose any empty cell. Your color. Your decision.',sheetLabel:'HUMAN MARK'},ai:{id:'ai',sizeX:1000,sizeY:1000,total:1e6,sealed:0,act:'ACT II',title:'THE AI CANVAS',subtitle:'Choose a cell. Ask any AI which color should live there.',sheetLabel:'AI-GUIDED MARK'},bridge:{id:'bridge',sizeX:null,sizeY:null,total:null,sealed:0,act:'ACT III',title:'THE BRIDGE',subtitle:'Human and AI build the space between them.',sheetLabel:'BRIDGE MARK',locked:true}};
 const COLORS=[
 ['Burgundy','#6D001A'],['Red','#BE0039'],['Orange Red','#FF4500'],['Orange','#FFA800'],
@@ -2495,6 +2515,9 @@ async function openCheckout(){
   document.getElementById('checkoutTotal').textContent=money(reservation.amountMinor);
   document.getElementById('cardTotal').textContent=money(reservation.amountMinor);
   document.getElementById('cryptoTotal').textContent=money(reservation.amountMinor);
+  const legalConsent=document.getElementById('legalConsent');
+  if(legalConsent)legalConsent.checked=false;
+  syncLegalConsentUI();
   updateReservationBanner();
   openModal('paymentModal');
 }
@@ -2925,6 +2948,7 @@ function setCardVerify(status,title,copy,done=false){
 }
 
 async function startDodoCardCheckout(){
+  if(!requireLegalConsent())return;
   if(!validateCheckout())return;
   if(!reservationIsActive()){
     toast('Reservation expired. Tap REVIEW & PAY again.');
@@ -2939,7 +2963,9 @@ async function startDodoCardCheckout(){
       reservation_token:reservationState.token,
       country_code:document.getElementById('countrySelect').value,
       ai_provider:activeWorld.id==='ai'?document.getElementById('aiProvider').value:null,
-      ai_model:null
+      ai_model:null,
+      legal_accepted:true,
+      legal_version:HUMANITY_LEGAL_VERSION
     });
     reservationState.expiresAt=result.reservation_expires_at||result.expires_at||reservationState.expiresAt;
     startReservationTimer();
@@ -3253,6 +3279,7 @@ function startCryptoPolling(){
 }
 
 async function createCryptoPayment(payCurrency){
+  if(!requireLegalConsent())return;
   if(!reservationIsActive()){
     toast('Reservation expired. Reserve the cells again.');
     closeModal('cryptoPaymentModal');
@@ -3376,6 +3403,7 @@ async function refreshCryptoOptions(){
 }
 
 function openCryptoPaymentFlow(){
+  if(!requireLegalConsent())return;
   if(!validateCheckout())return;
   if(!reservationIsActive()){
     toast('Reservation expired. Tap REVIEW & PAY again.');
@@ -3421,7 +3449,9 @@ async function prepareReservedCheckout(channel){
       reservation_token:reservationState.token,
       country_code:document.getElementById('countrySelect').value,
       ai_provider:activeWorld.id==='ai'?document.getElementById('aiProvider').value:null,
-      ai_model:null
+      ai_model:null,
+      legal_accepted:true,
+      legal_version:HUMANITY_LEGAL_VERSION
     });
     reservationState.expiresAt=result.expires_at;
     startReservationTimer();
@@ -3515,6 +3545,9 @@ document.querySelectorAll('[data-close]').forEach(btn=>btn.onclick=()=>{
   closeModal(btn.dataset.close);
 });
 document.getElementById('aboutBtn').onclick=()=>openModal('aboutModal');
+document.querySelectorAll('[data-legal]').forEach(btn=>{btn.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openModal(btn.dataset.legal);});});
+document.getElementById('legalConsent')?.addEventListener('change',syncLegalConsentUI);
+syncLegalConsentUI();
 
 document.getElementById('cardOption').onclick=startDodoCardCheckout;
 document.getElementById('cryptoOption').onclick=openCryptoPaymentFlow;
@@ -3802,7 +3835,7 @@ setCountryCanvas('human',{sync:false});
 
 // Fresh page load always begins from backend truth. User cell selections are not restored.
 clearTransientSelectionState();
-window.HUMANITY_BUILD='V5.8.4-CAPABILITY-HARDENED-20260825';
+window.HUMANITY_BUILD='V5.8.5-LEGAL-CONSENT-20260825';
 setPublicTruthGate('loading');
 
 async function bootPublicTruth(force=false){
