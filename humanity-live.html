@@ -3,9 +3,10 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+<meta name="referrer" content="no-referrer" />
 <meta name="theme-color" content="#f4f1ea" />
 <title>HUMANITY/1 — Human. AI. The Bridge.</title>
-<meta name="humanity-build" content="V5.8.2-RETURN-HARDENED-20260825" />
+<meta name="humanity-build" content="V5.8.4-CAPABILITY-HARDENED-20260825" />
 <style>
 :root{--bg:#f4f1ea;--paper:#fffef9;--ink:#11110f;--muted:#77736b;--line:#d8d3c8;--line2:#e8e3d9;--soft:#ece8df;--shadow:0 24px 80px rgba(22,19,14,.10);--shadow2:0 12px 34px rgba(22,19,14,.08);--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;--mono:"SFMono-Regular","SF Mono","Roboto Mono",Consolas,monospace}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased}body{min-width:320px}button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}#app{min-height:100vh;min-height:100dvh}
@@ -2888,26 +2889,27 @@ async function resolvePermanentIncomingLink(){
 
 
 
-const DODO_PENDING_KEY='humanity1_dodo_pending_v1';
+const DODO_PENDING_KEY='humanity1_dodo_pending_v2';
+try{localStorage.removeItem('humanity1_dodo_pending_v1');sessionStorage.removeItem('humanity1_dodo_pending_v1')}catch{}
 let dodoStatusTimer=null;
 let dodoStatusAttempts=0;
 
 function saveDodoPending(data){
-  try{localStorage.setItem(DODO_PENDING_KEY,JSON.stringify(data))}catch{}
+  try{sessionStorage.setItem(DODO_PENDING_KEY,JSON.stringify(data))}catch{}
 }
 function loadDodoPending(){
   try{
-    const raw=localStorage.getItem(DODO_PENDING_KEY);
+    const raw=sessionStorage.getItem(DODO_PENDING_KEY);
     return raw?JSON.parse(raw):null;
   }catch{return null}
 }
 function clearDodoPending(){
-  try{localStorage.removeItem(DODO_PENDING_KEY)}catch{}
+  try{sessionStorage.removeItem(DODO_PENDING_KEY)}catch{}
 }
 function cleanDodoReturnParams(){
   try{
     const u=new URL(location.href);
-    ['dodo_return','dodo_cancel','status','payment_id','h1p','email','license_key'].forEach(k=>u.searchParams.delete(k));
+    ['dodo_return','dodo_cancel','status','payment_id','h1p','h1r','email','license_key'].forEach(k=>u.searchParams.delete(k));
     history.replaceState({},'',u.pathname+(u.search?u.search:'')+(u.hash||''));
   }catch{}
 }
@@ -3023,8 +3025,8 @@ async function pollDodoPaymentOnce(pending){
 
 async function pollDodoReturnStatusOnce(reference){
   try{
-    if(!reference?.paymentRowId)throw Object.assign(new Error('PAYMENT_REFERENCE_MISSING'),{code:'PAYMENT_REFERENCE_MISSING'});
-    const status=await window.HUMANITY_API.dodoReturnStatus({payment_row_id:reference.paymentRowId});
+    if(!reference?.paymentRowId||!reference?.returnToken)throw Object.assign(new Error('PAYMENT_REFERENCE_MISSING'),{code:'PAYMENT_REFERENCE_MISSING'});
+    const status=await window.HUMANITY_API.dodoReturnStatus({payment_row_id:reference.paymentRowId,return_token:reference.returnToken});
     const provider=String(status.provider_status||'').toUpperCase();
     document.getElementById('cardVerifyStatus').textContent=provider||'VERIFYING';
 
@@ -3090,10 +3092,14 @@ async function resumeDodoReturn(){
 
   const pending=loadDodoPending();
   const paymentRowId=String(params.get('h1p')||pending?.paymentRowId||'').trim();
+  const returnToken=String(params.get('h1r')||'').trim();
 
-  // New live checkouts recover only through HUMANITY/1's own random payment-row UUID.
-  // Provider payment IDs are intentionally not accepted as public return lookup keys.
-  if(paymentRowId){
+  // New live checkouts require two independent capabilities: the payment-row UUID and
+  // a separate 256-bit return token embedded only in the provider return/cancel URL.
+  if(paymentRowId&&returnToken){
+    // The return capability is copied to memory, then removed from the address bar
+    // immediately so it is not left in screenshots, copied URLs, or later history state.
+    cleanDodoReturnParams();
     openModal('cardVerifyModal');
     setCardVerify(
       'VERIFYING',
@@ -3103,7 +3109,7 @@ async function resumeDodoReturn(){
         : 'Matching this return to the verified HUMANITY/1 payment record…'
     );
 
-    const reference={paymentRowId};
+    const reference={paymentRowId,returnToken};
     dodoStatusAttempts=0;
     await pollDodoReturnStatusOnce(reference);
     if(!dodoStatusTimer){
@@ -3112,7 +3118,8 @@ async function resumeDodoReturn(){
     return;
   }
 
-  // Backward-compatible fallback for older checkout URLs created before h1p was added.
+  // Backward-compatible fallback for pre-capability checkout URLs: only the local
+  // reservation token can be used. A bare payment UUID is never sufficient.
   if(pending?.batchId&&pending?.token){
     openModal('cardVerifyModal');
     reservationState={
@@ -3795,7 +3802,7 @@ setCountryCanvas('human',{sync:false});
 
 // Fresh page load always begins from backend truth. User cell selections are not restored.
 clearTransientSelectionState();
-window.HUMANITY_BUILD='V5.8.2-RETURN-HARDENED-20260825';
+window.HUMANITY_BUILD='V5.8.4-CAPABILITY-HARDENED-20260825';
 setPublicTruthGate('loading');
 
 async function bootPublicTruth(force=false){
