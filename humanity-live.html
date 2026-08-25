@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
 <meta name="theme-color" content="#f4f1ea" />
 <title>HUMANITY/1 — Human. AI. The Bridge.</title>
-<meta name="humanity-build" content="V5.7.8-20260825" />
+<meta name="humanity-build" content="V5.7.9-20260825" />
 <style>
 :root{--bg:#f4f1ea;--paper:#fffef9;--ink:#11110f;--muted:#77736b;--line:#d8d3c8;--line2:#e8e3d9;--soft:#ece8df;--shadow:0 24px 80px rgba(22,19,14,.10);--shadow2:0 12px 34px rgba(22,19,14,.08);--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;--mono:"SFMono-Regular","SF Mono","Roboto Mono",Consolas,monospace}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased}body{min-width:320px}button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}#app{min-height:100vh;min-height:100dvh}
@@ -2863,13 +2863,14 @@ async function resolvePermanentIncomingLink(){
     if(!mark)return;
     rememberSealedMarks([mark]);
     focusedSealedMark=mark;
-    if(certificateId){
-      sealedExperience={ok:true,verified:true,batch:null,marks:[mark]};
-      currentSealedIndex=0;
-      renderSealedExperience();
-      openModal('sealedModal');
-    }else{
-      focusOnPermanentMark(mark,{close:false});
+    // V5.7.9: Both permanent mark links and certificate links open the
+    // verified permanent record first. The visitor can then use VIEW MY MARK
+    // to jump to the exact cell on the canvas.
+    sealedExperience={ok:true,verified:true,batch:null,marks:[mark]};
+    currentSealedIndex=0;
+    renderSealedExperience();
+    openModal('sealedModal');
+    if(shareSlug){
       toast(`Permanent mark #${Number(mark.mark_number).toLocaleString('en-US')} verified.`);
     }
   }catch{
@@ -3787,7 +3788,7 @@ setCountryCanvas('human',{sync:false});
 
 // Fresh page load always begins from backend truth. User cell selections are not restored.
 clearTransientSelectionState();
-window.HUMANITY_BUILD='V5.7.8-20260825';
+window.HUMANITY_BUILD='V5.7.9-20260825';
 setPublicTruthGate('loading');
 
 async function bootPublicTruth(force=false){
