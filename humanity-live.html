@@ -5,13 +5,16 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
 <meta name="theme-color" content="#f4f1ea" />
 <title>HUMANITY/1 — Human. AI. The Bridge.</title>
-<meta name="humanity-build" content="V5.6.2-20260825" />
+<meta name="humanity-build" content="V5.7.4-20260825" />
 <style>
 :root{--bg:#f4f1ea;--paper:#fffef9;--ink:#11110f;--muted:#77736b;--line:#d8d3c8;--line2:#e8e3d9;--soft:#ece8df;--shadow:0 24px 80px rgba(22,19,14,.10);--shadow2:0 12px 34px rgba(22,19,14,.08);--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;--mono:"SFMono-Regular","SF Mono","Roboto Mono",Consolas,monospace}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased}body{min-width:320px}button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}#app{min-height:100vh;min-height:100dvh}
 .topbar{height:72px;padding:0 clamp(14px,3vw,34px);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;border-bottom:1px solid var(--line);background:rgba(244,241,234,.90);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);position:sticky;top:0;z-index:30}.brand{border:0;background:none;padding:0;text-align:left;cursor:pointer;min-width:0}.brand strong{font-size:14px;letter-spacing:.18em}.brand span{display:block;color:var(--muted);font-size:10px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.global-progress{text-align:center}.progress-copy{font:700 12px var(--mono)}.slash{color:#aaa59b;margin:0 3px}.progress-label{font-size:8px;letter-spacing:.18em;margin-top:4px;color:var(--muted)}.about-btn{justify-self:end;border:1px solid var(--line);border-radius:999px;background:rgba(255,254,249,.72);padding:9px 13px;font-size:10px;letter-spacing:.1em;font-weight:800;cursor:pointer}
 .main{width:min(1680px,100%);margin:0 auto;padding:34px clamp(18px,3vw,40px) 64px}.hero{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(340px,.82fr);gap:56px;align-items:end;margin:14px 0 24px}.eyebrow{font-size:9px;letter-spacing:.19em;text-transform:uppercase;color:var(--muted);font-weight:800}.hero h1{font-size:clamp(32px,5vw,72px);line-height:1.10;letter-spacing:-.055em;margin:10px 0 0;max-width:900px}.hero h1 em{font-family:Georgia,serif;font-weight:400}.hero-copy{margin:0 0 4px;color:var(--muted);font-size:13px;line-height:1.65;max-width:490px}
 .world-nav{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}.world-card{position:relative;min-height:100px;padding:16px;border:1px solid var(--line);border-radius:18px;background:rgba(255,254,249,.58);display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;gap:4px 13px;text-align:left;cursor:pointer;overflow:hidden}.world-card.active{background:var(--ink);color:white;border-color:var(--ink)}.world-index{font:700 10px var(--mono);opacity:.55;grid-row:1/3}.world-name{font-size:12px;letter-spacing:.10em;font-weight:850;align-self:end}.world-count{font:600 10px var(--mono);opacity:.62}.world-card.locked{background:#ebe7dd}.world-card.locked .world-count{letter-spacing:.16em}.lock-mark{position:absolute;right:14px;top:14px;font-size:11px;opacity:.5}
+.world-card.bridge-ready{background:#fffef9;border-color:#11110f;box-shadow:inset 0 0 0 1px #11110f}
+.world-card.bridge-ready .world-count{color:#2f6a43;font-weight:900;letter-spacing:.12em}
+.world-card.bridge-ready .lock-mark{opacity:1;color:#2f6a43}
 .canvas-shell{margin-top:0;border:1px solid var(--line);background:var(--paper);border-radius:26px;overflow:hidden;box-shadow:var(--shadow)}.canvas-topline{display:flex;justify-content:space-between;gap:28px;padding:20px 24px;border-bottom:1px solid var(--line2)}.canvas-kicker{font-size:9px;letter-spacing:.18em;color:var(--muted);font-weight:800}.canvas-topline h2{margin:4px 0 2px;font-size:24px;letter-spacing:-.03em}.canvas-topline p{margin:0;color:var(--muted);font-size:13px}.canvas-status{text-align:right;align-self:center}.status-big{font:750 18px var(--mono)}.status-small{font-size:9px;letter-spacing:.15em;color:var(--muted);margin-top:4px}
 .viewport{position:relative;height:min(72vh,860px);min-height:520px;background:#ece8df;overflow:hidden;touch-action:none;cursor:grab}.viewport.dragging{cursor:grabbing}canvas{display:block;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges}.coordinate-pill{position:absolute;right:18px;top:18px;background:rgba(255,254,249,.9);border:1px solid var(--line);border-radius:999px;padding:8px 10px;font:650 9px var(--mono);box-shadow:var(--shadow2);opacity:0;transform:translateY(-4px);transition:.18s ease}.coordinate-pill.show{opacity:1;transform:none}.canvas-controls{position:absolute;right:16px;bottom:16px;display:flex;flex-direction:column;gap:7px;z-index:8;touch-action:manipulation}.control{width:48px;height:48px;touch-action:manipulation;border-radius:13px;border:1px solid var(--line);background:rgba(255,254,249,.92);box-shadow:var(--shadow2);font-weight:850;cursor:pointer}.control.fit{font-size:9px;letter-spacing:.08em}.gesture-hint{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);max-width:calc(100% - 180px);background:rgba(17,17,15,.9);color:white;padding:9px 13px;border-radius:999px;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 12px 35px rgba(0,0,0,.16);pointer-events:none;transition:.18s ease}.gesture-hint.hidden{opacity:0}.canvas-footer{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 18px;border-top:1px solid var(--line2)}.rules{display:flex;gap:8px;flex-wrap:wrap}.rules span{font-size:8px;letter-spacing:.12em;color:var(--muted);padding:7px 9px;border:1px solid var(--line2);border-radius:999px}.seal-cta{border:0;background:var(--ink);color:white;border-radius:999px;padding:12px 18px;font-size:9px;letter-spacing:.12em;font-weight:850;cursor:pointer}
 .backdrop{position:fixed;inset:0;background:rgba(24,21,16,.28);backdrop-filter:blur(4px);z-index:40;opacity:0;pointer-events:none;transition:.22s}.backdrop.show{opacity:1;pointer-events:auto}.sheet{position:fixed;z-index:45;left:0;right:0;bottom:0;background:var(--paper);border-radius:26px 26px 0 0;border:1px solid var(--line);padding:10px 18px max(18px,env(safe-area-inset-bottom));box-shadow:0 -28px 80px rgba(20,18,14,.16);transform:translateY(102%);transition:transform .35s cubic-bezier(.16,1,.3,1);max-height:86dvh;overflow:auto}.sheet.show{transform:none}.sheet-handle{width:38px;height:4px;border-radius:5px;background:#d4cfc4;margin:2px auto 15px}.sheet-top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:14px}.sheet-top h3{font-size:20px;margin:5px 0 0;letter-spacing:-.025em}.coord{font:650 9px var(--mono);background:var(--soft);border-radius:999px;padding:7px 9px;white-space:nowrap}.selected-color-panel{display:flex;align-items:center;gap:12px;margin:0 0 12px;padding:11px 12px;border:1px solid var(--line);border-radius:14px;background:#faf8f2}
@@ -146,7 +149,7 @@
 .country-board-header,
 .country-row{
   display:grid;
-  grid-template-columns:80px minmax(0,1fr) auto;
+  grid-template-columns:70px minmax(190px,1fr) minmax(150px,.7fr) 88px;
   gap:14px;
   align-items:center;
   padding:13px 16px;
@@ -158,34 +161,63 @@
   letter-spacing:.13em;
   font-weight:850;
 }
+.country-board-header span:nth-child(3){text-align:left}
 .country-board-header span:last-child{text-align:right}
 .country-row{
   border-bottom:1px solid var(--line2);
+  transition:background .15s ease;
 }
 .country-row:last-child{border-bottom:0}
+.country-row.podium{background:rgba(17,17,15,.025)}
 .country-rank{
-  font:750 10px var(--mono);
+  width:34px;height:34px;border-radius:10px;
+  display:grid;place-items:center;
+  font:800 10px var(--mono);
   color:var(--muted);
+  background:var(--soft);
+  border:1px solid var(--line2);
+}
+.country-row.podium .country-rank{
+  background:var(--ink);color:#fff;border-color:var(--ink)
 }
 .country-name{
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:11px;
   min-width:0;
   font-size:11px;
-  font-weight:780;
+  font-weight:800;
+}
+.country-name-copy{min-width:0}
+.country-name-copy b{
+  display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11px
+}
+.country-name-copy small{
+  display:block;margin-top:2px;font:700 7px var(--mono);letter-spacing:.11em;color:var(--muted)
 }
 .country-flag{
-  width:25px;
-  height:18px;
-  border-radius:4px;
-  background:var(--soft);
-  border:1px solid var(--line2);
-  overflow:hidden;
+  width:32px;
+  height:24px;
+  display:grid;
+  place-items:center;
+  font-size:22px;
+  line-height:1;
   flex:0 0 auto;
+  filter:saturate(.92);
+}
+.country-share{min-width:0}
+.country-share-top{
+  display:flex;justify-content:space-between;gap:8px;
+  margin-bottom:5px;font-size:7px;color:var(--muted);font-weight:800
+}
+.country-share-bar{
+  height:5px;border-radius:999px;background:var(--soft);overflow:hidden
+}
+.country-share-bar i{
+  display:block;height:100%;min-width:0;border-radius:999px;background:var(--ink)
 }
 .country-marks{
-  font:750 10px var(--mono);
+  font:800 11px var(--mono);
   text-align:right;
 }
 .country-empty{
@@ -201,10 +233,16 @@
   .country-tabs{padding:3px}
   .country-tab{padding:8px 10px;font-size:8px}
   .country-board-header,.country-row{
-    grid-template-columns:48px minmax(0,1fr) auto;
+    grid-template-columns:42px minmax(0,1fr) 72px;
     padding:12px 13px;
-    gap:10px;
+    gap:9px;
   }
+  .country-board-header span:nth-child(3),.country-share{display:none}
+  .country-rank{width:32px;height:32px}
+  .country-flag{width:28px;height:22px;font-size:20px}
+  .country-name{gap:8px}
+  .country-name-copy b{font-size:10px}
+  .country-marks{font-size:10px}
 }
 
 
@@ -578,6 +616,21 @@
   #paymentModal .modal-head{top:-20px;margin:-20px -20px 0;padding:20px 20px 12px}
 }
 
+
+/* ===== V5.7.3 TURNSTILE READY ===== */
+.turnstile-wrap{
+  position:fixed;inset:0;z-index:140;display:none;place-items:center;padding:18px;
+  background:rgba(22,20,16,.42);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)
+}
+.turnstile-wrap.show{display:grid}
+.turnstile-card{
+  width:min(390px,100%);padding:18px;border:1px solid var(--line);border-radius:18px;
+  background:var(--paper);box-shadow:var(--shadow);text-align:center
+}
+.turnstile-card b{display:block;font-size:10px;letter-spacing:.12em}
+.turnstile-card p{margin:6px 0 13px;color:var(--muted);font-size:9px;line-height:1.5}
+#turnstileHost{min-height:1px;display:flex;justify-content:center}
+
 /* ===== V5.6.3 STARTUP SOURCE-OF-TRUTH GATE ===== */
 .truth-gate{
   position:absolute;inset:0;z-index:20;display:grid;place-items:center;padding:24px;
@@ -728,6 +781,7 @@
     <div class="country-board-header">
       <span>RANK</span>
       <span>COUNTRY</span>
+      <span>SHARE OF CANVAS</span>
       <span>MARKS</span>
     </div>
     <div id="countryRows">
@@ -1058,7 +1112,7 @@
     </label>
 
     <div class="ai-checkout-fields" id="checkoutAiFields">
-      <label class="checkout-field">
+      <label class="checkout-field" id="aiProviderField">
         <span>AI PROVIDER</span>
         <select id="aiProvider">
           <option value="">Choose AI</option>
@@ -1069,6 +1123,8 @@
           <option>DeepSeek</option>
           <option>Other</option>
         </select>
+        <small class="checkout-field-error" id="aiProviderError">Choose an AI to continue.</small>
+        <small>The selected AI provider becomes part of the permanent record for every mark in this batch.</small>
       </label>
     </div>
 
@@ -1086,12 +1142,12 @@
       <h4>AFTER VERIFIED PAYMENT</h4>
       <div class="reward-grid">
         <button class="reward" id="rewardCertificate"><span>✦</span><b>CERTIFICATES</b><span>One permanent record for each sealed mark</span></button>
-        <button class="reward" id="rewardShare"><span>↗</span><b>SHARE CARD</b><span>Share the completed batch</span></button>
+        <button class="reward" id="rewardShare"><span>↗</span><b>VIRAL SHARE CARD</b><span>Ready for WhatsApp · Instagram · X</span></button>
         <button class="reward" id="rewardLink"><span>⌖</span><b>CELL LINKS</b><span>Open directly on sealed marks</span></button>
       </div>
     </div>
 
-    <div class="security-note">Payment starts only after the server confirms that every selected cell can be reserved. A browser success page can never seal a mark.</div>
+    <div class="security-note">Payment starts only after the server confirms that every selected cell can be reserved. A browser success page can never seal a mark. Only one active payment attempt is allowed per reserved batch to prevent accidental double payment.</div>
   </div>
 </div>
 
@@ -1254,11 +1310,18 @@
   </div>
 </div>
 
-<div class="modal-wrap" id="bridgeModal"><div class="modal bridge-modal"><div class="bridge-symbol">◆</div><div class="eyebrow">ACT III</div><h3>THE BRIDGE IS LOCKED.</h3><p>Human and AI must first complete their separate canvases. Only then will the space between them open.</p><div class="bridge-condition"><span>HUMAN</span><b>0 / 1,000,000</b><span>AI</span><b>0 / 1,000,000</b></div><button class="primary" data-close="bridgeModal">UNDERSTOOD</button></div></div>
+<div class="modal-wrap" id="bridgeModal"><div class="modal bridge-modal"><div class="bridge-symbol">◆</div><div class="eyebrow">ACT III</div><h3 id="bridgeModalTitle">THE BRIDGE IS LOCKED.</h3><p id="bridgeModalCopy">Human and AI must first complete their separate canvases. Only then will the space between them open.</p><div class="bridge-condition"><span>HUMAN</span><b>0 / 1,000,000</b><span>AI</span><b>0 / 1,000,000</b></div><button class="primary" id="bridgeModalButton" data-close="bridgeModal">UNDERSTOOD</button></div></div>
 <div class="modal-wrap" id="aboutModal"><div class="modal"><div class="modal-head"><div><div class="eyebrow">HUMANITY/1</div><h3>Three acts. One permanent work.</h3></div><button class="close" data-close="aboutModal">×</button></div><div class="about-grid"><div><b>01 — HUMAN</b><p>1,000,000 permanent human choices.</p></div><div><b>02 — THE BRIDGE</b><p>Locked until Human and AI are complete.</p></div><div><b>03 — AI</b><p>1,000,000 choices directed by artificial intelligence.</p></div></div><p class="about-end">Every mark costs $4.99 + applicable taxes. One person may own multiple marks.</p></div></div>
+<div class="turnstile-wrap" id="turnstileWrap" aria-live="polite">
+  <div class="turnstile-card">
+    <b>SECURITY CHECK</b>
+    <p>Checking this reservation before the cells are locked. This usually completes automatically.</p>
+    <div id="turnstileHost"></div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 </div>
-<script>window.HUMANITY_CONFIG={functionsBase:"https://xwcmzsoydgeybjntqljv.supabase.co/functions/v1",publicBaseUrl:"https://ozdalmete-netizen.github.io/humanity/humanity-live.html"};</script>
+<script>window.HUMANITY_CONFIG={functionsBase:"https://xwcmzsoydgeybjntqljv.supabase.co/functions/v1",publicBaseUrl:"https://ozdalmete-netizen.github.io/humanity/humanity-live.html",turnstileSiteKey:"0x4AAAAAAEbXX1da6YPxw1W0"};</script>
 <script>
 const WORLDS={human:{id:'human',sizeX:1000,sizeY:1000,total:1e6,sealed:0,act:'ACT I',title:'THE HUMAN CANVAS',subtitle:'Choose any empty cell. Your color. Your decision.',sheetLabel:'HUMAN MARK'},ai:{id:'ai',sizeX:1000,sizeY:1000,total:1e6,sealed:0,act:'ACT II',title:'THE AI CANVAS',subtitle:'Choose a cell. Ask any AI which color should live there.',sheetLabel:'AI-GUIDED MARK'},bridge:{id:'bridge',sizeX:null,sizeY:null,total:null,sealed:0,act:'ACT III',title:'THE BRIDGE',subtitle:'Human and AI build the space between them.',sheetLabel:'BRIDGE MARK',locked:true}};
 const COLORS=[
@@ -1537,7 +1600,11 @@ function updateWorldUI(){
 
 function switchWorld(id){
   if(!publicTruthReady){toast('Live canvas is still syncing with the server.');return}
-  if(id==='bridge'){openModal('bridgeModal');return}
+  if(id==='bridge'){
+    updateBridgeUI();
+    openModal('bridgeModal');
+    return;
+  }
   if(selectedCells.size){toast('Clear or finish the current selection before switching canvases.');return}
   activeWorld=WORLDS[id];
   selectionMode=false;activeTool='tap';activeColor=null;areaPreview=null;
@@ -1545,6 +1612,10 @@ function switchWorld(id){
   selectedCells.clear();
   document.getElementById('canvasFooter').classList.remove('selection-active');
   resetOffscreen();updateWorldUI();updateSelectionUI();resetSelectedColorUI();closeColorSheet();resize();
+
+  // Keep LIVE BY COUNTRY locked to the currently selected canvas.
+  setCountryCanvas(id,{sync:false});
+
   syncCanvasFromBackend(id,{reset:true,silent:true});
 }
 
@@ -1766,6 +1837,105 @@ async function backendPost(functionName,payload){
   return data;
 }
 
+
+let turnstileWidgetId=null;
+let turnstileResolve=null;
+let turnstileReject=null;
+let turnstileLoadPromise=null;
+
+function turnstileSiteKey(){
+  return String(window.HUMANITY_CONFIG?.turnstileSiteKey||'').trim();
+}
+function setTurnstileVisible(show){
+  document.getElementById('turnstileWrap')?.classList.toggle('show',!!show);
+}
+function loadTurnstileScript(){
+  if(!turnstileSiteKey())return Promise.resolve(false);
+  if(window.turnstile)return Promise.resolve(true);
+  if(turnstileLoadPromise)return turnstileLoadPromise;
+  turnstileLoadPromise=new Promise((resolve,reject)=>{
+    const existing=document.querySelector('script[data-h1-turnstile]');
+    if(existing){
+      const timer=setInterval(()=>{
+        if(window.turnstile){clearInterval(timer);resolve(true)}
+      },80);
+      setTimeout(()=>{clearInterval(timer);window.turnstile?resolve(true):reject(new Error('TURNSTILE_LOAD_TIMEOUT'))},10000);
+      return;
+    }
+    const s=document.createElement('script');
+    s.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+    s.async=true;s.defer=true;s.dataset.h1Turnstile='1';
+    s.onload=()=>resolve(!!window.turnstile);
+    s.onerror=()=>reject(new Error('TURNSTILE_LOAD_FAILED'));
+    document.head.appendChild(s);
+  });
+  return turnstileLoadPromise;
+}
+
+async function ensureTurnstileWidget(){
+  if(!turnstileSiteKey())return null;
+  await loadTurnstileScript();
+  if(turnstileWidgetId!==null)return turnstileWidgetId;
+  if(!window.turnstile)throw new Error('TURNSTILE_UNAVAILABLE');
+
+  turnstileWidgetId=window.turnstile.render('#turnstileHost',{
+    sitekey:turnstileSiteKey(),
+    theme:'light',
+    size:'flexible',
+    appearance:'interaction-only',
+    execution:'execute',
+    action:'reserve_batch',
+    callback:(token)=>{
+      const resolve=turnstileResolve;
+      turnstileResolve=null;turnstileReject=null;
+      setTurnstileVisible(false);
+      if(resolve)resolve(token);
+    },
+    'error-callback':()=>{
+      const reject=turnstileReject;
+      turnstileResolve=null;turnstileReject=null;
+      setTurnstileVisible(false);
+      if(reject)reject(new Error('TURNSTILE_FAILED'));
+    },
+    'expired-callback':()=>{
+      try{window.turnstile?.reset(turnstileWidgetId)}catch{}
+    }
+  });
+  return turnstileWidgetId;
+}
+
+async function acquireTurnstileToken(){
+  if(!turnstileSiteKey())return null;
+  const widgetId=await ensureTurnstileWidget();
+  setTurnstileVisible(true);
+  return await new Promise((resolve,reject)=>{
+    turnstileResolve=resolve;
+    turnstileReject=reject;
+    const timer=setTimeout(()=>{
+      if(turnstileResolve===resolve){
+        turnstileResolve=null;turnstileReject=null;
+        setTurnstileVisible(false);
+        reject(new Error('TURNSTILE_TIMEOUT'));
+      }
+    },30000);
+    const wrappedResolve=(token)=>{clearTimeout(timer);resolve(token)};
+    const wrappedReject=(err)=>{clearTimeout(timer);reject(err)};
+    turnstileResolve=wrappedResolve;
+    turnstileReject=wrappedReject;
+    try{
+      window.turnstile.execute(widgetId);
+    }catch(err){
+      wrappedReject(err);
+      setTurnstileVisible(false);
+    }
+  });
+}
+
+function resetTurnstileAfterUse(){
+  if(turnstileWidgetId===null||!window.turnstile)return;
+  try{window.turnstile.reset(turnstileWidgetId)}catch{}
+}
+
 window.HUMANITY_API={
   reserveBatch(payload){return backendPost('reserve-batch',payload)},
   releaseBatch(batchId,reservationToken){
@@ -1805,6 +1975,15 @@ const publicSync = {
 };
 let publicTruthReady=false;
 let publicTruthBooting=false;
+let serverBridgeTruth={
+  unlocked:false,
+  human_complete:false,
+  ai_complete:false,
+  human_sealed:0,
+  ai_sealed:0,
+  human_capacity:1000000,
+  ai_capacity:1000000
+};
 
 function setPublicCounterPlaceholders(){
   const global=document.getElementById('globalSealed');
@@ -1849,6 +2028,57 @@ function isSealedCell(x,y,worldId=activeWorld.id){
   return !!sessionSealedMarks[worldId]?.has(keyFor(Number(x),Number(y)));
 }
 
+function applyBridgeTruth(bridge){
+  if(!bridge||typeof bridge!=='object')return;
+  serverBridgeTruth={
+    unlocked:bridge.unlocked===true,
+    human_complete:bridge.human_complete===true,
+    ai_complete:bridge.ai_complete===true,
+    human_sealed:Number(bridge.human_sealed||0),
+    ai_sealed:Number(bridge.ai_sealed||0),
+    human_capacity:Number(bridge.human_capacity||1000000),
+    ai_capacity:Number(bridge.ai_capacity||1000000)
+  };
+  updateBridgeUI();
+}
+
+function updateBridgeUI(){
+  const card=document.querySelector('.world-card[data-world="bridge"]');
+  const count=card?.querySelector('.world-count');
+  const lock=card?.querySelector('.lock-mark');
+  const title=document.getElementById('bridgeModalTitle');
+  const copy=document.getElementById('bridgeModalCopy');
+  const button=document.getElementById('bridgeModalButton');
+  const values=document.querySelectorAll('#bridgeModal .bridge-condition b');
+
+  const humanSealed=Number(serverBridgeTruth.human_sealed||WORLDS.human.sealed||0);
+  const aiSealed=Number(serverBridgeTruth.ai_sealed||WORLDS.ai.sealed||0);
+  const humanCapacity=Number(serverBridgeTruth.human_capacity||WORLDS.human.total||1000000);
+  const aiCapacity=Number(serverBridgeTruth.ai_capacity||WORLDS.ai.total||1000000);
+
+  if(values[0])values[0].textContent=`${humanSealed.toLocaleString('en-US')} / ${humanCapacity.toLocaleString('en-US')}`;
+  if(values[1])values[1].textContent=`${aiSealed.toLocaleString('en-US')} / ${aiCapacity.toLocaleString('en-US')}`;
+
+  const unlocked=serverBridgeTruth.unlocked===true;
+  WORLDS.bridge.locked=!unlocked;
+
+  card?.classList.toggle('locked',!unlocked);
+  card?.classList.toggle('bridge-ready',unlocked);
+
+  if(count)count.textContent=unlocked?'UNLOCKED':'LOCKED';
+  if(lock)lock.textContent=unlocked?'◇':'◆';
+
+  if(unlocked){
+    if(title)title.textContent='THE BRIDGE IS UNLOCKED.';
+    if(copy)copy.textContent='Human and AI have both completed their permanent canvases. The server has verified the condition for Act III.';
+    if(button)button.textContent='ACT III READY';
+  }else{
+    if(title)title.textContent='THE BRIDGE IS LOCKED.';
+    if(copy)copy.textContent='Human and AI must first complete their separate canvases. Only verified server counts can unlock the space between them.';
+    if(button)button.textContent='UNDERSTOOD';
+  }
+}
+
 function updatePublicCounters(){
   if(!publicTruthReady){setPublicCounterPlaceholders();return}
   const human=Number(WORLDS.human.sealed||0);
@@ -1867,9 +2097,7 @@ function updatePublicCounters(){
   document.querySelectorAll('.world-card[data-world="ai"] .world-count b')
     .forEach(el=>el.textContent=ai.toLocaleString('en-US'));
 
-  const bridgeValues=document.querySelectorAll('#bridgeModal .bridge-condition b');
-  if(bridgeValues[0])bridgeValues[0].textContent=`${human.toLocaleString('en-US')} / 1,000,000`;
-  if(bridgeValues[1])bridgeValues[1].textContent=`${ai.toLocaleString('en-US')} / 1,000,000`;
+  updateBridgeUI();
 
   if(activeWorld?.id==='human'||activeWorld?.id==='ai'){
     document.getElementById('canvasStatusBig').textContent=
@@ -1938,6 +2166,7 @@ async function syncCanvasFromBackend(canvasId,{reset=true,silent=false}={}){
       if(!result?.ok)throw new Error(result?.code||'PUBLIC_CANVAS_LOAD_FAILED');
 
       applyPublicStateRows(result.canvases||[]);
+      applyBridgeTruth(result.bridge);
       applyPublicMarks(canvasId,result.marks||[],first&&reset);
       if(first)applyCountryRankings(canvasId,result.country_rankings||[]);
 
@@ -2065,10 +2294,20 @@ async function reserveCurrentSelection(){
 
   setReviewBusy(true);
   try{
+    let turnstileToken=null;
+    try{
+      turnstileToken=await acquireTurnstileToken();
+    }catch{
+      toast('Security verification could not start. Check your connection and try again.');
+      return null;
+    }
+
     const result=await window.HUMANITY_API.reserveBatch({
       canvas:activeWorld.id,
-      items:selectedReservationItems()
+      items:selectedReservationItems(),
+      turnstile_token:turnstileToken
     });
+    resetTurnstileAfterUse();
     reservationState={
       batchId:result.batch_id,
       token:result.reservation_token,
@@ -2086,6 +2325,8 @@ async function reserveCurrentSelection(){
       toast(removed
         ? `${removed} unavailable cell${removed===1?' was':'s were'} removed. Choose replacements and try again.`
         : 'One or more cells are no longer available.');
+    }else if(err.code==='BOT_CHECK_FAILED'){
+      toast('Security verification expired or failed. Try again.');
     }else if(err.code==='RATE_LIMITED'){
       toast('Too many reservation attempts. Try again shortly.');
     }else{
@@ -2093,6 +2334,8 @@ async function reserveCurrentSelection(){
     }
     return null;
   }finally{
+    resetTurnstileAfterUse();
+    setTurnstileVisible(false);
     setReviewBusy(false);
   }
 }
@@ -2100,6 +2343,7 @@ async function reserveCurrentSelection(){
 async function openCheckout(){
   if(!selectedCells.size)return;
   clearCountryValidation();
+  clearAiValidation();
   const reservation=await reserveCurrentSelection();
   if(!reservation)return;
 
@@ -2131,6 +2375,24 @@ function permanentUrl(param,value){
   }catch{
     return `${permanentBaseUrl()}?${encodeURIComponent(param)}=${encodeURIComponent(String(value))}`;
   }
+}
+
+function shareCountryFlag(code){
+  const cc=String(code||'').trim().toUpperCase();
+  if(!/^[A-Z]{2}$/.test(cc))return '';
+  return String.fromCodePoint(...[...cc].map(ch=>127397+ch.charCodeAt(0)));
+}
+
+function permanentShareText(mark,count=1){
+  const canvas=String(mark?.canvas||'').toUpperCase();
+  const coord=`X${Number(mark?.x)} · Y${Number(mark?.y)}`;
+  const country=String(mark?.country_code||'').toUpperCase();
+  const flag=shareCountryFlag(country);
+  const ai=mark?.canvas==='ai'&&mark?.ai_provider?` · AI: ${mark.ai_provider}`:'';
+  if(Number(count)>1){
+    return `I sealed ${Number(count).toLocaleString('en-US')} permanent marks in HUMANITY/1. ${flag?flag+' ':''}${country||''} · ${canvas}${ai} · ${coord}`;
+  }
+  return `I sealed permanent Mark #${Number(mark?.mark_number).toLocaleString('en-US')} in HUMANITY/1. ${flag?flag+' ':''}${country||''} · ${canvas}${ai} · ${coord}`;
 }
 
 function rememberSealedMarks(marks=[]){
@@ -2181,6 +2443,16 @@ function renderSealedExperience(){
   document.getElementById('certAi').textContent=mark.ai_provider
     ? `${mark.ai_provider}${mark.ai_model?` · ${mark.ai_model}`:''}`
     : 'NOT APPLICABLE';
+
+  const sealedTitle=document.querySelector('#sealedModal .sealed-hero h3');
+  const sealedCopy=document.querySelector('#sealedModal .sealed-hero p');
+  if(mark.canvas==='ai'){
+    if(sealedTitle)sealedTitle.textContent='Your AI-guided mark is permanent.';
+    if(sealedCopy)sealedCopy.textContent=`AI provider: ${mark.ai_provider||'Recorded AI'} · No overwrite. No reset. The certificate and direct mark link resolve to the permanent server record.`;
+  }else{
+    if(sealedTitle)sealedTitle.textContent='Your mark is permanent.';
+    if(sealedCopy)sealedCopy.textContent='No overwrite. No reset. The certificate and direct mark link below resolve to the permanent server record.';
+  }
 
   const markLink=permanentUrl('mark',mark.share_slug);
   const verifyLink=permanentUrl('certificate',mark.certificate_id);
@@ -2285,33 +2557,58 @@ async function buildShareCardBlob(mark,count){
   const c=document.createElement('canvas');
   c.width=1200;c.height=1500;
   const g=c.getContext('2d');
-  g.fillStyle='#11110f';g.fillRect(0,0,c.width,c.height);
 
+  // Premium black poster.
+  g.fillStyle='#0d0d0c';g.fillRect(0,0,c.width,c.height);
+
+  // Header
   g.fillStyle='#fffef9';g.font='900 34px Arial';g.fillText('HUMANITY/1',80,105);
-  g.font='700 18px Arial';g.fillStyle='rgba(255,254,249,.55)';
-  g.fillText('A FINITE GLOBAL ARTWORK',80,145);
+  g.font='800 16px Arial';g.fillStyle='rgba(255,254,249,.48)';
+  g.fillText('ONE GLOBAL CANVAS · NO OVERWRITES · NO RESETS',80,145);
 
-  g.font='700 26px Arial';g.fillStyle='rgba(255,254,249,.65)';
-  g.fillText('PERMANENTLY SEALED',80,255);
-  g.font='700 72px Georgia';g.fillStyle='#fffef9';
-  const title=count>1?`I sealed ${count} permanent marks.`:'I made one permanent mark.';
-  drawWrappedText(g,title,80,345,1030,82,3);
+  // Hero copy
+  g.font='800 19px Arial';g.fillStyle='rgba(255,254,249,.58)';
+  g.fillText('PERMANENTLY SEALED',80,250);
 
-  g.fillStyle=color.color;g.fillRect(80,570,1040,420);
-  g.strokeStyle='rgba(255,255,255,.22)';g.lineWidth=3;g.strokeRect(80,570,1040,420);
+  g.fillStyle='#fffef9';g.font='700 68px Georgia';
+  const title=Number(count)>1
+    ? `I sealed ${Number(count).toLocaleString('en-US')} permanent marks.`
+    : `I sealed Mark #${Number(mark.mark_number).toLocaleString('en-US')}.`;
+  drawWrappedText(g,title,80,340,1040,80,3);
 
-  g.font='800 23px Arial';g.fillStyle='#fffef9';
-  g.fillText(`${String(mark.canvas).toUpperCase()} CANVAS`,80,1075);
-  g.font='700 47px monospace';
-  g.fillText(`X${Number(mark.x)} · Y${Number(mark.y)}`,80,1140);
-  g.font='700 22px Arial';g.fillStyle='rgba(255,254,249,.58)';
-  g.fillText(`${color.name.toUpperCase()} · MARK #${Number(mark.mark_number).toLocaleString('en-US')}`,80,1190);
+  // Color block
+  g.fillStyle=color.color;g.fillRect(80,560,1040,390);
+  g.strokeStyle='rgba(255,255,255,.16)';g.lineWidth=2;g.strokeRect(80,560,1040,390);
 
-  g.fillStyle='rgba(255,254,249,.16)';g.fillRect(80,1280,1040,1);
-  g.font='700 18px Arial';g.fillStyle='rgba(255,254,249,.68)';
-  g.fillText('HUMAN CREATES ONE. AI CREATES ANOTHER. THEN WE BUILD THE BRIDGE.',80,1340);
-  g.font='700 17px monospace';g.fillStyle='rgba(255,254,249,.42)';
-  g.fillText(`CERTIFICATE ${mark.certificate_id}`,80,1395);
+  // Mark identity
+  const flag=shareCountryFlag(mark.country_code);
+  const country=String(mark.country_code||'—').toUpperCase();
+  const canvasName=String(mark.canvas||'').toUpperCase();
+  g.fillStyle='#fffef9';g.font='900 22px Arial';
+  g.fillText(`${canvasName} CANVAS`,80,1040);
+  g.font='800 48px monospace';
+  g.fillText(`X${Number(mark.x)} · Y${Number(mark.y)}`,80,1102);
+
+  g.font='800 20px Arial';g.fillStyle='rgba(255,254,249,.64)';
+  g.fillText(`${color.name.toUpperCase()} · ${color.color.toUpperCase()}`,80,1154);
+
+  g.font='700 20px Arial';g.fillStyle='rgba(255,254,249,.72)';
+  g.fillText(`${flag?flag+' ':''}${country}`,80,1203);
+
+  if(mark.canvas==='ai'&&mark.ai_provider){
+    g.font='800 19px Arial';g.fillStyle='rgba(255,254,249,.72)';
+    g.fillText(`AI-GUIDED · ${String(mark.ai_provider).toUpperCase()}`,620,1203);
+  }
+
+  // Scarcity / CTA
+  g.fillStyle='rgba(255,254,249,.12)';g.fillRect(80,1265,1040,1);
+  g.fillStyle='#fffef9';g.font='800 22px Arial';
+  g.fillText('1,000,000 HUMAN · 1,000,000 AI · THEN THE BRIDGE',80,1322);
+  g.font='700 17px Arial';g.fillStyle='rgba(255,254,249,.54)';
+  g.fillText('Find an empty cell. Make one permanent decision.',80,1368);
+
+  g.font='700 16px monospace';g.fillStyle='rgba(255,254,249,.34)';
+  g.fillText(`CERTIFICATE ${mark.certificate_id}`,80,1428);
 
   return canvasBlob(c);
 }
@@ -2329,7 +2626,8 @@ async function buildCertificateBlob(mark){
   g.font='700 18px Arial';g.fillStyle='#4e7558';g.fillText('✓ VERIFIED PERMANENT RECORD',1320,125);
 
   g.fillStyle='#706b61';g.font='800 18px Arial';g.fillText('CERTIFICATE OF',105,285);
-  g.fillStyle='#11110f';g.font='500 72px Georgia';g.fillText('Permanent Participation',105,365);
+  g.fillStyle='#11110f';g.font='500 72px Georgia';
+  g.fillText(mark.canvas==='ai'?'AI-Guided Participation':'Permanent Participation',105,365);
 
   g.fillStyle=color.color;g.fillRect(105,470,205,205);
   g.strokeStyle='rgba(17,17,15,.2)';g.lineWidth=2;g.strokeRect(105,470,205,205);
@@ -2357,8 +2655,11 @@ async function buildCertificateBlob(mark){
     drawWrappedText(g,rows[i][1],x,yy+39,680,28,2);
   }
 
-  g.fillStyle='#706b61';g.font='600 17px Arial';
-  g.fillText('This certificate records participation in the permanent HUMANITY/1 artwork. It does not represent legal ownership of the canvas or project.',105,1170);
+  const verifyUrl=permanentUrl('certificate',mark.certificate_id);
+  g.fillStyle='#706b61';g.font='600 16px Arial';
+  g.fillText('This certificate records participation in the permanent HUMANITY/1 artwork. It does not represent legal ownership of the canvas or project.',105,1146);
+  g.font='700 15px monospace';g.fillStyle='#47433d';
+  drawWrappedText(g,`VERIFY ${verifyUrl}`,105,1190,1570,22,2);
   return canvasBlob(c);
 }
 
@@ -2366,25 +2667,35 @@ async function shareCurrentPermanentCard(){
   const mark=currentPermanentMark();
   if(!mark)return;
   try{
-    const blob=await buildShareCardBlob(mark,sealedExperience?.marks?.length||1);
+    const count=sealedExperience?.marks?.length||1;
+    const blob=await buildShareCardBlob(mark,count);
     const file=new File([blob],`humanity1-mark-${mark.mark_number}.png`,{type:'image/png'});
     const url=permanentUrl('mark',mark.share_slug);
+    const text=permanentShareText(mark,count);
     const data={
       title:'HUMANITY/1 · Permanent Mark',
-      text:`I made a permanent mark in HUMANITY/1 — X${mark.x}, Y${mark.y}.`,
+      text,
       url,
       files:[file]
     };
-    if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]}))){
-      await navigator.share(data);
-    }else{
-      const a=document.createElement('a');
-      a.href=URL.createObjectURL(blob);
-      a.download=file.name;
-      a.click();
-      setTimeout(()=>URL.revokeObjectURL(a.href),1500);
-      toast('Share card created.');
+
+    if(navigator.share){
+      if(!navigator.canShare||navigator.canShare({files:[file]})){
+        await navigator.share(data);
+        return;
+      }
+      await navigator.share({title:data.title,text:data.text,url:data.url});
+      return;
     }
+
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download=file.name;
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+    try{await navigator.clipboard.writeText(`${text}
+${url}`)}catch{}
+    toast('Share card saved. Permanent link copied.');
   }catch(err){
     if(err?.name!=='AbortError')toast('Could not create the share card.');
   }
@@ -2506,6 +2817,8 @@ async function startDodoCardCheckout(){
       toast('Dodo card payments are ready in the site, but Dodo credentials still need to be connected.');
     }else if(err.code==='DODO_PRODUCT_MISCONFIGURED'){
       toast('Dodo product must be exactly $4.99 USD, one-time, with tax-inclusive pricing OFF.');
+    }else if(err.code==='PAYMENT_ALREADY_ACTIVE'||err.code==='PAYMENT_ACTIVE'){
+      toast('A payment is already active for these cells. Finish it or wait for it to expire — do not pay twice.');
     }else if(err.code==='RESERVATION_EXPIRED'||err.code==='RESERVATION_NOT_ACTIVE'){
       reservationState=null;
       updateReservationBanner();
@@ -2574,6 +2887,7 @@ async function pollDodoReturnStatusOnce(reference){
     document.getElementById('cardVerifyStatus').textContent=provider||'VERIFYING';
 
     if(
+      status.verified===true &&
       status.batch_status==='paid' &&
       status.payment_status==='paid' &&
       provider==='SUCCEEDED' &&
@@ -2636,39 +2950,18 @@ async function resumeDodoReturn(){
   const providerPaymentId=String(params.get('payment_id')||'').trim();
   const paymentRowId=String(params.get('h1p')||pending?.paymentRowId||'').trim();
 
-  // Normal path: same browser still has the private reservation token.
-  if(pending?.batchId&&pending?.token){
-    openModal('cardVerifyModal');
-    reservationState={
-      batchId:pending.batchId,token:pending.token,expiresAt:pending.expiresAt,
-      itemCount:Number(pending.itemCount||0),amountMinor:Number(pending.amountMinor||0)
-    };
-    startReservationTimer();
-
-    if(isCancel){
-      setCardVerify('CHECKING','Checkout was closed.','Checking the server before treating the payment as cancelled…');
-    }else{
-      setCardVerify('VERIFYING','Verifying your card payment.','Waiting for Dodo Payments’ signed server confirmation…');
-    }
-
-    dodoStatusAttempts=0;
-    await pollDodoPaymentOnce(pending);
-    if(!dodoStatusTimer){
-      dodoStatusTimer=setInterval(()=>pollDodoPaymentOnce(pending),2500);
-    }
-    return;
-  }
-
-  // Recovery path: some browsers can lose localStorage while leaving the Dodo return URL.
-  // If Dodo supplied a payment_id (or a future checkout supplies h1p), recover read-only
-  // payment status directly from the server. This never seals anything from the browser.
+  // Deterministic server recovery is the primary path for new checkouts.
+  // It does not depend on localStorage, the original tab, or the reservation token.
   if(providerPaymentId||paymentRowId){
     openModal('cardVerifyModal');
     setCardVerify(
       'VERIFYING',
-      'Recovering your payment record.',
-      'The browser checkout record is missing, so HUMANITY/1 is matching the return to the verified server payment…'
+      isCancel?'Checking the server record.':'Verifying your card payment.',
+      isCancel
+        ? 'Checkout was closed. HUMANITY/1 is checking the verified server payment before treating it as cancelled…'
+        : 'Matching this return to the verified HUMANITY/1 payment record…'
     );
+
     const reference={providerPaymentId,paymentRowId};
     dodoStatusAttempts=0;
     await pollDodoReturnStatusOnce(reference);
@@ -2678,15 +2971,39 @@ async function resumeDodoReturn(){
     return;
   }
 
-  // Stale return URL with no usable checkout identifier. Do not show a false payment error.
-  // Remove the old return flag and sync the public canvas from backend truth.
+  // Backward-compatible fallback for older checkout URLs created before h1p was added.
+  if(pending?.batchId&&pending?.token){
+    openModal('cardVerifyModal');
+    reservationState={
+      batchId:pending.batchId,token:pending.token,expiresAt:pending.expiresAt,
+      itemCount:Number(pending.itemCount||0),amountMinor:Number(pending.amountMinor||0)
+    };
+    startReservationTimer();
+
+    setCardVerify(
+      isCancel?'CHECKING':'VERIFYING',
+      isCancel?'Checkout was closed.':'Verifying your card payment.',
+      isCancel
+        ? 'Checking the server before treating the payment as cancelled…'
+        : 'Waiting for Dodo Payments’ signed server confirmation…'
+    );
+
+    dodoStatusAttempts=0;
+    await pollDodoPaymentOnce(pending);
+    if(!dodoStatusTimer){
+      dodoStatusTimer=setInterval(()=>pollDodoPaymentOnce(pending),2500);
+    }
+    return;
+  }
+
+  // No usable identifier: never infer payment success from the redirect.
   cleanDodoReturnParams();
   closeModal('cardVerifyModal');
   await Promise.allSettled([
     syncCanvasFromBackend('human',{reset:true,silent:true}),
     syncCanvasFromBackend('ai',{reset:true,silent:true})
   ]);
-  toast('Old checkout return cleared. Canvas synced with the server.');
+  toast('Checkout return cleared. Canvas synced with the server.');
 }
 
 
@@ -2827,6 +3144,8 @@ async function createCryptoPayment(payCurrency){
       closeModal('paymentModal');
     }else if(err.code==='PAYMENT_CREATING'){
       toast('Payment is already being created. Try again in a moment.');
+    }else if(err.code==='PAYMENT_ALREADY_ACTIVE'||err.code==='PAYMENT_ACTIVE'){
+      toast('A payment is already active for these cells. Finish it or wait for it to expire — do not pay twice.');
     }else if(err.code==='PAYMENT_BELOW_MINIMUM'){
       const marks=Number(err.payload?.minimum_marks);
       const minUsd=Number(err.payload?.minimum_fiat);
@@ -2988,6 +3307,19 @@ function showCountryValidation(){
   setTimeout(()=>{try{select?.focus({preventScroll:true})}catch{select?.focus()}},220);
 }
 
+function clearAiValidation(){
+  const field=document.getElementById('aiProviderField');
+  if(field)field.classList.remove('invalid');
+}
+
+function showAiValidation(){
+  const field=document.getElementById('aiProviderField');
+  const select=document.getElementById('aiProvider');
+  if(field)field.classList.add('invalid');
+  field?.scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(()=>{try{select?.focus({preventScroll:true})}catch{select?.focus()}},220);
+}
+
 function validateCheckout(){
   const country=document.getElementById('countrySelect');
   if(!country?.value){
@@ -2996,12 +3328,23 @@ function validateCheckout(){
     return false;
   }
   clearCountryValidation();
-  if(activeWorld.id==='ai'&&!document.getElementById('aiProvider').value){toast('Choose which AI made these decisions.');return false}
+
+  const aiProvider=document.getElementById('aiProvider');
+  if(activeWorld.id==='ai'&&!aiProvider?.value){
+    showAiValidation();
+    toast('Choose an AI to continue.');
+    return false;
+  }
+  clearAiValidation();
   return true;
 }
 
 document.getElementById('countrySelect')?.addEventListener('change',()=>{
   if(document.getElementById('countrySelect').value)clearCountryValidation();
+});
+
+document.getElementById('aiProvider')?.addEventListener('change',()=>{
+  if(document.getElementById('aiProvider').value)clearAiValidation();
 });
 
 const enterCellSelection = (initialCell=null)=>startSelectionMode(initialCell);
@@ -3210,6 +3553,12 @@ resetOffscreen();updateWorldUI();updateSelectionUI();updateGestureHint();resize(
 
 const countryState = { canvas: 'human', rows: [] };
 
+function countryFlagEmoji(code){
+  const cc=String(code||'').trim().toUpperCase();
+  if(!/^[A-Z]{2}$/.test(cc))return '◌';
+  return String.fromCodePoint(...[...cc].map(ch=>127397+ch.charCodeAt(0)));
+}
+
 function renderCountryLeaderboard(rows = countryState.rows) {
   const root = document.getElementById('countryRows');
   if (!root) return;
@@ -3217,33 +3566,76 @@ function renderCountryLeaderboard(rows = countryState.rows) {
     root.innerHTML = '<div class="country-empty">Country rankings will appear here as verified marks are sealed.</div>';
     return;
   }
-  root.innerHTML = rows.slice(0, 20).map((row, index) => `
-    <div class="country-row">
-      <div class="country-rank">${String(index + 1).padStart(2,'0')}</div>
-      <div class="country-name">
-        <span class="country-flag" aria-hidden="true"></span>
-        <span>${row.country_name}</span>
+
+  const canvasTotal=Math.max(0,Number(WORLDS[countryState.canvas]?.sealed||0));
+  const sorted=[...rows].sort((a,b)=>
+    Number(b.marks||0)-Number(a.marks||0) ||
+    String(a.country_name||'').localeCompare(String(b.country_name||''))
+  );
+
+  root.innerHTML = sorted.slice(0, 20).map((row, index) => {
+    const marks=Math.max(0,Number(row.marks||0));
+    const share=canvasTotal>0?(marks/canvasTotal)*100:0;
+    const shareLabel=share>=10?`${share.toFixed(1)}%`:`${share.toFixed(2)}%`;
+    const barWidth=Math.max(0,Math.min(100,share));
+    const code=String(row.country_code||'').toUpperCase();
+    return `
+      <div class="country-row ${index<3?'podium':''}">
+        <div class="country-rank">${String(index + 1).padStart(2,'0')}</div>
+        <div class="country-name">
+          <span class="country-flag" aria-hidden="true">${countryFlagEmoji(code)}</span>
+          <span class="country-name-copy">
+            <b>${row.country_name}</b>
+            <small>${code}</small>
+          </span>
+        </div>
+        <div class="country-share">
+          <div class="country-share-top"><span>OF SEALED MARKS</span><b>${shareLabel}</b></div>
+          <div class="country-share-bar"><i style="width:${barWidth}%"></i></div>
+        </div>
+        <div class="country-marks">${marks.toLocaleString('en-US')}</div>
       </div>
-      <div class="country-marks">${Number(row.marks || 0).toLocaleString('en-US')}</div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
+}
+
+function setCountryCanvas(canvasId,{sync=true}={}){
+  if(!['human','ai'].includes(canvasId))return;
+  countryState.canvas=canvasId;
+
+  document.querySelectorAll('.country-tab').forEach(btn=>{
+    btn.classList.toggle('active',btn.dataset.countryCanvas===canvasId);
+  });
+
+  // If rankings for the requested canvas are not already on screen,
+  // clear the stale rows immediately so Human data never appears under AI, or vice versa.
+  renderCountryLeaderboard([]);
+
+  if(sync){
+    syncCanvasFromBackend(canvasId,{reset:false,silent:true});
+  }else{
+    // switchWorld already performs a full reset sync for this same canvas.
+    // The first public-state page will repopulate the matching country rows.
+  }
 }
 
 document.querySelectorAll('.country-tab').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.country-tab').forEach(x => x.classList.remove('active'));
-    btn.classList.add('active');
-    countryState.canvas = btn.dataset.countryCanvas;
-    renderCountryLeaderboard([]);
-    syncCanvasFromBackend(countryState.canvas,{reset:false,silent:true});
+    const id=btn.dataset.countryCanvas;
+    // Country tabs also switch the main canvas, keeping both views in sync.
+    if(id!==activeWorld.id){
+      switchWorld(id);
+    }else{
+      setCountryCanvas(id,{sync:true});
+    }
   });
 });
 
-renderCountryLeaderboard();
+setCountryCanvas('human',{sync:false});
 
 // Fresh page load always begins from backend truth. User cell selections are not restored.
 clearTransientSelectionState();
-window.HUMANITY_BUILD='V5.6.4-20260825';
+window.HUMANITY_BUILD='V5.7.4-20260825';
 setPublicTruthGate('loading');
 
 async function bootPublicTruth(force=false){
