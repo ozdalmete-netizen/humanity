@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
 <meta name="theme-color" content="#f4f1ea" />
 <title>HUMANITY/1 — Human. AI. The Bridge.</title>
+<meta name="humanity-build" content="V5.6.2-20260825" />
 <style>
 :root{--bg:#f4f1ea;--paper:#fffef9;--ink:#11110f;--muted:#77736b;--line:#d8d3c8;--line2:#e8e3d9;--soft:#ece8df;--shadow:0 24px 80px rgba(22,19,14,.10);--shadow2:0 12px 34px rgba(22,19,14,.08);--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;--mono:"SFMono-Regular","SF Mono","Roboto Mono",Consolas,monospace}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased}body{min-width:320px}button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}#app{min-height:100vh;min-height:100dvh}
@@ -434,7 +435,7 @@
 
 
 
-/* ===== V5.0 DODO CARD CHECKOUT ===== */
+/* ===== V5.6 BACKEND SOURCE OF TRUTH + DODO CARD CHECKOUT ===== */
 .card-verify-modal .modal{width:min(520px,100%)}
 .card-verify-box{
   margin-top:14px;padding:22px;border:1px solid var(--line);border-radius:18px;background:var(--soft)
@@ -1461,6 +1462,7 @@ function switchWorld(id){
   selectedCells.clear();
   document.getElementById('canvasFooter').classList.remove('selection-active');
   resetOffscreen();updateWorldUI();updateSelectionUI();resetSelectedColorUI();closeColorSheet();resize();
+  syncCanvasFromBackend(id,{reset:true,silent:true});
 }
 
 document.querySelectorAll('.world-card').forEach(btn=>btn.addEventListener('click',()=>switchWorld(btn.dataset.world)));
@@ -1559,6 +1561,10 @@ function updateSelectionUI(){
 
 function addOrUpdateCell(x,y,color=activeColor){
   if(!color)return false;
+  if(isSealedCell(x,y)){
+    toast('That cell is already permanently sealed.');
+    return false;
+  }
   if(reservationState)invalidateReservation();
   const key=keyFor(x,y);
   if(!selectedCells.has(key)&&selectedCells.size>=MAX_SELECTION){
@@ -1572,6 +1578,10 @@ function addOrUpdateCell(x,y,color=activeColor){
 }
 
 function toggleCell(x,y){
+  if(isSealedCell(x,y)){
+    toast('That cell is already permanently sealed.');
+    return;
+  }
   if(reservationState)invalidateReservation();
   const key=keyFor(x,y);
   if(selectedCells.has(key))selectedCells.delete(key);else addOrUpdateCell(x,y);
@@ -1604,7 +1614,10 @@ function areaMetrics(a,b){
 function showAreaPreview(a,b){
   const m=areaMetrics(a,b);
   let newNeeded=0;
-  for(let y=m.y1;y<=m.y2;y++)for(let x=m.x1;x<=m.x2;x++)if(!selectedCells.has(keyFor(x,y)))newNeeded++;
+  for(let y=m.y1;y<=m.y2;y++)for(let x=m.x1;x<=m.x2;x++){
+    const k=keyFor(x,y);
+    if(!isSealedCell(x,y)&&!selectedCells.has(k))newNeeded++;
+  }
   const over=selectedCells.size+newNeeded>MAX_SELECTION;
   areaPreview={x1:m.x1,y1:m.y1,x2:m.x2,y2:m.y2,overLimit:over};
   areaPill.textContent=`${m.w}×${m.h} · ${m.count.toLocaleString('en-US')} CELLS${over?' · TOO LARGE':''}`;
@@ -1614,11 +1627,16 @@ function showAreaPreview(a,b){
 function commitArea(a,b){
   if(!activeColor)return;
   const m=areaMetrics(a,b);let newNeeded=0;
-  for(let y=m.y1;y<=m.y2;y++)for(let x=m.x1;x<=m.x2;x++)if(!selectedCells.has(keyFor(x,y)))newNeeded++;
+  for(let y=m.y1;y<=m.y2;y++)for(let x=m.x1;x<=m.x2;x++){
+    const k=keyFor(x,y);
+    if(!isSealedCell(x,y)&&!selectedCells.has(k))newNeeded++;
+  }
   if(selectedCells.size+newNeeded>MAX_SELECTION){
     toast(`${MAX_SELECTION-selectedCells.size} selection slots remain.`);return;
   }
-  for(let y=m.y1;y<=m.y2;y++)for(let x=m.x1;x<=m.x2;x++)addOrUpdateCell(x,y);
+  for(let y=m.y1;y<=m.y2;y++)for(let x=m.x1;x<=m.x2;x++){
+    if(!isSealedCell(x,y))addOrUpdateCell(x,y);
+  }
   updateSelectionUI();queueRender();
 }
 
@@ -1685,19 +1703,165 @@ window.HUMANITY_API={
   dodoPaymentStatus(batchId,reservationToken){
     return backendPost('dodo-payment-status',{batch_id:batchId,reservation_token:reservationToken});
   },
+  dodoReturnStatus(payload){
+    return backendPost('dodo-return-status',payload);
+  },
   sealedResult(payload){
     return backendPost('sealed-result',payload);
+  },
+  publicCanvasState(payload){
+    return backendPost('public-canvas-state',payload);
   }
 };
+
+const publicSync = {
+  human:{loading:false,loaded:false,lastMarkNumber:0},
+  ai:{loading:false,loaded:false,lastMarkNumber:0}
+};
+
+function isSealedCell(x,y,worldId=activeWorld.id){
+  return !!sessionSealedMarks[worldId]?.has(keyFor(Number(x),Number(y)));
+}
+
+function updatePublicCounters(){
+  const human=Number(WORLDS.human.sealed||0);
+  const ai=Number(WORLDS.ai.sealed||0);
+  const total=human+ai;
+
+  const global=document.getElementById('globalSealed');
+  const humanLive=document.getElementById('humanLive');
+  const aiLive=document.getElementById('aiLive');
+  if(global)global.textContent=total.toLocaleString('en-US');
+  if(humanLive)humanLive.textContent=human.toLocaleString('en-US');
+  if(aiLive)aiLive.textContent=ai.toLocaleString('en-US');
+
+  document.querySelectorAll('.world-card[data-world="human"] .world-count b')
+    .forEach(el=>el.textContent=human.toLocaleString('en-US'));
+  document.querySelectorAll('.world-card[data-world="ai"] .world-count b')
+    .forEach(el=>el.textContent=ai.toLocaleString('en-US'));
+
+  const bridgeValues=document.querySelectorAll('#bridgeModal .bridge-condition b');
+  if(bridgeValues[0])bridgeValues[0].textContent=`${human.toLocaleString('en-US')} / 1,000,000`;
+  if(bridgeValues[1])bridgeValues[1].textContent=`${ai.toLocaleString('en-US')} / 1,000,000`;
+
+  if(activeWorld?.id==='human'||activeWorld?.id==='ai'){
+    document.getElementById('canvasStatusBig').textContent=
+      Math.max(0,Number(activeWorld.total)-Number(activeWorld.sealed||0)).toLocaleString('en-US');
+  }
+}
+
+function countryNameFor(code){
+  const option=document.querySelector(`#countrySelect option[value="${String(code||'').toUpperCase()}"]`);
+  return option?.textContent||String(code||'').toUpperCase();
+}
+
+function applyCountryRankings(canvasId,rows=[]){
+  if(typeof countryState==='undefined'||countryState.canvas!==canvasId)return;
+  countryState.rows=(rows||[]).map(row=>({
+    ...row,
+    country_name:countryNameFor(row.country_code)
+  }));
+  renderCountryLeaderboard(countryState.rows);
+}
+
+function applyPublicStateRows(rows=[]){
+  for(const row of rows||[]){
+    const world=WORLDS[row.canvas];
+    if(!world)continue;
+    world.sealed=Number(row.sealed_count||0);
+    if(Number.isFinite(Number(row.capacity))&&Number(row.capacity)>0)world.total=Number(row.capacity);
+  }
+  updatePublicCounters();
+  updateWorldUI();
+}
+
+function applyPublicMarks(canvasId,marks=[],reset=false){
+  const store=sessionSealedMarks[canvasId];
+  if(!store)return;
+  if(reset)store.clear();
+  for(const mark of marks||[]){
+    store.set(keyFor(Number(mark.x),Number(mark.y)),mark);
+  }
+  if(activeWorld.id===canvasId){
+    resetOffscreen();
+    queueRender();
+  }
+}
+
+async function syncCanvasFromBackend(canvasId,{reset=true,silent=false}={}){
+  if(!['human','ai'].includes(canvasId))return;
+  const state=publicSync[canvasId];
+  if(state.loading)return;
+  state.loading=true;
+  try{
+    let after=reset?0:Number(state.lastMarkNumber||0);
+    let first=true;
+    if(reset){
+      state.lastMarkNumber=0;
+      sessionSealedMarks[canvasId].clear();
+    }
+
+    for(let page=0;page<250;page++){
+      const result=await window.HUMANITY_API.publicCanvasState({
+        canvas:canvasId,
+        after_mark_number:after,
+        limit:5000
+      });
+      if(!result?.ok)throw new Error(result?.code||'PUBLIC_CANVAS_LOAD_FAILED');
+
+      applyPublicStateRows(result.canvases||[]);
+      applyPublicMarks(canvasId,result.marks||[],first&&reset);
+      if(first)applyCountryRankings(canvasId,result.country_rankings||[]);
+
+      first=false;
+      const next=Number(result.next_after_mark_number||after);
+      state.lastMarkNumber=Math.max(state.lastMarkNumber,next);
+      after=next;
+
+      if(!result.has_more)break;
+      if(!Number.isFinite(next)||next<=0)break;
+    }
+
+    state.loaded=true;
+    if(activeWorld.id===canvasId){
+      resetOffscreen();
+      queueRender();
+    }
+  }catch(err){
+    console.error('[H1] public canvas sync failed',canvasId,err);
+    if(!silent)toast('Could not refresh the live canvas. Retrying later.');
+  }finally{
+    state.loading=false;
+  }
+}
+
+function clearTransientSelectionState(){
+  selectedCells.clear();
+  pendingCellSelection=null;
+  areaPreview=null;
+  activeColor=null;
+  selectionMode=false;
+  document.getElementById('canvasFooter')?.classList.remove('selection-active');
+  viewport.classList.remove('selecting');
+  updateSelectionUI();
+  resetSelectedColorUI();
+  queueRender();
+}
 
 function reservationIsActive(){
   return !!reservationState&&Date.now()<new Date(reservationState.expiresAt).getTime();
 }
 
 function selectedReservationItems(){
-  return [...selectedCells.values()].map(item=>({
+  const items=[...selectedCells.values()].map(item=>({
     x:item.x,y:item.y,color_id:item.color.id
   }));
+  const unique=new Set(items.map(item=>keyFor(item.x,item.y)));
+  console.assert(items.length===unique.size,'[H1] Duplicate checkout cells detected');
+  console.assert(items.length<=MAX_SELECTION,'[H1] Checkout selection limit violated');
+  console.log('[H1] selected unique:',selectedCells.size);
+  console.log('[H1] checkout quantity:',items.length);
+  return items;
 }
 
 function setReviewBusy(busy){
@@ -1930,11 +2094,8 @@ function focusOnPermanentMark(mark,{close=true}={}){
   setTimeout(()=>viewport.scrollIntoView({behavior:'smooth',block:'center'}),80);
 }
 
-async function openSealedExperience(batchId,reservationToken){
-  const result=await window.HUMANITY_API.sealedResult({
-    batch_id:batchId,
-    reservation_token:reservationToken
-  });
+async function openSealedExperienceFromData(result){
+  if(!result?.marks?.length)throw new Error('SEALED_RESULT_EMPTY');
   sealedExperience=result;
   currentSealedIndex=0;
   focusedSealedMark=result.marks?.[0]||null;
@@ -1951,8 +2112,20 @@ async function openSealedExperience(batchId,reservationToken){
   closeModal('cryptoPaymentModal');
   closeModal('cardVerifyModal');
   closeModal('paymentModal');
+
+  const sealedCanvas=result.marks?.[0]?.canvas||activeWorld.id;
+  await syncCanvasFromBackend(sealedCanvas,{reset:true,silent:true});
+
   renderSealedExperience();
   openModal('sealedModal');
+}
+
+async function openSealedExperience(batchId,reservationToken){
+  const result=await window.HUMANITY_API.sealedResult({
+    batch_id:batchId,
+    reservation_token:reservationToken
+  });
+  await openSealedExperienceFromData(result);
 }
 
 function drawWrappedText(g,text,x,y,maxWidth,lineHeight,maxLines=8){
@@ -2151,7 +2324,7 @@ function clearDodoPending(){
 function cleanDodoReturnParams(){
   try{
     const u=new URL(location.href);
-    ['dodo_return','dodo_cancel','status','payment_id','email','license_key'].forEach(k=>u.searchParams.delete(k));
+    ['dodo_return','dodo_cancel','status','payment_id','h1p','email','license_key'].forEach(k=>u.searchParams.delete(k));
     history.replaceState({},'',u.pathname+(u.search?u.search:'')+(u.hash||''));
   }catch{}
 }
@@ -2192,6 +2365,7 @@ async function startDodoCardCheckout(){
       expiresAt:reservationState.expiresAt,
       itemCount:reservationState.itemCount,
       amountMinor:reservationState.amountMinor,
+      paymentRowId:result.payment_row_id||null,
       createdAt:Date.now()
     });
 
@@ -2221,7 +2395,12 @@ async function pollDodoPaymentOnce(pending){
     const provider=String(status.provider_status||'').toUpperCase();
     document.getElementById('cardVerifyStatus').textContent=provider||'VERIFYING';
 
-    if(status.batch_status==='paid'&&Number(status.sealed_marks)===Number(status.expected_marks)){
+    if(
+      status.batch_status==='paid' &&
+      status.payment_status==='paid' &&
+      Number(status.sealed_marks)>0 &&
+      Number(status.sealed_marks)===Number(status.expected_marks)
+    ){
       stopDodoPolling();
       setCardVerify('SEALED','Payment verified.','Opening your permanent record…',true);
       await openSealedExperience(pending.batchId,pending.token);
@@ -2254,6 +2433,69 @@ async function pollDodoPaymentOnce(pending){
   }
 }
 
+
+async function pollDodoReturnStatusOnce(reference){
+  try{
+    const payload=reference.paymentRowId
+      ? {payment_row_id:reference.paymentRowId}
+      : {provider_payment_id:reference.providerPaymentId};
+    const status=await window.HUMANITY_API.dodoReturnStatus(payload);
+    const provider=String(status.provider_status||'').toUpperCase();
+    document.getElementById('cardVerifyStatus').textContent=provider||'VERIFYING';
+
+    if(
+      status.batch_status==='paid' &&
+      status.payment_status==='paid' &&
+      provider==='SUCCEEDED' &&
+      Number(status.sealed_marks)>0 &&
+      Number(status.sealed_marks)===Number(status.expected_marks) &&
+      Array.isArray(status.marks) &&
+      status.marks.length===Number(status.expected_marks)
+    ){
+      stopDodoPolling();
+      setCardVerify('SEALED','Payment verified.','Opening your permanent record…',true);
+      await openSealedExperienceFromData({
+        ok:true,
+        batch:status.batch,
+        marks:status.marks
+      });
+      clearDodoPending();
+      reservationState=null;
+      updateReservationBanner();
+      cleanDodoReturnParams();
+      return true;
+    }
+
+    if(['FAILED','CANCELLED','EXPIRED','REFUNDED'].includes(provider)){
+      stopDodoPolling();
+      clearDodoPending();
+      setCardVerify(provider,'Payment was not completed.','No mark was sealed. You can close this window and try again.',true);
+      cleanDodoReturnParams();
+      return true;
+    }
+
+    dodoStatusAttempts++;
+    if(dodoStatusAttempts>=48){
+      stopDodoPolling();
+      setCardVerify(provider||'PENDING','Still waiting for confirmation.','Do not pay again. The server is still the source of truth and the canvas will sync automatically.',true);
+      await syncCanvasFromBackend('human',{reset:true,silent:true}).catch(()=>{});
+      await syncCanvasFromBackend('ai',{reset:true,silent:true}).catch(()=>{});
+      return true;
+    }
+    return false;
+  }catch(err){
+    dodoStatusAttempts++;
+    if(dodoStatusAttempts>=48){
+      stopDodoPolling();
+      setCardVerify('CHECKING','Confirmation is taking longer than expected.','Do not submit a second payment. Reload the canvas later; permanent marks remain server-side.',true);
+      await syncCanvasFromBackend('human',{reset:true,silent:true}).catch(()=>{});
+      await syncCanvasFromBackend('ai',{reset:true,silent:true}).catch(()=>{});
+      return true;
+    }
+    return false;
+  }
+}
+
 async function resumeDodoReturn(){
   const params=new URLSearchParams(location.search);
   const isReturn=params.get('dodo_return')==='1';
@@ -2261,32 +2503,61 @@ async function resumeDodoReturn(){
   if(!isReturn&&!isCancel)return;
 
   const pending=loadDodoPending();
-  openModal('cardVerifyModal');
+  const providerPaymentId=String(params.get('payment_id')||'').trim();
+  const paymentRowId=String(params.get('h1p')||pending?.paymentRowId||'').trim();
 
-  if(!pending?.batchId||!pending?.token){
-    setCardVerify('UNKNOWN','This browser has no matching checkout record.','No mark will be sealed from this redirect alone. Payment verification remains server-side.',true);
+  // Normal path: same browser still has the private reservation token.
+  if(pending?.batchId&&pending?.token){
+    openModal('cardVerifyModal');
+    reservationState={
+      batchId:pending.batchId,token:pending.token,expiresAt:pending.expiresAt,
+      itemCount:Number(pending.itemCount||0),amountMinor:Number(pending.amountMinor||0)
+    };
+    startReservationTimer();
+
+    if(isCancel){
+      setCardVerify('CHECKING','Checkout was closed.','Checking the server before treating the payment as cancelled…');
+    }else{
+      setCardVerify('VERIFYING','Verifying your card payment.','Waiting for Dodo Payments’ signed server confirmation…');
+    }
+
+    dodoStatusAttempts=0;
+    await pollDodoPaymentOnce(pending);
+    if(!dodoStatusTimer){
+      dodoStatusTimer=setInterval(()=>pollDodoPaymentOnce(pending),2500);
+    }
     return;
   }
 
-  reservationState={
-    batchId:pending.batchId,token:pending.token,expiresAt:pending.expiresAt,
-    itemCount:Number(pending.itemCount||0),amountMinor:Number(pending.amountMinor||0)
-  };
-  startReservationTimer();
-
-  if(isCancel){
-    setCardVerify('CHECKING','Checkout was closed.','Checking the server before treating the payment as cancelled…');
-  }else{
-    setCardVerify('VERIFYING','Verifying your card payment.','Waiting for Dodo Payments’ signed server confirmation…');
+  // Recovery path: some browsers can lose localStorage while leaving the Dodo return URL.
+  // If Dodo supplied a payment_id (or a future checkout supplies h1p), recover read-only
+  // payment status directly from the server. This never seals anything from the browser.
+  if(providerPaymentId||paymentRowId){
+    openModal('cardVerifyModal');
+    setCardVerify(
+      'VERIFYING',
+      'Recovering your payment record.',
+      'The browser checkout record is missing, so HUMANITY/1 is matching the return to the verified server payment…'
+    );
+    const reference={providerPaymentId,paymentRowId};
+    dodoStatusAttempts=0;
+    await pollDodoReturnStatusOnce(reference);
+    if(!dodoStatusTimer){
+      dodoStatusTimer=setInterval(()=>pollDodoReturnStatusOnce(reference),2500);
+    }
+    return;
   }
 
-  dodoStatusAttempts=0;
-  await pollDodoPaymentOnce(pending);
-  if(!dodoStatusTimer){
-    dodoStatusTimer=setInterval(()=>pollDodoPaymentOnce(pending),2500);
-  }
+  // Stale return URL with no usable checkout identifier. Do not show a false payment error.
+  // Remove the old return flag and sync the public canvas from backend truth.
+  cleanDodoReturnParams();
+  closeModal('cardVerifyModal');
+  await Promise.allSettled([
+    syncCanvasFromBackend('human',{reset:true,silent:true}),
+    syncCanvasFromBackend('ai',{reset:true,silent:true})
+  ]);
+  toast('Old checkout return cleared. Canvas synced with the server.');
 }
-
 
 
 let cryptoPaymentState=null;
@@ -2354,7 +2625,12 @@ async function pollCryptoPayment(){
     const providerStatus=String(status.provider_status||status.payment_status||'waiting').toUpperCase();
     document.getElementById('cryptoPaymentStatus').textContent=providerStatus;
 
-    if(status.batch_status==='paid'&&Number(status.sealed_marks)===Number(status.expected_marks)){
+    if(
+      status.batch_status==='paid' &&
+      status.payment_status==='paid' &&
+      Number(status.sealed_marks)>0 &&
+      Number(status.sealed_marks)===Number(status.expected_marks)
+    ){
       stopCryptoPolling();
       document.getElementById('cryptoSuccess').classList.add('show');
       document.getElementById('cryptoPaymentStatus').textContent='SEALED';
@@ -2466,7 +2742,7 @@ function resetCryptoOptionsUi(){
 async function refreshCryptoOptions(){
   resetCryptoOptionsUi();
   document.querySelectorAll('.crypto-choice').forEach(btn=>btn.classList.add('crypto-loading'));
-  const amountMinor=(reservationState?.amountMinor)||selected.size*PRICE_MINOR;
+  const amountMinor=(reservationState?.amountMinor)||selectedCells.size*PRICE_MINOR;
   try{
     const data=await window.HUMANITY_API.cryptoOptions(amountMinor);
     const opts=Array.isArray(data?.options)?data.options:[];
@@ -2806,11 +3082,28 @@ document.querySelectorAll('.country-tab').forEach(btn => {
     btn.classList.add('active');
     countryState.canvas = btn.dataset.countryCanvas;
     renderCountryLeaderboard([]);
-    // Production: fetch /api/stats/countries?canvas=${countryState.canvas}
+    syncCanvasFromBackend(countryState.canvas,{reset:false,silent:true});
   });
 });
 
 renderCountryLeaderboard();
+
+// Fresh page load always begins from backend truth. User cell selections are not restored.
+clearTransientSelectionState();
+window.HUMANITY_BUILD='V5.6.2-20260825';
+async function bootPublicTruth(){
+  for(let attempt=0;attempt<4;attempt++){
+    try{
+      await Promise.all([
+        syncCanvasFromBackend('human',{reset:true,silent:false}),
+        syncCanvasFromBackend('ai',{reset:true,silent:false})
+      ]);
+      if(publicSync.human.loaded&&publicSync.ai.loaded)return;
+    }catch{}
+    await new Promise(r=>setTimeout(r,700*(attempt+1)));
+  }
+}
+setTimeout(()=>bootPublicTruth(),40);
 setTimeout(resolvePermanentIncomingLink,120);
 setTimeout(resumeDodoReturn,180);
 
