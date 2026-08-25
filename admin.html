@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#11110f">
 <title>HUMANITY/1 — Admin</title>
 <style>
@@ -136,7 +137,7 @@ td.mono{font-family:ui-monospace,monospace}
     <div class="login-symbol">H/1</div>
     <div class="label">PRIVATE CONTROL ROOM</div>
     <h2>HUMANITY/1 Admin</h2>
-    <p>This page never contains the Supabase service-role key. Enter the private <b>H1_ADMIN_KEY</b> stored in Supabase Secrets. The key is kept only for this browser session.</p>
+    <p>This page never contains the Supabase service-role key. Enter the private <b>H1_ADMIN_KEY</b> stored in Supabase Secrets. The key is kept only in memory while this page remains open. Reloading or leaving the page locks the panel.</p>
     <input class="input" id="adminKey" type="password" autocomplete="current-password" placeholder="Admin key">
     <button class="btn" id="loginBtn">ENTER ADMIN</button>
     <div class="login-msg" id="loginMsg"></div>
@@ -232,13 +233,12 @@ td.mono{font-family:ui-monospace,monospace}
     <button class="btn danger" disabled style="margin-top:10px">RESET LOCKED BY DESIGN</button>
   </section>
 
-  <div class="footer">HUMANITY/1 ADMIN · NO SERVICE ROLE KEY IN BROWSER · NO CUSTOMER PII</div>
+  <div class="footer">HUMANITY/1 ADMIN V2 · MEMORY-ONLY KEY · NO SERVICE ROLE KEY · NO CUSTOMER PII</div>
 </div>
 
 <script>
 const API='https://xwcmzsoydgeybjntqljv.supabase.co/functions/v1/admin-api';
-const KEY_NAME='h1_admin_key_v1';
-let adminKey=sessionStorage.getItem(KEY_NAME)||'';
+let adminKey='';
 let dash=null;
 let paymentRows=[];
 let countryCanvas='human';
@@ -263,14 +263,14 @@ function showLogin(msg=''){
   $('loginView').classList.remove('hidden');$('appView').classList.add('hidden');$('loginMsg').textContent=msg;
 }
 function showApp(){$('loginView').classList.add('hidden');$('appView').classList.remove('hidden')}
-function logout(){adminKey='';sessionStorage.removeItem(KEY_NAME);dash=null;showLogin('Admin session locked.')}
+function logout(){adminKey='';dash=null;$('adminKey').value='';showLogin('Admin session locked.')}
 async function login(){
   const key=$('adminKey').value.trim();
   if(key.length<24){$('loginMsg').textContent='Admin key must be at least 24 characters.';return}
   adminKey=key;$('loginMsg').textContent='Checking…';$('loginBtn').disabled=true;
   try{
     const data=await api('dashboard');
-    sessionStorage.setItem(KEY_NAME,key);dash=data;showApp();renderDashboard();
+    dash=data;showApp();renderDashboard();touchAdminActivity();
   }catch(e){
     adminKey='';
     if(e.data?.code==='ADMIN_NOT_CONFIGURED')$('loginMsg').textContent='Supabase secret H1_ADMIN_KEY is not configured yet.';
@@ -415,11 +415,17 @@ $('csvBtn').addEventListener('click',downloadCsv);
 $('previewResetBtn').addEventListener('click',previewReset);
 document.querySelectorAll('[data-country]').forEach(b=>b.addEventListener('click',()=>{countryCanvas=b.dataset.country;renderCountries()}));
 
-if(adminKey){
-  api('dashboard').then(d=>{dash=d;showApp();renderDashboard()}).catch(()=>showLogin('Session expired or admin key is invalid.'));
-}else showLogin();
+let lastAdminActivity=Date.now();
+function touchAdminActivity(){lastAdminActivity=Date.now()}
+for(const evt of ['pointerdown','keydown','touchstart'])document.addEventListener(evt,touchAdminActivity,{passive:true});
+window.addEventListener('pagehide',()=>{adminKey=''});
+showLogin();
 
-setInterval(()=>{if(adminKey&&!document.hidden)refresh()},60000);
+setInterval(()=>{
+  if(!adminKey)return;
+  if(Date.now()-lastAdminActivity>15*60*1000){logout();return}
+  if(!document.hidden)refresh();
+},60000);
 </script>
 </body>
 </html>
