@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
 <meta name="theme-color" content="#f4f1ea" />
 <title>HUMANITY/1 — Human. AI. The Bridge.</title>
-<meta name="humanity-build" content="V5.7.5-20260825" />
+<meta name="humanity-build" content="V5.7.7-20260825" />
 <style>
 :root{--bg:#f4f1ea;--paper:#fffef9;--ink:#11110f;--muted:#77736b;--line:#d8d3c8;--line2:#e8e3d9;--soft:#ece8df;--shadow:0 24px 80px rgba(22,19,14,.10);--shadow2:0 12px 34px rgba(22,19,14,.08);--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;--mono:"SFMono-Regular","SF Mono","Roboto Mono",Consolas,monospace}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased}body{min-width:320px}button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}#app{min-height:100vh;min-height:100dvh}
@@ -1536,6 +1536,45 @@ function render(){
   const worldH=activeWorld.sizeY*zoom;
   ctx.drawImage(off,0,0,off.width,off.height,panX,panY,worldW,worldH);
 
+  // V5.7.6: At targeting zoom, paint sealed cells again from the authoritative
+  // in-memory server map using exact screen-cell boundaries. This avoids mobile
+  // browser/GPU resampling artifacts where a 1x1 source pixel can look white
+  // after the 1000x1000 offscreen canvas is scaled up.
+  if(zoom>=5){
+    const store=sessionSealedMarks[activeWorld.id];
+    if(store&&store.size){
+      const sx=Math.max(0,Math.floor((-panX)/zoom));
+      const ex=Math.min(activeWorld.sizeX-1,Math.ceil((w-panX)/zoom)-1);
+      const sy=Math.max(0,Math.floor((-panY)/zoom));
+      const ey=Math.min(activeWorld.sizeY-1,Math.ceil((h-panY)/zoom)-1);
+      const visibleCells=Math.max(0,ex-sx+1)*Math.max(0,ey-sy+1);
+
+      if(store.size<=visibleCells*2){
+        for(const mark of store.values()){
+          const mx=Number(mark.x), my=Number(mark.y);
+          if(mx<sx||mx>ex||my<sy||my>ey)continue;
+          const c=COLORS[Number(mark.color_id)-1];
+          if(!c)continue;
+          const r=screenCellRect(mx,my);
+          ctx.fillStyle=c.color;
+          ctx.fillRect(r.x,r.y,r.w,r.h);
+        }
+      }else{
+        for(let yy=sy;yy<=ey;yy++){
+          for(let xx=sx;xx<=ex;xx++){
+            const mark=store.get(keyFor(xx,yy));
+            if(!mark)continue;
+            const c=COLORS[Number(mark.color_id)-1];
+            if(!c)continue;
+            const r=screenCellRect(xx,yy);
+            ctx.fillStyle=c.color;
+            ctx.fillRect(r.x,r.y,r.w,r.h);
+          }
+        }
+      }
+    }
+  }
+
   // Selected cells are drawn from exact rounded boundaries.
   for(const item of selectedCells.values()){
     const r=screenCellRect(item.x,item.y);
@@ -1660,7 +1699,7 @@ function switchWorld(id){
   // Keep LIVE BY COUNTRY locked to the currently selected canvas.
   setCountryCanvas(id,{sync:false});
 
-  syncCanvasFromBackend(id,{reset:true,silent:true});
+  syncCanvasFromBackend(id,{reset:false,silent:true});
 }
 
 document.querySelectorAll('.world-card').forEach(btn=>btn.addEventListener('click',()=>switchWorld(btn.dataset.world)));
@@ -1760,6 +1799,10 @@ function updateSelectionUI(){
 
 function addOrUpdateCell(x,y,color=activeColor){
   if(!publicTruthReady)return false;
+  if(publicSync?.[activeWorld.id]?.loading){
+    toast('Refreshing permanent marks… try again in a moment.');
+    return false;
+  }
   if(!color)return false;
   if(isSealedCell(x,y)){
     toast('That cell is already permanently sealed.');
@@ -1778,6 +1821,10 @@ function addOrUpdateCell(x,y,color=activeColor){
 }
 
 function toggleCell(x,y){
+  if(publicSync?.[activeWorld.id]?.loading){
+    toast('Refreshing permanent marks… try again in a moment.');
+    return;
+  }
   if(isSealedCell(x,y)){
     toast('That cell is already permanently sealed.');
     return;
@@ -2192,14 +2239,16 @@ async function syncCanvasFromBackend(canvasId,{reset=true,silent=false}={}){
   const state=publicSync[canvasId];
   if(state.loading)return;
   state.loading=true;
+
+  // V5.7.7: full refreshes are staged. Never empty the live occupancy map while
+  // waiting for the network, otherwise already-sealed AI cells temporarily look
+  // empty and can be selected again in the UI.
+  const stagedMarks=reset?new Map():null;
+  let stagedLast=reset?0:Number(state.lastMarkNumber||0);
+
   try{
     let after=reset?0:Number(state.lastMarkNumber||0);
     let first=true;
-    if(reset){
-      state.loaded=false;
-      state.lastMarkNumber=0;
-      sessionSealedMarks[canvasId].clear();
-    }
 
     for(let page=0;page<250;page++){
       const result=await window.HUMANITY_API.publicCanvasState({
@@ -2211,26 +2260,47 @@ async function syncCanvasFromBackend(canvasId,{reset=true,silent=false}={}){
 
       applyPublicStateRows(result.canvases||[]);
       applyBridgeTruth(result.bridge);
-      applyPublicMarks(canvasId,result.marks||[],first&&reset);
-      if(first)applyCountryRankings(canvasId,result.country_rankings||[]);
 
+      if(reset){
+        for(const mark of result.marks||[]){
+          stagedMarks.set(keyFor(Number(mark.x),Number(mark.y)),mark);
+        }
+      }else{
+        applyPublicMarks(canvasId,result.marks||[],false);
+      }
+
+      if(first)applyCountryRankings(canvasId,result.country_rankings||[]);
       first=false;
+
       const next=Number(result.next_after_mark_number||after);
-      state.lastMarkNumber=Math.max(state.lastMarkNumber,next);
+      stagedLast=Math.max(stagedLast,next);
       after=next;
 
       if(!result.has_more)break;
       if(!Number.isFinite(next)||next<=0)break;
     }
 
+    if(reset){
+      const liveStore=sessionSealedMarks[canvasId];
+      liveStore.clear();
+      for(const [k,mark] of stagedMarks.entries())liveStore.set(k,mark);
+      if(activeWorld.id===canvasId){
+        resetOffscreen();
+        queueRender();
+      }
+    }
+
+    state.lastMarkNumber=stagedLast;
     state.loaded=true;
+
     if(activeWorld.id===canvasId){
       resetOffscreen();
       queueRender();
     }
   }catch(err){
     console.error('[H1] public canvas sync failed',canvasId,err);
-    if(!silent)toast('Could not refresh the live canvas. Retrying later.');
+    // Keep the previously verified occupancy map intact on refresh failure.
+    if(!silent)toast('Could not refresh the live canvas. Keeping the last verified state.');
   }finally{
     state.loading=false;
   }
@@ -3679,7 +3749,7 @@ setCountryCanvas('human',{sync:false});
 
 // Fresh page load always begins from backend truth. User cell selections are not restored.
 clearTransientSelectionState();
-window.HUMANITY_BUILD='V5.7.5-20260825';
+window.HUMANITY_BUILD='V5.7.7-20260825';
 setPublicTruthGate('loading');
 
 async function bootPublicTruth(force=false){
