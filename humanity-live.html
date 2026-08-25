@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
 <meta name="theme-color" content="#f4f1ea" />
 <title>HUMANITY/1 — Human. AI. The Bridge.</title>
-<meta name="humanity-build" content="V5.7.7-20260825" />
+<meta name="humanity-build" content="V5.7.8-20260825" />
 <style>
 :root{--bg:#f4f1ea;--paper:#fffef9;--ink:#11110f;--muted:#77736b;--line:#d8d3c8;--line2:#e8e3d9;--soft:#ece8df;--shadow:0 24px 80px rgba(22,19,14,.10);--shadow2:0 12px 34px rgba(22,19,14,.08);--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;--mono:"SFMono-Regular","SF Mono","Roboto Mono",Consolas,monospace}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased}body{min-width:320px}button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}#app{min-height:100vh;min-height:100dvh}
@@ -48,7 +48,7 @@
 .gesture-hint{font-size:10px;padding:10px 15px}
 .seal-cta{padding:13px 22px;font-size:10px}
 }
-@media(max-width:760px){.topbar{height:64px;grid-template-columns:1fr auto}.global-progress{display:none}.brand span{display:none}.main{padding-top:18px}.hero{grid-template-columns:1fr;gap:13px;margin-bottom:18px}.hero h1{font-size:38px}.hero-copy{font-size:11px}.world-nav{gap:6px;margin-bottom:6px}.world-card{min-height:82px;padding:11px 9px;border-radius:14px;grid-template-columns:1fr}.world-index{grid-row:auto;font-size:8px}.world-name{font-size:10px}.world-count{font-size:8px}.lock-mark{right:8px;top:8px}.canvas-topline{padding:13px 14px}.canvas-topline h2{font-size:16px}.canvas-topline p{font-size:9px}.status-big{font-size:11px}.status-small{font-size:7px}.viewport{height:58vh;min-height:410px}.coordinate-pill{right:10px;top:10px}.canvas-controls{right:10px;bottom:10px}.control{width:48px;height:48px}.gesture-hint{bottom:10px;font-size:8px;max-width:calc(100% - 150px)}.canvas-footer{padding:11px;align-items:flex-end}.rules{gap:5px}.rules span{font-size:7px;padding:6px 7px}.seal-cta{padding:11px 13px;font-size:8px}}
+@media(max-width:760px){.topbar{height:64px;grid-template-columns:1fr auto}.global-progress{display:none}.brand span{display:none}.main{padding-top:18px}.hero{grid-template-columns:1fr;gap:13px;margin-bottom:18px}.hero h1{font-size:38px}.hero-copy{font-size:11px}.world-nav{gap:6px;margin-bottom:6px}.world-card{min-height:82px;padding:11px 9px;border-radius:14px;grid-template-columns:1fr}.world-index{grid-row:auto;font-size:8px}.world-name{font-size:10px}.world-count{font-size:8px}.lock-mark{right:8px;top:8px}.canvas-topline{padding:13px 14px}.canvas-topline h2{font-size:16px}.canvas-topline p{font-size:9px}.status-big{font-size:11px}.status-small{font-size:7px}.viewport{height:50dvh;min-height:360px;max-height:620px}.coordinate-pill{right:10px;top:10px}.canvas-controls{right:10px;bottom:10px}.control{width:48px;height:48px}.control.fit{font-size:7px;letter-spacing:.05em}.gesture-hint{bottom:10px;font-size:8px;max-width:calc(100% - 150px)}.canvas-footer{padding:11px;align-items:flex-end}.rules{gap:5px}.rules span{font-size:7px;padding:6px 7px}.seal-cta{padding:11px 13px;font-size:8px}}
 @media(max-width:480px){.hero h1{font-size:33px}.world-card{min-height:76px}.canvas-topline p{max-width:220px}.palette{grid-template-columns:repeat(4,1fr);gap:6px}.value{min-height:61px;border-radius:12px}.swatch{width:27px;height:27px}.selected-color-panel{margin-bottom:10px}}
 
 /* ===== V2 viral/product additions ===== */
@@ -709,6 +709,19 @@
   .gesture-hint{max-width:calc(100% - 128px)}
 }
 
+
+/* ===== V5.7.8 MOBILE DISCOVERY POLISH ===== */
+@media(max-width:760px){
+  .idle-footer{gap:10px}
+  .multi-cell-callout{
+    padding:12px 13px;
+    border-radius:16px;
+  }
+  .multi-cell-callout strong{font-size:9px}
+  .multi-cell-callout span{font-size:8px;line-height:1.4}
+  .canvas-shell{border-radius:22px}
+}
+
 </style>
 </head>
 <body>
@@ -756,7 +769,7 @@
     <button id="truthRetryBtn" type="button">RETRY SYNC</button>
   </div>
 </div>
-<div class="area-pill" id="areaPill"></div><div class="coordinate-pill" id="coordinatePill">X000 · Y000</div><div class="canvas-controls"><button class="control" id="zoomIn">+</button><button class="control" id="zoomOut">−</button><button class="control fit" id="fit">FIT</button></div><div class="gesture-hint" id="gestureHint">Tap to zoom in · Tap an exact cell · Drag to move</div></div>
+<div class="area-pill" id="areaPill"></div><div class="coordinate-pill" id="coordinatePill">X000 · Y000</div><div class="canvas-controls"><button class="control" id="zoomIn" aria-label="Zoom in">+</button><button class="control" id="zoomOut" aria-label="Zoom out">−</button><button class="control fit" id="latestMark" aria-label="Jump to latest sealed mark">LATEST</button><button class="control fit" id="fit" aria-label="Fit entire canvas">FIT</button></div><div class="gesture-hint" id="gestureHint">Drag to move · Pinch to zoom</div></div>
 
 <div class="canvas-footer" id="canvasFooter">
   <div class="idle-footer" id="idleFooter">
@@ -1777,7 +1790,13 @@ function setTool(tool){
 
 function updateGestureHint(){
   const hint=document.getElementById('gestureHint');
-  if(!selectionMode){hint.textContent='Drag to move · Pinch to zoom';return}
+  if(!selectionMode){
+    const sealed=Number(activeWorld?.sealed||0);
+    hint.textContent=sealed>0
+      ? `${sealed.toLocaleString('en-US')} sealed · LATEST jumps to activity`
+      : 'Drag to move · Pinch to zoom';
+    return;
+  }
   if(!activeColor){hint.textContent='Choose a color first';return}
   hint.textContent={
     tap:'Tap to select · Drag to move · Pinch to zoom',
@@ -3656,9 +3675,28 @@ viewport.addEventListener('wheel',e=>{
   wheelSnapTimer=setTimeout(()=>{snapView(e.clientX,e.clientY);queueRender()},90);
 },{passive:false});
 
+function focusLatestSealedMark(){
+  const store=sessionSealedMarks[activeWorld.id];
+  if(!store||store.size===0){
+    toast('No permanent marks on this canvas yet.');
+    return;
+  }
+  let latest=null;
+  for(const mark of store.values()){
+    if(!latest||Number(mark.mark_number||0)>Number(latest.mark_number||0))latest=mark;
+  }
+  if(!latest){
+    toast('No permanent marks on this canvas yet.');
+    return;
+  }
+  focusOnPermanentMark(latest,{close:false});
+  toast(`Latest permanent mark #${Number(latest.mark_number||0).toLocaleString('en-US')}`);
+}
+
 document.getElementById('zoomIn').onclick=e=>{e.preventDefault();e.stopPropagation();const r=viewport.getBoundingClientRect();zoomAt(r.left+r.width/2,r.top+r.height/2,1.6,true)};
 document.getElementById('zoomOut').onclick=e=>{e.preventDefault();e.stopPropagation();const r=viewport.getBoundingClientRect();zoomAt(r.left+r.width/2,r.top+r.height/2,.625,true)};
-document.getElementById('fit').onclick=e=>{e.preventDefault();e.stopPropagation();fit()};
+document.getElementById('latestMark').onclick=e=>{e.preventDefault();e.stopPropagation();focusLatestSealedMark()};
+document.getElementById('fit').onclick=e=>{e.preventDefault();e.stopPropagation();focusedSealedMark=null;fit()};
 
 window.addEventListener('resize',resize);
 window.addEventListener('orientationchange',()=>setTimeout(resize,180));
@@ -3749,7 +3787,7 @@ setCountryCanvas('human',{sync:false});
 
 // Fresh page load always begins from backend truth. User cell selections are not restored.
 clearTransientSelectionState();
-window.HUMANITY_BUILD='V5.7.7-20260825';
+window.HUMANITY_BUILD='V5.7.8-20260825';
 setPublicTruthGate('loading');
 
 async function bootPublicTruth(force=false){
