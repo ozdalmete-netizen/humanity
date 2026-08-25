@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="referrer" content="no-referrer">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#11110f">
 <title>HUMANITY/1 — Admin</title>
 <style>
@@ -138,7 +141,7 @@ td.mono{font-family:ui-monospace,monospace}
     <div class="label">PRIVATE CONTROL ROOM</div>
     <h2>HUMANITY/1 Admin</h2>
     <p>This page never contains the Supabase service-role key. Enter the private <b>H1_ADMIN_KEY</b> stored in Supabase Secrets. The key is kept only in memory while this page remains open. Reloading or leaving the page locks the panel.</p>
-    <input class="input" id="adminKey" type="password" autocomplete="current-password" placeholder="Admin key">
+    <input class="input" id="adminKey" name="h1-admin-key-manual-entry" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true" placeholder="Admin key">
     <button class="btn" id="loginBtn">ENTER ADMIN</button>
     <div class="login-msg" id="loginMsg"></div>
   </div>
@@ -148,7 +151,7 @@ td.mono{font-family:ui-monospace,monospace}
   <header class="top">
     <div class="brand">
       <div class="brandmark">H/1</div>
-      <div><h1>HUMANITY/1 Admin</h1><small>PRIVATE · SERVER-VERIFIED</small></div>
+      <div><h1>HUMANITY/1 Admin</h1><small>PRIVATE · SERVER-VERIFIED · V2.1</small></div>
     </div>
     <div class="top-actions">
       <span class="badge" id="envBadge">ENV —</span>
@@ -233,11 +236,15 @@ td.mono{font-family:ui-monospace,monospace}
     <button class="btn danger" disabled style="margin-top:10px">RESET LOCKED BY DESIGN</button>
   </section>
 
-  <div class="footer">HUMANITY/1 ADMIN V2 · MEMORY-ONLY KEY · NO SERVICE ROLE KEY · NO CUSTOMER PII</div>
+  <div class="footer">HUMANITY/1 ADMIN V2.1 · MANUAL LOGIN ONLY · MEMORY-ONLY KEY · NO SERVICE ROLE KEY · NO CUSTOMER PII</div>
 </div>
 
 <script>
 const API='https://xwcmzsoydgeybjntqljv.supabase.co/functions/v1/admin-api';
+try{
+  sessionStorage.removeItem('h1_admin_key_v1');
+  localStorage.removeItem('h1_admin_key_v1');
+}catch{}
 let adminKey='';
 let dash=null;
 let paymentRows=[];
@@ -418,7 +425,19 @@ document.querySelectorAll('[data-country]').forEach(b=>b.addEventListener('click
 let lastAdminActivity=Date.now();
 function touchAdminActivity(){lastAdminActivity=Date.now()}
 for(const evt of ['pointerdown','keydown','touchstart'])document.addEventListener(evt,touchAdminActivity,{passive:true});
-window.addEventListener('pagehide',()=>{adminKey=''});
+window.addEventListener('pagehide',()=>{
+  adminKey='';
+  const el=$('adminKey'); if(el) el.value='';
+});
+window.addEventListener('beforeunload',()=>{
+  adminKey='';
+  const el=$('adminKey'); if(el) el.value='';
+});
+window.addEventListener('pageshow',(ev)=>{
+  // A browser may restore a page from its back/forward cache without rerunning JS.
+  // Never restore an authenticated admin session from that cache.
+  if(ev.persisted && adminKey) logout();
+});
 showLogin();
 
 setInterval(()=>{
