@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
 <meta name="theme-color" content="#f4f1ea" />
 <title>HUMANITY/1 — Human. AI. The Bridge.</title>
-<meta name="humanity-build" content="V5.8.1-SECURITY-20260825" />
+<meta name="humanity-build" content="V5.8.2-RETURN-HARDENED-20260825" />
 <style>
 :root{--bg:#f4f1ea;--paper:#fffef9;--ink:#11110f;--muted:#77736b;--line:#d8d3c8;--line2:#e8e3d9;--soft:#ece8df;--shadow:0 24px 80px rgba(22,19,14,.10);--shadow2:0 12px 34px rgba(22,19,14,.08);--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;--mono:"SFMono-Regular","SF Mono","Roboto Mono",Consolas,monospace}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased}body{min-width:320px}button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}#app{min-height:100vh;min-height:100dvh}
@@ -3023,10 +3023,8 @@ async function pollDodoPaymentOnce(pending){
 
 async function pollDodoReturnStatusOnce(reference){
   try{
-    const payload=reference.paymentRowId
-      ? {payment_row_id:reference.paymentRowId}
-      : {provider_payment_id:reference.providerPaymentId};
-    const status=await window.HUMANITY_API.dodoReturnStatus(payload);
+    if(!reference?.paymentRowId)throw Object.assign(new Error('PAYMENT_REFERENCE_MISSING'),{code:'PAYMENT_REFERENCE_MISSING'});
+    const status=await window.HUMANITY_API.dodoReturnStatus({payment_row_id:reference.paymentRowId});
     const provider=String(status.provider_status||'').toUpperCase();
     document.getElementById('cardVerifyStatus').textContent=provider||'VERIFYING';
 
@@ -3091,12 +3089,11 @@ async function resumeDodoReturn(){
   if(!isReturn&&!isCancel)return;
 
   const pending=loadDodoPending();
-  const providerPaymentId=String(params.get('payment_id')||'').trim();
   const paymentRowId=String(params.get('h1p')||pending?.paymentRowId||'').trim();
 
-  // Deterministic server recovery is the primary path for new checkouts.
-  // It does not depend on localStorage, the original tab, or the reservation token.
-  if(providerPaymentId||paymentRowId){
+  // New live checkouts recover only through HUMANITY/1's own random payment-row UUID.
+  // Provider payment IDs are intentionally not accepted as public return lookup keys.
+  if(paymentRowId){
     openModal('cardVerifyModal');
     setCardVerify(
       'VERIFYING',
@@ -3106,7 +3103,7 @@ async function resumeDodoReturn(){
         : 'Matching this return to the verified HUMANITY/1 payment record…'
     );
 
-    const reference={providerPaymentId,paymentRowId};
+    const reference={paymentRowId};
     dodoStatusAttempts=0;
     await pollDodoReturnStatusOnce(reference);
     if(!dodoStatusTimer){
@@ -3798,7 +3795,7 @@ setCountryCanvas('human',{sync:false});
 
 // Fresh page load always begins from backend truth. User cell selections are not restored.
 clearTransientSelectionState();
-window.HUMANITY_BUILD='V5.8.1-SECURITY-20260825';
+window.HUMANITY_BUILD='V5.8.2-RETURN-HARDENED-20260825';
 setPublicTruthGate('loading');
 
 async function bootPublicTruth(force=false){
