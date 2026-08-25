@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
 <meta name="theme-color" content="#f4f1ea" />
 <title>HUMANITY/1 — Human. AI. The Bridge.</title>
-<meta name="humanity-build" content="V5.7.4-20260825" />
+<meta name="humanity-build" content="V5.7.5-20260825" />
 <style>
 :root{--bg:#f4f1ea;--paper:#fffef9;--ink:#11110f;--muted:#77736b;--line:#d8d3c8;--line2:#e8e3d9;--soft:#ece8df;--shadow:0 24px 80px rgba(22,19,14,.10);--shadow2:0 12px 34px rgba(22,19,14,.08);--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;--mono:"SFMono-Regular","SF Mono","Roboto Mono",Consolas,monospace}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased}body{min-width:320px}button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}#app{min-height:100vh;min-height:100dvh}
@@ -616,6 +616,50 @@
   #paymentModal .modal-head{top:-20px;margin:-20px -20px 0;padding:20px 20px 12px}
 }
 
+
+
+/* ===== V5.7.5 MOBILE SEALED RESULT SCROLL FIX ===== */
+#sealedModal{
+  padding:12px;
+  overflow:hidden;
+}
+#sealedModal>.modal{
+  width:min(820px,100%);
+  max-height:calc(100dvh - 24px);
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-y;
+  scrollbar-gutter:stable;
+}
+#sealedModal>.modal>.modal-head{
+  position:sticky;
+  top:-23px;
+  z-index:30;
+  margin:-23px -23px 0;
+  padding:23px 23px 12px;
+  background:linear-gradient(to bottom,var(--paper) 86%,rgba(255,254,249,.96));
+}
+@media(max-width:700px){
+  #sealedModal{padding:8px}
+  #sealedModal>.modal{
+    max-height:calc(100dvh - 16px);
+    padding:20px;
+    border-radius:20px;
+  }
+  #sealedModal>.modal>.modal-head{
+    top:-20px;
+    margin:-20px -20px 0;
+    padding:20px 20px 12px;
+  }
+  #sealedModal .sealed-actions{
+    padding-bottom:max(8px,env(safe-area-inset-bottom));
+  }
+  #sealedModal .permanent-link code{
+    font-size:7px;
+  }
+}
 
 /* ===== V5.7.3 TURNSTILE READY ===== */
 .turnstile-wrap{
@@ -3635,7 +3679,7 @@ setCountryCanvas('human',{sync:false});
 
 // Fresh page load always begins from backend truth. User cell selections are not restored.
 clearTransientSelectionState();
-window.HUMANITY_BUILD='V5.7.4-20260825';
+window.HUMANITY_BUILD='V5.7.5-20260825';
 setPublicTruthGate('loading');
 
 async function bootPublicTruth(force=false){
