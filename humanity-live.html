@@ -298,7 +298,7 @@
   padding:0 12px;font-size:11px;outline:none
 }
 .checkout-field>small{display:block;color:var(--muted);font-size:8px;margin:5px 2px 0}
-.ai-checkout-fields{display:none;grid-template-columns:1fr 1fr;gap:8px}
+.ai-checkout-fields{display:none;grid-template-columns:1fr;gap:8px}
 .ai-checkout-fields.show{display:grid}
 
 @media(max-width:900px){
@@ -533,6 +533,77 @@
 .review-btn.busy{opacity:.62;cursor:wait}
 .payment-option:disabled{opacity:.36;cursor:not-allowed}
 
+/* ===== V5.6.4 MOBILE CHECKOUT UX ===== */
+#paymentModal{
+  place-items:center;
+  overflow:hidden;
+  padding:12px;
+}
+#paymentModal .checkout-modal{
+  width:min(560px,100%);
+  max-height:calc(100dvh - 24px);
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-y;
+  scrollbar-gutter:stable;
+}
+#paymentModal .modal-head{
+  position:sticky;
+  top:-23px;
+  z-index:12;
+  margin:-23px -23px 0;
+  padding:23px 23px 12px;
+  background:linear-gradient(to bottom,var(--paper) 86%,rgba(255,254,249,.96));
+}
+.checkout-field.invalid select{
+  border-color:#b42318!important;
+  box-shadow:0 0 0 3px rgba(180,35,24,.12);
+  background:#fff8f7;
+}
+.checkout-field.invalid>span{color:#b42318}
+.checkout-field-error{
+  display:none!important;
+  color:#b42318!important;
+  font-size:8px!important;
+  font-weight:850!important;
+  letter-spacing:.02em!important;
+  margin:6px 2px 0!important;
+}
+.checkout-field.invalid .checkout-field-error{display:block!important}
+@media(max-width:520px){
+  #paymentModal{padding:8px}
+  #paymentModal .checkout-modal{max-height:calc(100dvh - 16px);border-radius:20px;padding:20px}
+  #paymentModal .modal-head{top:-20px;margin:-20px -20px 0;padding:20px 20px 12px}
+}
+
+/* ===== V5.6.3 STARTUP SOURCE-OF-TRUTH GATE ===== */
+.truth-gate{
+  position:absolute;inset:0;z-index:20;display:grid;place-items:center;padding:24px;
+  background:rgba(236,232,223,.92);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);
+  opacity:0;pointer-events:none;transition:opacity .16s ease
+}
+.truth-gate.show{opacity:1;pointer-events:auto}
+.truth-gate-card{
+  width:min(390px,calc(100% - 24px));padding:20px;border:1px solid var(--line);border-radius:18px;
+  background:rgba(255,254,249,.96);box-shadow:var(--shadow2);text-align:center
+}
+.truth-gate-kicker{font-size:8px;letter-spacing:.16em;color:var(--muted);font-weight:900}
+.truth-gate h4{margin:7px 0 6px;font-size:18px;letter-spacing:-.025em}
+.truth-gate p{margin:0;color:var(--muted);font-size:9px;line-height:1.55}
+.truth-gate-spinner{
+  width:28px;height:28px;margin:0 auto 13px;border-radius:50%;border:3px solid #d7d1c6;border-top-color:#11110f;
+  animation:h1spin .8s linear infinite
+}
+.truth-gate button{
+  display:none;margin:14px auto 0;border:0;border-radius:999px;background:var(--ink);color:#fff;
+  padding:10px 16px;font-size:8px;letter-spacing:.11em;font-weight:900;cursor:pointer
+}
+.truth-gate.error button{display:inline-block}
+.truth-gate.error .truth-gate-spinner{display:none}
+.seal-cta:disabled{opacity:.38;cursor:wait}
+
 /* ===== V3.3 deterministic canvas gestures ===== */
 .area-pill.over-limit{background:#9f1d2f}
 .viewport.selecting{cursor:crosshair}
@@ -547,7 +618,7 @@
 <div id="app">
 <header class="topbar">
 <button class="brand" id="brandBtn"><strong>HUMANITY/1</strong><span>Human. AI. The Bridge between them.</span></button>
-<div class="global-progress"><div class="progress-copy"><span id="globalSealed">0</span> SEALED</div><div class="progress-label">HUMAN + AI IN PROGRESS</div></div>
+<div class="global-progress"><div class="progress-copy"><span id="globalSealed">—</span> SEALED</div><div class="progress-label">HUMAN + AI IN PROGRESS</div></div>
 <button class="about-btn" id="aboutBtn">THE IDEA</button>
 </header>
 <main class="main">
@@ -558,27 +629,37 @@
     <span class="pulse"></span>
     <div>
       <div class="live-label">HUMAN DECISIONS</div>
-      <div class="live-value"><span id="humanLive">0</span> / 1,000,000</div>
+      <div class="live-value"><span id="humanLive">—</span> / 1,000,000</div>
     </div>
   </div>
   <div class="vs">VS</div>
   <div class="live-side right">
     <div>
       <div class="live-label">AI DECISIONS</div>
-      <div class="live-value"><span id="aiLive">0</span> / 1,000,000</div>
+      <div class="live-value"><span id="aiLive">—</span> / 1,000,000</div>
     </div>
     <span class="pulse"></span>
   </div>
 </section>
 
 <section class="world-nav">
-<button class="world-card active" data-world="human"><span class="world-index">01</span><span class="world-name">HUMAN</span><span class="world-count"><b>0</b> / 1,000,000</span></button>
+<button class="world-card active" data-world="human"><span class="world-index">01</span><span class="world-name">HUMAN</span><span class="world-count"><b>—</b> / 1,000,000</span></button>
 <button class="world-card bridge-card locked" data-world="bridge"><span class="world-index">02</span><span class="world-name">THE BRIDGE</span><span class="world-count">LOCKED</span><span class="lock-mark">◆</span></button>
-<button class="world-card" data-world="ai"><span class="world-index">03</span><span class="world-name">AI</span><span class="world-count"><b>0</b> / 1,000,000</span></button>
+<button class="world-card" data-world="ai"><span class="world-index">03</span><span class="world-name">AI</span><span class="world-count"><b>—</b> / 1,000,000</span></button>
 </section>
 <section class="canvas-shell">
-<div class="canvas-topline"><div><div class="canvas-kicker" id="canvasKicker">ACT I</div><h2 id="canvasTitle">THE HUMAN CANVAS</h2><p id="canvasSubtitle">Choose any empty cell. Your color. Your decision.</p></div><div class="canvas-status"><div class="status-big" id="canvasStatusBig">1,000,000</div><div class="status-small">MARKS REMAIN</div></div></div>
-<div class="viewport" id="viewport"><canvas id="canvas"></canvas><div class="area-pill" id="areaPill"></div><div class="coordinate-pill" id="coordinatePill">X000 · Y000</div><div class="canvas-controls"><button class="control" id="zoomIn">+</button><button class="control" id="zoomOut">−</button><button class="control fit" id="fit">FIT</button></div><div class="gesture-hint" id="gestureHint">Tap to zoom in · Tap an exact cell · Drag to move</div></div>
+<div class="canvas-topline"><div><div class="canvas-kicker" id="canvasKicker">ACT I</div><h2 id="canvasTitle">THE HUMAN CANVAS</h2><p id="canvasSubtitle">Choose any empty cell. Your color. Your decision.</p></div><div class="canvas-status"><div class="status-big" id="canvasStatusBig">SYNCING…</div><div class="status-small">MARKS REMAIN</div></div></div>
+<div class="viewport" id="viewport"><canvas id="canvas"></canvas>
+<div class="truth-gate show" id="truthGate" role="status" aria-live="polite">
+  <div class="truth-gate-card">
+    <div class="truth-gate-spinner" aria-hidden="true"></div>
+    <div class="truth-gate-kicker">LIVE CANVAS</div>
+    <h4 id="truthGateTitle">Syncing permanent marks…</h4>
+    <p id="truthGateCopy">Loading the verified server record before cell selection is enabled.</p>
+    <button id="truthRetryBtn" type="button">RETRY SYNC</button>
+  </div>
+</div>
+<div class="area-pill" id="areaPill"></div><div class="coordinate-pill" id="coordinatePill">X000 · Y000</div><div class="canvas-controls"><button class="control" id="zoomIn">+</button><button class="control" id="zoomOut">−</button><button class="control fit" id="fit">FIT</button></div><div class="gesture-hint" id="gestureHint">Tap to zoom in · Tap an exact cell · Drag to move</div></div>
 
 <div class="canvas-footer" id="canvasFooter">
   <div class="idle-footer" id="idleFooter">
@@ -718,7 +799,7 @@
       <div class="reservation-clock" id="reservationClock">07:00</div>
     </div>
 
-    <label class="checkout-field">
+    <label class="checkout-field" id="countryField">
       <span>REPRESENTING</span>
       <select id="countrySelect">
         <option value="">Choose country</option>
@@ -972,6 +1053,7 @@
 <option value="ZW">Zimbabwe</option>
 <option value="AX">Åland Islands</option>
       </select>
+      <small class="checkout-field-error" id="countryError">Choose a country to continue.</small>
       <small>This is the country counted in LIVE BY COUNTRY.</small>
     </label>
 
@@ -987,10 +1069,6 @@
           <option>DeepSeek</option>
           <option>Other</option>
         </select>
-      </label>
-      <label class="checkout-field">
-        <span>MODEL / VERSION <em>OPTIONAL</em></span>
-        <input id="aiModel" placeholder="e.g. GPT-5.6" />
       </label>
     </div>
 
@@ -1450,10 +1528,15 @@ function updateWorldUI(){
   document.getElementById('canvasKicker').textContent=activeWorld.act;
   document.getElementById('canvasTitle').textContent=activeWorld.title;
   document.getElementById('canvasSubtitle').textContent=activeWorld.subtitle;
-  document.getElementById('canvasStatusBig').textContent=(activeWorld.total-activeWorld.sealed).toLocaleString('en-US');
+  if(typeof publicTruthReady!=='undefined'&&!publicTruthReady&&(activeWorld.id==='human'||activeWorld.id==='ai')){
+    document.getElementById('canvasStatusBig').textContent='SYNCING…';
+  }else{
+    document.getElementById('canvasStatusBig').textContent=(activeWorld.total-activeWorld.sealed).toLocaleString('en-US');
+  }
 }
 
 function switchWorld(id){
+  if(!publicTruthReady){toast('Live canvas is still syncing with the server.');return}
   if(id==='bridge'){openModal('bridgeModal');return}
   if(selectedCells.size){toast('Clear or finish the current selection before switching canvases.');return}
   activeWorld=WORLDS[id];
@@ -1517,6 +1600,7 @@ COLORS.forEach(c=>{
 resetSelectedColorUI();
 
 function startSelectionMode(initialCell=null){
+  if(!publicTruthReady){toast('Wait for the live canvas to finish syncing.');return}
   selectionMode=true;
   document.getElementById('canvasFooter').classList.add('selection-active');
   viewport.classList.add('selecting');
@@ -1560,6 +1644,7 @@ function updateSelectionUI(){
 }
 
 function addOrUpdateCell(x,y,color=activeColor){
+  if(!publicTruthReady)return false;
   if(!color)return false;
   if(isSealedCell(x,y)){
     toast('That cell is already permanently sealed.');
@@ -1718,12 +1803,54 @@ const publicSync = {
   human:{loading:false,loaded:false,lastMarkNumber:0},
   ai:{loading:false,loaded:false,lastMarkNumber:0}
 };
+let publicTruthReady=false;
+let publicTruthBooting=false;
+
+function setPublicCounterPlaceholders(){
+  const global=document.getElementById('globalSealed');
+  const humanLive=document.getElementById('humanLive');
+  const aiLive=document.getElementById('aiLive');
+  if(global)global.textContent='—';
+  if(humanLive)humanLive.textContent='—';
+  if(aiLive)aiLive.textContent='—';
+  document.querySelectorAll('.world-card[data-world="human"] .world-count b,.world-card[data-world="ai"] .world-count b')
+    .forEach(el=>el.textContent='—');
+  const status=document.getElementById('canvasStatusBig');
+  if(status)status.textContent='SYNCING…';
+}
+
+function setPublicTruthGate(mode='loading'){
+  const gate=document.getElementById('truthGate');
+  const title=document.getElementById('truthGateTitle');
+  const copy=document.getElementById('truthGateCopy');
+  const quick=document.getElementById('quickSealBtn');
+  publicTruthReady=mode==='ready';
+  if(quick)quick.disabled=!publicTruthReady;
+  if(!gate)return;
+  gate.classList.toggle('show',!publicTruthReady);
+  gate.classList.toggle('error',mode==='error');
+  if(mode==='loading'){
+    title.textContent='Syncing permanent marks…';
+    copy.textContent='Loading the verified server record before cell selection is enabled.';
+    setPublicCounterPlaceholders();
+  }else if(mode==='error'){
+    title.textContent='Live canvas could not be verified.';
+    copy.textContent='Cell selection stays locked until the server record loads successfully. Check your connection and retry.';
+    setPublicCounterPlaceholders();
+  }else{
+    updatePublicCounters();
+    updateWorldUI();
+    resetOffscreen();
+    queueRender();
+  }
+}
 
 function isSealedCell(x,y,worldId=activeWorld.id){
   return !!sessionSealedMarks[worldId]?.has(keyFor(Number(x),Number(y)));
 }
 
 function updatePublicCounters(){
+  if(!publicTruthReady){setPublicCounterPlaceholders();return}
   const human=Number(WORLDS.human.sealed||0);
   const ai=Number(WORLDS.ai.sealed||0);
   const total=human+ai;
@@ -1797,6 +1924,7 @@ async function syncCanvasFromBackend(canvasId,{reset=true,silent=false}={}){
     let after=reset?0:Number(state.lastMarkNumber||0);
     let first=true;
     if(reset){
+      state.loaded=false;
       state.lastMarkNumber=0;
       sessionSealedMarks[canvasId].clear();
     }
@@ -1930,6 +2058,7 @@ function removeReservationConflicts(conflicts=[]){
 }
 
 async function reserveCurrentSelection(){
+  if(!publicTruthReady){toast('Live canvas is not synced yet.');return null}
   if(!selectedCells.size)return null;
   if(reservationIsActive())return reservationState;
   if(reservationBusy)return null;
@@ -1970,6 +2099,7 @@ async function reserveCurrentSelection(){
 
 async function openCheckout(){
   if(!selectedCells.size)return;
+  clearCountryValidation();
   const reservation=await reserveCurrentSelection();
   if(!reservation)return;
 
@@ -2354,7 +2484,7 @@ async function startDodoCardCheckout(){
       reservation_token:reservationState.token,
       country_code:document.getElementById('countrySelect').value,
       ai_provider:activeWorld.id==='ai'?document.getElementById('aiProvider').value:null,
-      ai_model:activeWorld.id==='ai'?(document.getElementById('aiModel').value.trim()||null):null
+      ai_model:null
     });
     reservationState.expiresAt=result.reservation_expires_at||result.expires_at||reservationState.expiresAt;
     startReservationTimer();
@@ -2680,7 +2810,7 @@ async function createCryptoPayment(payCurrency){
       country_code:document.getElementById('countrySelect').value,
       pay_currency:payCurrency,
       ai_provider:activeWorld.id==='ai'?document.getElementById('aiProvider').value:null,
-      ai_model:activeWorld.id==='ai'?(document.getElementById('aiModel').value.trim()||null):null
+      ai_model:null
     });
     renderCryptoPayment(result);
     if(result.reservation_expires_at){
@@ -2824,7 +2954,7 @@ async function prepareReservedCheckout(channel){
       reservation_token:reservationState.token,
       country_code:document.getElementById('countrySelect').value,
       ai_provider:activeWorld.id==='ai'?document.getElementById('aiProvider').value:null,
-      ai_model:activeWorld.id==='ai'?(document.getElementById('aiModel').value.trim()||null):null
+      ai_model:null
     });
     reservationState.expiresAt=result.expires_at;
     startReservationTimer();
@@ -2845,11 +2975,34 @@ async function prepareReservedCheckout(channel){
   }
 }
 
+function clearCountryValidation(){
+  const field=document.getElementById('countryField');
+  if(field)field.classList.remove('invalid');
+}
+
+function showCountryValidation(){
+  const field=document.getElementById('countryField');
+  const select=document.getElementById('countrySelect');
+  if(field)field.classList.add('invalid');
+  field?.scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(()=>{try{select?.focus({preventScroll:true})}catch{select?.focus()}},220);
+}
+
 function validateCheckout(){
-  if(!document.getElementById('countrySelect').value){toast('Choose the country you are representing.');return false}
+  const country=document.getElementById('countrySelect');
+  if(!country?.value){
+    showCountryValidation();
+    toast('Choose a country to continue.');
+    return false;
+  }
+  clearCountryValidation();
   if(activeWorld.id==='ai'&&!document.getElementById('aiProvider').value){toast('Choose which AI made these decisions.');return false}
   return true;
 }
+
+document.getElementById('countrySelect')?.addEventListener('change',()=>{
+  if(document.getElementById('countrySelect').value)clearCountryValidation();
+});
 
 const enterCellSelection = (initialCell=null)=>startSelectionMode(initialCell);
 document.getElementById('quickSealBtn').onclick=()=>enterCellSelection();
@@ -3090,20 +3243,35 @@ renderCountryLeaderboard();
 
 // Fresh page load always begins from backend truth. User cell selections are not restored.
 clearTransientSelectionState();
-window.HUMANITY_BUILD='V5.6.2-20260825';
-async function bootPublicTruth(){
-  for(let attempt=0;attempt<4;attempt++){
-    try{
+window.HUMANITY_BUILD='V5.6.4-20260825';
+setPublicTruthGate('loading');
+
+async function bootPublicTruth(force=false){
+  if(publicTruthBooting&&!force)return false;
+  publicTruthBooting=true;
+  setPublicTruthGate('loading');
+  try{
+    for(let attempt=0;attempt<4;attempt++){
       await Promise.all([
-        syncCanvasFromBackend('human',{reset:true,silent:false}),
-        syncCanvasFromBackend('ai',{reset:true,silent:false})
+        syncCanvasFromBackend('human',{reset:true,silent:attempt>0}),
+        syncCanvasFromBackend('ai',{reset:true,silent:attempt>0})
       ]);
-      if(publicSync.human.loaded&&publicSync.ai.loaded)return;
-    }catch{}
-    await new Promise(r=>setTimeout(r,700*(attempt+1)));
+      if(publicSync.human.loaded&&publicSync.ai.loaded){
+        setPublicTruthGate('ready');
+        console.log('[H1] startup truth ready',{human:WORLDS.human.sealed,ai:WORLDS.ai.sealed});
+        return true;
+      }
+      await new Promise(r=>setTimeout(r,700*(attempt+1)));
+    }
+    setPublicTruthGate('error');
+    return false;
+  }finally{
+    publicTruthBooting=false;
   }
 }
-setTimeout(()=>bootPublicTruth(),40);
+
+document.getElementById('truthRetryBtn').onclick=()=>bootPublicTruth(true);
+setTimeout(()=>bootPublicTruth(),20);
 setTimeout(resolvePermanentIncomingLink,120);
 setTimeout(resumeDodoReturn,180);
 
