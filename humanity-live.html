@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
 <meta name="theme-color" content="#f4f1ea" />
 <title>HUMANITY/1 — Human. AI. The Bridge.</title>
-<meta name="humanity-build" content="V5.7.9-20260825" />
+<meta name="humanity-build" content="V5.8.1-SECURITY-20260825" />
 <style>
 :root{--bg:#f4f1ea;--paper:#fffef9;--ink:#11110f;--muted:#77736b;--line:#d8d3c8;--line2:#e8e3d9;--soft:#ece8df;--shadow:0 24px 80px rgba(22,19,14,.10);--shadow2:0 12px 34px rgba(22,19,14,.08);--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;--mono:"SFMono-Regular","SF Mono","Roboto Mono",Consolas,monospace}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased}body{min-width:320px}button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}#app{min-height:100vh;min-height:100dvh}
@@ -473,7 +473,7 @@
 
 
 
-/* ===== V5.6 BACKEND SOURCE OF TRUTH + DODO CARD CHECKOUT ===== */
+/* ===== V5.8 LIVE DODO CARD CHECKOUT + BACKEND SOURCE OF TRUTH ===== */
 .card-verify-modal .modal{width:min(520px,100%)}
 .card-verify-box{
   margin-top:14px;padding:22px;border:1px solid var(--line);border-radius:18px;background:var(--soft)
@@ -2063,7 +2063,7 @@ window.HUMANITY_API={
     return backendPost('crypto-options',{amount_minor:amountMinor});
   },
   createDodoCheckout(payload){
-    return backendPost('create-dodo-checkout',payload);
+    return backendPost('create-dodo-live-checkout',payload);
   },
   dodoPaymentStatus(batchId,reservationToken){
     return backendPost('dodo-payment-status',{batch_id:batchId,reservation_token:reservationToken});
@@ -2216,8 +2216,16 @@ function updatePublicCounters(){
 }
 
 function countryNameFor(code){
-  const option=document.querySelector(`#countrySelect option[value="${String(code||'').toUpperCase()}"]`);
-  return option?.textContent||String(code||'').toUpperCase();
+  const normalized=String(code||'').toUpperCase();
+  const select=document.getElementById('countrySelect');
+  const option=select?[...select.options].find(o=>o.value===normalized):null;
+  return option?.textContent||normalized;
+}
+
+function escapeHtml(value){
+  return String(value??'').replace(/[&<>"']/g,ch=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  })[ch]);
 }
 
 function applyCountryRankings(canvasId,rows=[]){
@@ -2947,10 +2955,12 @@ async function startDodoCardCheckout(){
     if(!result.checkout_url)throw Object.assign(new Error('CHECKOUT_URL_MISSING'),{code:'CHECKOUT_URL_MISSING'});
     window.location.assign(result.checkout_url);
   }catch(err){
-    if(err.code==='DODO_NOT_CONFIGURED'){
-      toast('Dodo card payments are ready in the site, but Dodo credentials still need to be connected.');
-    }else if(err.code==='DODO_PRODUCT_MISCONFIGURED'){
-      toast('Dodo product must be exactly $4.99 USD, one-time, with tax-inclusive pricing OFF.');
+    if(err.code==='DODO_LIVE_NOT_CONFIGURED'||err.code==='DODO_NOT_CONFIGURED'){
+      toast('Live card checkout is not fully configured yet.');
+    }else if(err.code==='DODO_LIVE_PRODUCT_MISCONFIGURED'||err.code==='DODO_PRODUCT_MISCONFIGURED'){
+      toast('Live Dodo product must be exactly $4.99 USD, one-time, with tax-inclusive pricing OFF.');
+    }else if(err.code==='NON_LIVE_PAYMENT_ALREADY_ACTIVE'){
+      toast('An older test checkout is still active for these cells. Close it or wait for that reservation to expire, then reserve again.');
     }else if(err.code==='PAYMENT_ALREADY_ACTIVE'||err.code==='PAYMENT_ACTIVE'){
       toast('A payment is already active for these cells. Finish it or wait for it to expire — do not pay twice.');
     }else if(err.code==='RESERVATION_EXPIRED'||err.code==='RESERVATION_NOT_ACTIVE'){
@@ -3738,12 +3748,12 @@ function renderCountryLeaderboard(rows = countryState.rows) {
         <div class="country-name">
           <span class="country-flag" aria-hidden="true">${countryFlagEmoji(code)}</span>
           <span class="country-name-copy">
-            <b>${row.country_name}</b>
-            <small>${code}</small>
+            <b>${escapeHtml(row.country_name)}</b>
+            <small>${escapeHtml(code)}</small>
           </span>
         </div>
         <div class="country-share">
-          <div class="country-share-top"><span>OF SEALED MARKS</span><b>${shareLabel}</b></div>
+          <div class="country-share-top"><span>OF SEALED MARKS</span><b>${escapeHtml(shareLabel)}</b></div>
           <div class="country-share-bar"><i style="width:${barWidth}%"></i></div>
         </div>
         <div class="country-marks">${marks.toLocaleString('en-US')}</div>
@@ -3788,7 +3798,7 @@ setCountryCanvas('human',{sync:false});
 
 // Fresh page load always begins from backend truth. User cell selections are not restored.
 clearTransientSelectionState();
-window.HUMANITY_BUILD='V5.7.9-20260825';
+window.HUMANITY_BUILD='V5.8.1-SECURITY-20260825';
 setPublicTruthGate('loading');
 
 async function bootPublicTruth(force=false){
