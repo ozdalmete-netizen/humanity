@@ -6,7 +6,7 @@
 <meta name="referrer" content="no-referrer" />
 <meta name="theme-color" content="#f4f1ea" />
 <title>HUMANITY/1 — Human. AI. The Bridge.</title>
-<meta name="humanity-build" content="V5.8.7-CRYPTO-LEGAL-20260826" />
+<meta name="humanity-build" content="V5.8.8-AI-GUIDE-20260826" />
 <style>
 :root{--bg:#f4f1ea;--paper:#fffef9;--ink:#11110f;--muted:#77736b;--line:#d8d3c8;--line2:#e8e3d9;--soft:#ece8df;--shadow:0 24px 80px rgba(22,19,14,.10);--shadow2:0 12px 34px rgba(22,19,14,.08);--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;--mono:"SFMono-Regular","SF Mono","Roboto Mono",Consolas,monospace}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased}body{min-width:320px}button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}#app{min-height:100vh;min-height:100dvh}
@@ -16,7 +16,7 @@
 .world-card.bridge-ready{background:#fffef9;border-color:#11110f;box-shadow:inset 0 0 0 1px #11110f}
 .world-card.bridge-ready .world-count{color:#2f6a43;font-weight:900;letter-spacing:.12em}
 .world-card.bridge-ready .lock-mark{opacity:1;color:#2f6a43}
-.canvas-shell{margin-top:0;border:1px solid var(--line);background:var(--paper);border-radius:26px;overflow:hidden;box-shadow:var(--shadow)}.canvas-topline{display:flex;justify-content:space-between;gap:28px;padding:20px 24px;border-bottom:1px solid var(--line2)}.canvas-kicker{font-size:9px;letter-spacing:.18em;color:var(--muted);font-weight:800}.canvas-topline h2{margin:4px 0 2px;font-size:24px;letter-spacing:-.03em}.canvas-topline p{margin:0;color:var(--muted);font-size:13px}.canvas-status{text-align:right;align-self:center}.status-big{font:750 18px var(--mono)}.status-small{font-size:9px;letter-spacing:.15em;color:var(--muted);margin-top:4px}
+.canvas-shell{margin-top:0;border:1px solid var(--line);background:var(--paper);border-radius:26px;overflow:hidden;box-shadow:var(--shadow)}.canvas-topline{display:flex;justify-content:space-between;gap:28px;padding:20px 24px;border-bottom:1px solid var(--line2)}.canvas-kicker{font-size:9px;letter-spacing:.18em;color:var(--muted);font-weight:800}.canvas-topline h2{margin:4px 0 2px;font-size:24px;letter-spacing:-.03em}.canvas-topline p{margin:0;color:var(--muted);font-size:13px}.ai-instruction{display:none;margin:14px 18px 16px;padding:15px 16px;border:1px solid #11110f;border-radius:16px;background:#11110f;color:#fff;box-shadow:0 12px 30px rgba(17,17,15,.14)}.ai-instruction.show{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:start}.ai-instruction-badge{padding:7px 9px;border:1px solid rgba(255,255,255,.28);border-radius:999px;font:850 8px var(--mono);letter-spacing:.12em;white-space:nowrap}.ai-instruction strong{display:block;font-size:14px;letter-spacing:-.01em}.ai-instruction p{margin:5px 0 0;color:rgba(255,255,255,.76);font-size:10px;line-height:1.55}.canvas-status{text-align:right;align-self:center}.status-big{font:750 18px var(--mono)}.status-small{font-size:9px;letter-spacing:.15em;color:var(--muted);margin-top:4px}
 .viewport{position:relative;height:min(72vh,860px);min-height:520px;background:#ece8df;overflow:hidden;touch-action:none;cursor:grab}.viewport.dragging{cursor:grabbing}canvas{display:block;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges}.coordinate-pill{position:absolute;right:18px;top:18px;background:rgba(255,254,249,.9);border:1px solid var(--line);border-radius:999px;padding:8px 10px;font:650 9px var(--mono);box-shadow:var(--shadow2);opacity:0;transform:translateY(-4px);transition:.18s ease}.coordinate-pill.show{opacity:1;transform:none}.canvas-controls{position:absolute;right:16px;bottom:16px;display:flex;flex-direction:column;gap:7px;z-index:8;touch-action:manipulation}.control{width:48px;height:48px;touch-action:manipulation;border-radius:13px;border:1px solid var(--line);background:rgba(255,254,249,.92);box-shadow:var(--shadow2);font-weight:850;cursor:pointer}.control.fit{font-size:9px;letter-spacing:.08em}.gesture-hint{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);max-width:calc(100% - 180px);background:rgba(17,17,15,.9);color:white;padding:9px 13px;border-radius:999px;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 12px 35px rgba(0,0,0,.16);pointer-events:none;transition:.18s ease}.gesture-hint.hidden{opacity:0}.canvas-footer{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 18px;border-top:1px solid var(--line2)}.rules{display:flex;gap:8px;flex-wrap:wrap}.rules span{font-size:8px;letter-spacing:.12em;color:var(--muted);padding:7px 9px;border:1px solid var(--line2);border-radius:999px}.seal-cta{border:0;background:var(--ink);color:white;border-radius:999px;padding:12px 18px;font-size:9px;letter-spacing:.12em;font-weight:850;cursor:pointer}
 .backdrop{position:fixed;inset:0;background:rgba(24,21,16,.28);backdrop-filter:blur(4px);z-index:40;opacity:0;pointer-events:none;transition:.22s}.backdrop.show{opacity:1;pointer-events:auto}.sheet{position:fixed;z-index:45;left:0;right:0;bottom:0;background:var(--paper);border-radius:26px 26px 0 0;border:1px solid var(--line);padding:10px 18px max(18px,env(safe-area-inset-bottom));box-shadow:0 -28px 80px rgba(20,18,14,.16);transform:translateY(102%);transition:transform .35s cubic-bezier(.16,1,.3,1);max-height:86dvh;overflow:auto}.sheet.show{transform:none}.sheet-handle{width:38px;height:4px;border-radius:5px;background:#d4cfc4;margin:2px auto 15px}.sheet-top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:14px}.sheet-top h3{font-size:20px;margin:5px 0 0;letter-spacing:-.025em}.coord{font:650 9px var(--mono);background:var(--soft);border-radius:999px;padding:7px 9px;white-space:nowrap}.selected-color-panel{display:flex;align-items:center;gap:12px;margin:0 0 12px;padding:11px 12px;border:1px solid var(--line);border-radius:14px;background:#faf8f2}
 .selected-color-chip{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#f2eee4,#e5dfd3);border:1px solid rgba(0,0,0,.12);box-shadow:inset 0 0 0 1px rgba(255,255,255,.45)}
@@ -766,6 +766,10 @@
 </section>
 <section class="canvas-shell">
 <div class="canvas-topline"><div><div class="canvas-kicker" id="canvasKicker">ACT I</div><h2 id="canvasTitle">THE HUMAN CANVAS</h2><p id="canvasSubtitle">Choose any empty cell. Your color. Your decision.</p></div><div class="canvas-status"><div class="status-big" id="canvasStatusBig">SYNCING…</div><div class="status-small">MARKS REMAIN</div></div></div>
+<div class="ai-instruction" id="aiInstruction">
+  <div class="ai-instruction-badge">AI GUIDE</div>
+  <div><strong>Let AI choose the color.</strong><p>Take a screenshot of this canvas, send it to any AI, and ask: “Which color should live in my selected cell?” Then place the AI’s answer as your permanent mark.</p></div>
+</div>
 <div class="viewport" id="viewport"><canvas id="canvas"></canvas>
 <div class="truth-gate show" id="truthGate" role="status" aria-live="polite">
   <div class="truth-gate-card">
@@ -1710,6 +1714,7 @@ function updateWorldUI(){
   document.getElementById('canvasKicker').textContent=activeWorld.act;
   document.getElementById('canvasTitle').textContent=activeWorld.title;
   document.getElementById('canvasSubtitle').textContent=activeWorld.subtitle;
+  document.getElementById('aiInstruction')?.classList.toggle('show',activeWorld.id==='ai');
   if(typeof publicTruthReady!=='undefined'&&!publicTruthReady&&(activeWorld.id==='human'||activeWorld.id==='ai')){
     document.getElementById('canvasStatusBig').textContent='SYNCING…';
   }else{
@@ -3857,7 +3862,7 @@ setCountryCanvas('human',{sync:false});
 
 // Fresh page load always begins from backend truth. User cell selections are not restored.
 clearTransientSelectionState();
-window.HUMANITY_BUILD='V5.8.7-CRYPTO-LEGAL-20260826';
+window.HUMANITY_BUILD='V5.8.8-AI-GUIDE-20260826';
 setPublicTruthGate('loading');
 
 async function bootPublicTruth(force=false){
