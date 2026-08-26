@@ -6,7 +6,7 @@
 <meta name="referrer" content="no-referrer" />
 <meta name="theme-color" content="#f4f1ea" />
 <title>HUMANITY/1 — Human. AI. The Bridge.</title>
-<meta name="humanity-build" content="V5.8.5-LEGAL-CONSENT-20260825" />
+<meta name="humanity-build" content="V5.8.6-CHECKOUT-LOCK-UX-20260826" />
 <style>
 :root{--bg:#f4f1ea;--paper:#fffef9;--ink:#11110f;--muted:#77736b;--line:#d8d3c8;--line2:#e8e3d9;--soft:#ece8df;--shadow:0 24px 80px rgba(22,19,14,.10);--shadow2:0 12px 34px rgba(22,19,14,.08);--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;--mono:"SFMono-Regular","SF Mono","Roboto Mono",Consolas,monospace}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased}body{min-width:320px}button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}#app{min-height:100vh;min-height:100dvh}
@@ -559,6 +559,8 @@
   border-radius:13px;background:#f3efe6
 }
 .reservation-banner.show{display:flex}
+.reservation-banner.payment-active{background:#edf3ec;border-color:#ceddcb}
+.reservation-banner.payment-active .reservation-clock{background:#31523a}
 .reservation-banner .reservation-copy small{
   display:block;font-size:7px;letter-spacing:.13em;color:var(--muted);font-weight:850
 }
@@ -886,7 +888,7 @@
       <div>
         <div class="eyebrow">CHECKOUT</div>
         <h3 id="checkoutTitle">Review your marks.</h3>
-        <p>All selected cells are locked together for 7 minutes before payment begins.</p>
+        <p>You have 7 minutes to begin payment. Once secure provider checkout starts, the selected cells stay locked while that payment is active.</p>
       </div>
       <button class="close" data-close="paymentModal">×</button>
     </div>
@@ -2395,8 +2397,9 @@ function updateReservationBanner(){
   const banner=document.getElementById('reservationBanner');
   const clock=document.getElementById('reservationClock');
   const status=document.getElementById('reservationStatusText');
+  const label=banner?.querySelector('.reservation-copy small');
   if(!reservationState){
-    banner.classList.remove('show');
+    banner?.classList.remove('show','payment-active');
     return;
   }
 
@@ -2404,18 +2407,29 @@ function updateReservationBanner(){
   const seconds=Math.ceil(left/1000);
   const mm=String(Math.floor(seconds/60)).padStart(2,'0');
   const ss=String(seconds%60).padStart(2,'0');
+  const paymentActive=reservationState.checkoutActive===true;
 
   banner.classList.add('show');
-  clock.textContent=`${mm}:${ss}`;
-  status.textContent=`${reservationState.itemCount.toLocaleString('en-US')} cells are locked for this checkout.`;
+  banner.classList.toggle('payment-active',paymentActive);
+  if(paymentActive){
+    if(label)label.textContent='PAYMENT IN PROGRESS';
+    clock.textContent='LOCKED';
+    status.textContent=`${reservationState.itemCount.toLocaleString('en-US')} cells stay locked while secure payment is active.`;
+  }else{
+    if(label)label.textContent='CELLS RESERVED';
+    clock.textContent=`${mm}:${ss}`;
+    status.textContent=`${reservationState.itemCount.toLocaleString('en-US')} cells are temporarily reserved for checkout.`;
+  }
 
   if(left<=0){
     clearInterval(reservationTimer);
     reservationTimer=null;
     reservationState=null;
-    banner.classList.remove('show');
+    banner.classList.remove('show','payment-active');
     if(document.getElementById('paymentModal').classList.contains('show')){
-      toast('Reservation expired. Tap REVIEW & PAY to reserve the cells again.');
+      toast(paymentActive
+        ? 'Payment lock expired. Check payment status before starting another checkout.'
+        : 'Reservation expired. Tap REVIEW & PAY to reserve the cells again.');
     }
   }
 }
@@ -2475,7 +2489,8 @@ async function reserveCurrentSelection(){
       token:result.reservation_token,
       expiresAt:result.expires_at,
       itemCount:Number(result.item_count),
-      amountMinor:Number(result.amount_minor)
+      amountMinor:Number(result.amount_minor),
+      checkoutActive:false
     };
     startReservationTimer();
     return reservationState;
@@ -2968,6 +2983,7 @@ async function startDodoCardCheckout(){
       legal_version:HUMANITY_LEGAL_VERSION
     });
     reservationState.expiresAt=result.reservation_expires_at||result.expires_at||reservationState.expiresAt;
+    reservationState.checkoutActive=true;
     startReservationTimer();
 
     saveDodoPending({
@@ -2977,6 +2993,7 @@ async function startDodoCardCheckout(){
       itemCount:reservationState.itemCount,
       amountMinor:reservationState.amountMinor,
       paymentRowId:result.payment_row_id||null,
+      checkoutActive:true,
       createdAt:Date.now()
     });
 
@@ -3150,7 +3167,7 @@ async function resumeDodoReturn(){
     openModal('cardVerifyModal');
     reservationState={
       batchId:pending.batchId,token:pending.token,expiresAt:pending.expiresAt,
-      itemCount:Number(pending.itemCount||0),amountMinor:Number(pending.amountMinor||0)
+      itemCount:Number(pending.itemCount||0),amountMinor:Number(pending.amountMinor||0),checkoutActive:true
     };
     startReservationTimer();
 
@@ -3305,10 +3322,11 @@ async function createCryptoPayment(payCurrency){
       ai_model:null
     });
     renderCryptoPayment(result);
+    reservationState.checkoutActive=true;
     if(result.reservation_expires_at){
       reservationState.expiresAt=result.reservation_expires_at;
-      startReservationTimer();
     }
+    startReservationTimer();
     startCryptoPolling();
   }catch(err){
     if(err.code==='NOWPAYMENTS_NOT_CONFIGURED'){
@@ -3835,7 +3853,7 @@ setCountryCanvas('human',{sync:false});
 
 // Fresh page load always begins from backend truth. User cell selections are not restored.
 clearTransientSelectionState();
-window.HUMANITY_BUILD='V5.8.5-LEGAL-CONSENT-20260825';
+window.HUMANITY_BUILD='V5.8.6-CHECKOUT-LOCK-UX-20260826';
 setPublicTruthGate('loading');
 
 async function bootPublicTruth(force=false){
