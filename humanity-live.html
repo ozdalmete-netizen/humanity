@@ -6,7 +6,7 @@
 <meta name="referrer" content="no-referrer" />
 <meta name="theme-color" content="#f4f1ea" />
 <title>HUMANITY/1 — Human. AI. The Bridge.</title>
-<meta name="humanity-build" content="V5.8.8-AI-GUIDE-20260826" />
+<meta name="humanity-build" content="V5.8.9-AI-GUIDE-COPY-20260826" />
 <style>
 :root{--bg:#f4f1ea;--paper:#fffef9;--ink:#11110f;--muted:#77736b;--line:#d8d3c8;--line2:#e8e3d9;--soft:#ece8df;--shadow:0 24px 80px rgba(22,19,14,.10);--shadow2:0 12px 34px rgba(22,19,14,.08);--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;--mono:"SFMono-Regular","SF Mono","Roboto Mono",Consolas,monospace}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased}body{min-width:320px}button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}#app{min-height:100vh;min-height:100dvh}
@@ -768,7 +768,7 @@
 <div class="canvas-topline"><div><div class="canvas-kicker" id="canvasKicker">ACT I</div><h2 id="canvasTitle">THE HUMAN CANVAS</h2><p id="canvasSubtitle">Choose any empty cell. Your color. Your decision.</p></div><div class="canvas-status"><div class="status-big" id="canvasStatusBig">SYNCING…</div><div class="status-small">MARKS REMAIN</div></div></div>
 <div class="ai-instruction" id="aiInstruction">
   <div class="ai-instruction-badge">AI GUIDE</div>
-  <div><strong>Let AI choose the color.</strong><p>Take a screenshot of this canvas, send it to any AI, and ask: “Which color should live in my selected cell?” Then place the AI’s answer as your permanent mark.</p></div>
+  <div><strong>Let AI choose the color.</strong><p>Select an empty cell, take a screenshot of this canvas, and send it to any AI. Ask: “Which color should live in my selected cell?” Then place the AI’s answer as your permanent mark.</p></div>
 </div>
 <div class="viewport" id="viewport"><canvas id="canvas"></canvas>
 <div class="truth-gate show" id="truthGate" role="status" aria-live="polite">
@@ -3862,7 +3862,7 @@ setCountryCanvas('human',{sync:false});
 
 // Fresh page load always begins from backend truth. User cell selections are not restored.
 clearTransientSelectionState();
-window.HUMANITY_BUILD='V5.8.8-AI-GUIDE-20260826';
+window.HUMANITY_BUILD='V5.8.9-AI-GUIDE-COPY-20260826';
 setPublicTruthGate('loading');
 
 async function bootPublicTruth(force=false){
